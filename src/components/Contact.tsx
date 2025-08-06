@@ -76,13 +76,13 @@ const Contact: React.FC = () => {
     {
       icon: <Github size={24} />,
       title: 'GitHub',
-      url: 'https://github.com/yourusername',
+      url: 'https://github.com/kartik977',
       color: 'text-gray-300 hover:text-white'
     },
     {
       icon: <Linkedin size={24} />,
       title: 'LinkedIn',
-      url: 'https://linkedin.com/in/yourusername',
+      url: 'https://www.linkedin.com/in/kartikkataria2023/',
       color: 'text-blue-400 hover:text-blue-300'
     }
   ];
