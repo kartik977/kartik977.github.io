@@ -226,7 +226,7 @@ const Home: React.FC = () => {
               className="flex gap-4 justify-center lg:justify-start"
             >
               <motion.a
-                href="https://github.com/yourusername"
+                href="https://github.com/kartik977"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
@@ -236,7 +236,7 @@ const Home: React.FC = () => {
                 <Github size={20} className="text-white group-hover:text-blue-300 transition-colors" />
               </motion.a>
               <motion.a
-                href="https://linkedin.com/in/yourusername"
+                href="https://www.linkedin.com/in/kartikkataria2023/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
