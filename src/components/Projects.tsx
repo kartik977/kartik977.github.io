@@ -213,26 +213,7 @@ const Projects: React.FC = () => {
                 </div>
               </div>
               
-              <div className="flex gap-3">
-                <motion.a
-                  href={project.github}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Github size={16} />
-                  <span className="text-sm">Code</span>
-                </motion.a>
-                <motion.a
-                  href={project.live}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors duration-300"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <ExternalLink size={16} />
-                  <span className="text-sm">Live Demo</span>
-                </motion.a>
-              </div>
+
             </motion.div>
           ))}
         </div>
