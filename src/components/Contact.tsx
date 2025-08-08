@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Mail, Phone, MapPin, Github, Linkedin, Send, User, MessageCircle, Handshake, Heart } from 'lucide-react';
-import emailjs from '@emailjs/browser';
+import { Mail, Phone, MapPin, Github, Linkedin, User, MessageCircle, Handshake, Heart, Star, Sparkles, Coffee } from 'lucide-react';
 
 const Contact: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [currentInvite, setCurrentInvite] = useState(0);
+  const [currentMessage, setCurrentMessage] = useState(0);
   const controls = useAnimation();
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentInvite((prev) => (prev + 1) % 3);
+      setCurrentMessage((prev) => (prev + 1) % 4);
     }, 4000);
 
     return () => clearInterval(interval);
@@ -31,53 +24,6 @@ const Contact: React.FC = () => {
       }
     });
   }, [controls]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    try {
-      // EmailJS configuration - you'll need to set up your own account
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        to_email: 'katariakartik08@gmail.com'
-      };
-
-      // For now, we'll use a fallback method that opens the user's email client
-      const mailtoLink = `mailto:katariakartik08@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
-      
-      window.open(mailtoLink, '_blank');
-      
-      setSubmitStatus('success');
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
-      });
-    } catch (error) {
-      console.error('Error sending email:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const contactInfo = [
     {
@@ -115,10 +61,11 @@ const Contact: React.FC = () => {
     }
   ];
 
-  const inviteMessages = [
-    "Let's connect and discuss opportunities...",
-    "I'd love to hear about your projects...",
-    "Ready to collaborate on something amazing..."
+  const goodbyeMessages = [
+    "Thanks for exploring my portfolio! 🚀",
+    "Hope you enjoyed the journey through my work... ✨",
+    "Ready to create something amazing together? 💫",
+    "Let's connect and build the future! 🌟"
   ];
 
   return (
@@ -259,131 +206,100 @@ const Contact: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Portfolio Summary & Goodbye */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <div className="card bg-white/10 backdrop-blur-xl border border-white/20">
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Send Message</h3>
+              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Portfolio Summary</h3>
               
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-200 mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-200 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-200 mb-2">
-                    Subject
-                  </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    placeholder="Subject of your message"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-200 mb-2">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={5}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
-                    placeholder="Your message..."
-                  />
-                </div>
-
-                <motion.button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full px-6 py-3 text-white font-semibold rounded-lg flex items-center justify-center gap-2 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-transparent ${
-                    isSubmitting 
-                      ? 'bg-gray-600 cursor-not-allowed' 
-                      : submitStatus === 'success'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                  }`}
-                  whileHover={!isSubmitting ? { scale: 1.02 } : {}}
-                  whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+              <div className="space-y-6">
+                {/* Rotating Goodbye Message */}
+                <motion.div
+                  key={currentMessage}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg border border-white/20"
                 >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Sending...
-                    </>
-                  ) : submitStatus === 'success' ? (
-                    <>
-                      <Mail size={20} />
-                      Email Client Opened!
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} />
-                      Send Message
-                    </>
-                  )}
-                </motion.button>
-                
-                {submitStatus === 'success' && (
+                  <p className="text-lg text-white font-medium">{goodbyeMessages[currentMessage]}</p>
+                </motion.div>
+
+                {/* Key Highlights */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm text-center"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                    className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
-                    ✅ Your email client has been opened with the message pre-filled!
+                    <div className="flex items-center gap-3 mb-3">
+                      <Star size={20} className="text-yellow-400" />
+                      <h4 className="text-white font-semibold">Experience</h4>
+                    </div>
+                    <p className="text-gray-300 text-sm">Software Engineer at Cognizant, specializing in Java, Node.js, and FinTech solutions</p>
                   </motion.div>
-                )}
-                
-                {submitStatus === 'error' && (
+
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                    className="p-4 bg-white/5 rounded-lg border border-white/10"
                   >
-                    ❌ There was an error. Please try again or contact me directly.
+                    <div className="flex items-center gap-3 mb-3">
+                      <Sparkles size={20} className="text-blue-400" />
+                      <h4 className="text-white font-semibold">Skills</h4>
+                    </div>
+                    <p className="text-gray-300 text-sm">Full-stack development, React, TypeScript, Java, Node.js, and cloud technologies</p>
                   </motion.div>
-                )}
-              </form>
+
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    className="p-4 bg-white/5 rounded-lg border border-white/10"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <Coffee size={20} className="text-orange-400" />
+                      <h4 className="text-white font-semibold">Projects</h4>
+                    </div>
+                    <p className="text-gray-300 text-sm">React apps, AI image generation, data visualization, and innovative solutions</p>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="p-4 bg-white/5 rounded-lg border border-white/10"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <Heart size={20} className="text-red-400" />
+                      <h4 className="text-white font-semibold">Passion</h4>
+                    </div>
+                    <p className="text-gray-300 text-sm">Creating impactful solutions and pushing the boundaries of technology</p>
+                  </motion.div>
+                </div>
+
+                {/* Call to Action */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  className="text-center p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg border border-white/20"
+                >
+                  <p className="text-white font-medium mb-3">Ready to collaborate on something amazing?</p>
+                  <a
+                    href="mailto:katariakartik08@gmail.com"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+                  >
+                    <Mail size={18} />
+                    Let's Connect
+                  </a>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>
