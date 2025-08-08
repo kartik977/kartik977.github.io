@@ -4,7 +4,15 @@ import { Mail, Phone, MapPin, Github, Linkedin, User, MessageCircle, Handshake, 
 
 const Contact: React.FC = () => {
   const [currentMessage, setCurrentMessage] = useState(0);
+  const [currentInvite, setCurrentInvite] = useState(0);
   const controls = useAnimation();
+
+  const inviteMessages = [
+    "Hey there! Ready to connect? 👋",
+    "Let's build something amazing together! 🚀",
+    "Your next project is waiting! 💫",
+    "Time to create something special! ✨"
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -13,6 +21,14 @@ const Contact: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const inviteInterval = setInterval(() => {
+      setCurrentInvite((prev) => (prev + 1) % inviteMessages.length);
+    }, 3000);
+
+    return () => clearInterval(inviteInterval);
+  }, [inviteMessages.length]);
 
   useEffect(() => {
     controls.start({

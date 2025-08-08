@@ -92,9 +92,9 @@ const Home: React.FC = () => {
               animate={controls}
             >
               <div className="relative w-48 h-48 mx-auto lg:mx-0">
-                {/* Character circle */}
+                {/* Character circle with photo */}
                 <motion.div
-                  className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl"
+                  className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl overflow-hidden"
                   animate={{
                     boxShadow: [
                       "0 0 30px rgba(59, 130, 246, 0.5)",
@@ -108,7 +108,11 @@ const Home: React.FC = () => {
                     ease: "easeInOut"
                   }}
                 >
-                  <User size={80} className="text-white" />
+                  <img 
+                    src="/WhatsApp Image 2025-08-07 at 10.48.20 AM.jpeg" 
+                    alt="Kartik Kataria" 
+                    className="w-full h-full object-cover rounded-full"
+                  />
                 </motion.div>
                 
                 {/* Floating elements around character */}
