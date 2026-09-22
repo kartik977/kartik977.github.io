@@ -294,6 +294,21 @@ const Home: React.FC = () => {
           </motion.div>
         </div>
       </div>
+
+      <div className="hero-marquee absolute bottom-0 left-0 right-0 z-20 overflow-hidden border-y border-white/[0.055] bg-slate-950/32 py-2.5 backdrop-blur-xl">
+        <div className="hero-marquee-track flex w-max items-center">
+          {[0, 1].map((loop) => (
+            <div key={loop} className="flex shrink-0 items-center gap-5 pr-5">
+              {['JAVA', 'SPRING BOOT', 'NODE.JS', 'TYPESCRIPT', 'AWS', 'GRAPHQL', 'NEW RELIC', 'CLAUDE CODE'].map((item) => (
+                <React.Fragment key={loop + '-' + item}>
+                  <span className="text-[9px] font-semibold tracking-[0.22em] text-slate-500">{item}</span>
+                  <span className="h-1 w-1 rounded-full bg-cyan-300/55" />
+                </React.Fragment>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 };
