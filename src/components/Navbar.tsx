@@ -30,30 +30,14 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5"
-    >
-      <div
-        className={
-          'mx-auto max-w-6xl rounded-2xl border transition-all duration-500 ' +
-          (scrolled
-            ? 'border-white/10 bg-slate-950/72 shadow-[0_18px_60px_rgba(0,0,0,0.34)] backdrop-blur-2xl'
-            : 'border-white/[0.06] bg-slate-950/28 backdrop-blur-xl')
-        }
-      >
+    <motion.nav initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }} className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-5">
+      <div className={'mx-auto max-w-6xl rounded-2xl border transition-all duration-500 ' + (scrolled ? 'border-white/10 bg-slate-950/72 shadow-[0_18px_60px_rgba(0,0,0,0.34)] backdrop-blur-2xl' : 'border-white/[0.06] bg-slate-950/28 backdrop-blur-xl')}>
         <div className="flex h-16 items-center justify-between px-4 sm:px-5">
           <Link to="/" className="group flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/[0.06] text-sm font-bold text-cyan-200 transition duration-300 group-hover:border-cyan-300/30 group-hover:bg-cyan-400/[0.1]">
-              KK
-            </div>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/15 bg-cyan-400/[0.06] text-sm font-bold text-cyan-200 transition duration-300 group-hover:border-cyan-300/30 group-hover:bg-cyan-400/[0.1]">KK</div>
             <div className="hidden sm:block">
               <p className="text-sm font-semibold tracking-tight text-white">Kartik Kataria</p>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                Software Engineer
-              </p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Backend Software Engineer</p>
             </div>
           </Link>
 
@@ -61,63 +45,26 @@ const Navbar: React.FC = () => {
             {navItems.map((item) => {
               const active = location.pathname === item.path;
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={
-                    'relative rounded-xl px-3.5 py-2 text-sm font-medium transition-colors duration-300 ' +
-                    (active ? 'text-white' : 'text-slate-400 hover:text-slate-100')
-                  }
-                >
-                  {active && (
-                    <motion.span
-                      layoutId="nav-active"
-                      className="absolute inset-0 -z-10 rounded-xl border border-white/8 bg-white/[0.06]"
-                      transition={{ type: 'spring', stiffness: 360, damping: 30 }}
-                    />
-                  )}
+                <Link key={item.path} to={item.path} className={'relative rounded-xl px-3.5 py-2 text-sm font-medium transition-colors duration-300 ' + (active ? 'text-white' : 'text-slate-400 hover:text-slate-100')}>
+                  {active && <motion.span layoutId="nav-active" className="absolute inset-0 -z-10 rounded-xl border border-white/8 bg-white/[0.06]" transition={{ type: 'spring', stiffness: 360, damping: 30 }} />}
                   {item.name}
                 </Link>
               );
             })}
           </div>
 
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white md:hidden"
-            onClick={() => setIsOpen((value) => !value)}
-            aria-label="Toggle navigation"
-            aria-expanded={isOpen}
-          >
+          <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white md:hidden" onClick={() => setIsOpen((value) => !value)} aria-label="Toggle navigation" aria-expanded={isOpen}>
             {isOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
         </div>
 
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden border-t border-white/[0.06] md:hidden"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden border-t border-white/[0.06] md:hidden">
               <div className="grid gap-1 p-3">
                 {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.path}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.035 }}
-                  >
-                    <Link
-                      to={item.path}
-                      className={
-                        'block rounded-xl px-4 py-3 text-sm font-medium ' +
-                        (location.pathname === item.path
-                          ? 'bg-white/[0.07] text-white'
-                          : 'text-slate-400 hover:bg-white/[0.04] hover:text-white')
-                      }
-                    >
+                  <motion.div key={item.path} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.035 }}>
+                    <Link to={item.path} className={'block rounded-xl px-4 py-3 text-sm font-medium ' + (location.pathname === item.path ? 'bg-white/[0.07] text-white' : 'text-slate-400 hover:bg-white/[0.04] hover:text-white')}>
                       {item.name}
                     </Link>
                   </motion.div>
