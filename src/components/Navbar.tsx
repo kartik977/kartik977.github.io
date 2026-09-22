@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
 
           <div className="hidden items-center gap-1 md:flex">
             {navItems.map((item) => {
-              const active = location.pathname === item.path;
+              const active = item.path === '/projects' ? location.pathname.startsWith('/projects') : location.pathname === item.path;
               return (
                 <Link key={item.path} to={item.path} className={'relative rounded-xl px-3.5 py-2 text-sm font-medium transition-colors duration-300 ' + (active ? 'text-white' : 'text-slate-400 hover:text-slate-100')}>
                   {active && <motion.span layoutId="nav-active" className="absolute inset-0 -z-10 rounded-xl border border-white/8 bg-white/[0.06]" transition={{ type: 'spring', stiffness: 360, damping: 30 }} />}
@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
               <div className="grid gap-1 p-3">
                 {navItems.map((item, index) => (
                   <motion.div key={item.path} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.035 }}>
-                    <Link to={item.path} className={'block rounded-xl px-4 py-3 text-sm font-medium ' + (location.pathname === item.path ? 'bg-white/[0.07] text-white' : 'text-slate-400 hover:bg-white/[0.04] hover:text-white')}>
+                    <Link to={item.path} className={'block rounded-xl px-4 py-3 text-sm font-medium ' + ((item.path === '/projects' ? location.pathname.startsWith('/projects') : location.pathname === item.path) ? 'bg-white/[0.07] text-white' : 'text-slate-400 hover:bg-white/[0.04] hover:text-white')}>
                       {item.name}
                     </Link>
                   </motion.div>
