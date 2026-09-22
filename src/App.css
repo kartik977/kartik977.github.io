@@ -627,3 +627,92 @@ html {
     animation: none;
   }
 }
+
+
+/* Interactive architecture map */
+.architecture-shell {
+  transform-style: preserve-3d;
+}
+
+.architecture-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(103, 232, 249, 0.2),
+      rgba(255, 255, 255, 0.025) 30%,
+      rgba(96, 165, 250, 0.08) 62%,
+      rgba(167, 139, 250, 0.18)
+    );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.architecture-ambient {
+  background:
+    radial-gradient(circle at 22% 50%, rgba(34, 211, 238, 0.08), transparent 24%),
+    radial-gradient(circle at 58% 34%, rgba(59, 130, 246, 0.09), transparent 28%),
+    radial-gradient(circle at 86% 68%, rgba(139, 92, 246, 0.08), transparent 24%);
+  animation: architecture-ambient-shift 8s ease-in-out infinite alternate;
+}
+
+@keyframes architecture-ambient-shift {
+  0% {
+    transform: scale(0.96) translate3d(-1%, 1%, 0);
+    opacity: 0.72;
+  }
+  100% {
+    transform: scale(1.06) translate3d(1.5%, -1%, 0);
+    opacity: 1;
+  }
+}
+
+.architecture-node {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.architecture-node::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,0.08), transparent 30%);
+  transition: opacity 280ms ease;
+}
+
+.architecture-node:hover::after,
+.architecture-node-active::after {
+  opacity: 1;
+}
+
+.architecture-node-active {
+  box-shadow:
+    0 0 0 1px rgba(103, 232, 249, 0.045),
+    0 20px 60px rgba(0,0,0,0.32),
+    0 0 34px rgba(34, 211, 238, 0.08);
+}
+
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .architecture-node {
+    width: 118px;
+    padding: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .architecture-ambient {
+    animation: none;
+  }
+}
