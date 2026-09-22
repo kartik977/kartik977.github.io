@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring
+} from 'framer-motion';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import About from './components/About';
@@ -10,6 +16,34 @@ import Skills from './components/Skills';
 import Contact from './components/Contact';
 import './App.css';
 
+const GlobalFX: React.FC = () => {
+  const pointerX = useMotionValue(-200);
+  const pointerY = useMotionValue(-200);
+  const smoothX = useSpring(pointerX, { stiffness: 180, damping: 28, mass: 0.25 });
+  const smoothY = useSpring(pointerY, { stiffness: 180, damping: 28, mass: 0.25 });
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 28, mass: 0.2 });
+
+  useEffect(() => {
+    const handlePointer = (event: PointerEvent) => {
+      pointerX.set(event.clientX);
+      pointerY.set(event.clientY);
+    };
+
+    window.addEventListener('pointermove', handlePointer, { passive: true });
+    return () => window.removeEventListener('pointermove', handlePointer);
+  }, [pointerX, pointerY]);
+
+  return (
+    <>
+      <motion.div className="global-scroll-progress" style={{ scaleX: progress }} />
+      <motion.div className="cursor-aura" style={{ x: smoothX, y: smoothY }} />
+      <motion.div className="cursor-dot" style={{ x: smoothX, y: smoothY }} />
+      <div className="global-grain" aria-hidden="true" />
+    </>
+  );
+};
+
 const AnimatedRoutes: React.FC = () => {
   const location = useLocation();
 
@@ -17,10 +51,27 @@ const AnimatedRoutes: React.FC = () => {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{ duration: 0.28, ease: 'easeOut' }}
+        initial={{
+          opacity: 0,
+          y: 28,
+          scale: 0.992,
+          filter: 'blur(10px)',
+          clipPath: 'inset(2% 0 0 0 round 28px)'
+        }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: 'blur(0px)',
+          clipPath: 'inset(0% 0 0 0 round 0px)'
+        }}
+        exit={{
+          opacity: 0,
+          y: -16,
+          scale: 0.995,
+          filter: 'blur(8px)'
+        }}
+        transition={{ duration: 0.52, ease: [0.22, 1, 0.36, 1] }}
       >
         <Routes location={location}>
           <Route path="/" element={<Home />} />
@@ -39,6 +90,7 @@ function App() {
   return (
     <Router>
       <div className="App">
+        <GlobalFX />
         <Navbar />
         <main>
           <AnimatedRoutes />
