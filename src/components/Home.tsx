@@ -37,8 +37,6 @@ const Home: React.FC = () => {
   const heroY = useTransform(smoothY, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-12, 12]);
   const cardRotateY = useTransform(smoothX, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-5, 5]);
   const cardRotateX = useTransform(smoothY, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [4, -4]);
-  const glowX = useTransform(smoothX, [-0.5, 0.5], ['28%', '72%']);
-  const glowY = useTransform(smoothY, [-0.5, 0.5], ['30%', '70%']);
 
   useEffect(() => {
     if (prefersReducedMotion) return;
@@ -106,21 +104,7 @@ const Home: React.FC = () => {
       <div className="hero-grid absolute inset-0" aria-hidden="true" />
       <div className="hero-noise absolute inset-0" aria-hidden="true" />
 
-      <motion.div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: useTransform(
-            [glowX, glowY],
-            ([x, y]) =>
-              'radial-gradient(circle at ' +
-              x +
-              ' ' +
-              y +
-              ', rgba(56, 189, 248, 0.14), transparent 28%)'
-          )
-        }}
-        aria-hidden="true"
-      />
+      <div className="hero-spotlight pointer-events-none absolute inset-0" aria-hidden="true" />
 
       <motion.div
         className="pointer-events-none absolute left-[8%] top-[15%] h-72 w-72 rounded-full bg-blue-500/10 blur-3xl"
