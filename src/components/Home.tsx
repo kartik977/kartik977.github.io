@@ -10,7 +10,7 @@ import {
 } from 'framer-motion';
 import {
   ArrowUpRight,
-  Briefcase,
+  Bot,
   CheckCircle2,
   Cloud,
   Code2,
@@ -40,46 +40,42 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     if (prefersReducedMotion) return;
-
-    const interval = window.setInterval(() => {
-      setCurrentStep((prev) => (prev + 1) % 4);
-    }, 3200);
-
+    const interval = window.setInterval(() => setCurrentStep((prev) => (prev + 1) % 4), 3200);
     return () => window.clearInterval(interval);
   }, [prefersReducedMotion]);
 
   const steps = [
     {
       icon: Code2,
-      eyebrow: 'API engineering',
-      text: 'Java, Node.js & TypeScript',
+      eyebrow: 'Backend engineering',
+      text: 'Java, Spring Boot, Node.js & TypeScript',
       accent: 'from-cyan-400 to-blue-500'
     },
     {
       icon: Cloud,
       eyebrow: 'Cloud delivery',
-      text: 'AWS infrastructure & serverless',
+      text: 'AWS Lambda, CloudFormation & CI/CD',
       accent: 'from-blue-500 to-violet-500'
     },
     {
       icon: ShieldCheck,
-      eyebrow: 'Quality ownership',
-      text: 'Component, performance & dependency testing',
+      eyebrow: 'Quality & security',
+      text: 'Automated testing and vulnerability remediation',
       accent: 'from-violet-500 to-fuchsia-500'
     },
     {
-      icon: Server,
-      eyebrow: 'Production reliability',
-      text: 'Deployment, monitoring & incident support',
+      icon: Bot,
+      eyebrow: 'AI developer tooling',
+      text: 'Claude Code skills, Copilot & agentic workflows',
       accent: 'from-emerald-400 to-cyan-500'
     }
   ];
 
   const workflow = [
-    { label: 'Build', detail: 'APIs & services', icon: Code2 },
-    { label: 'Validate', detail: 'Functional + performance', icon: CheckCircle2 },
-    { label: 'Deploy', detail: 'AWS & CI/CD', icon: Cloud },
-    { label: 'Observe', detail: 'Logs, alerts & production', icon: Server }
+    { label: 'Architect', detail: 'Distributed services & APIs', icon: Code2 },
+    { label: 'Validate', detail: 'Functional + performance testing', icon: CheckCircle2 },
+    { label: 'Deploy', detail: 'AWS + automated delivery', icon: Cloud },
+    { label: 'Observe', detail: 'New Relic + production support', icon: Server }
   ];
 
   const technologies = ['Java', 'Spring Boot', 'Node.js', 'TypeScript', 'AWS', 'GraphQL'];
@@ -103,25 +99,16 @@ const Home: React.FC = () => {
     >
       <div className="hero-grid absolute inset-0" aria-hidden="true" />
       <div className="hero-noise absolute inset-0" aria-hidden="true" />
-
       <div className="hero-spotlight pointer-events-none absolute inset-0" aria-hidden="true" />
 
       <motion.div
         className="pointer-events-none absolute left-[8%] top-[15%] h-72 w-72 rounded-full bg-blue-500/10 blur-3xl"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, 28, -12, 0], y: [0, -18, 14, 0], scale: [1, 1.08, 0.96, 1] }
-        }
+        animate={prefersReducedMotion ? undefined : { x: [0, 28, -12, 0], y: [0, -18, 14, 0], scale: [1, 1.08, 0.96, 1] }}
         transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
         className="pointer-events-none absolute bottom-[5%] right-[8%] h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"
-        animate={
-          prefersReducedMotion
-            ? undefined
-            : { x: [0, -22, 18, 0], y: [0, 18, -10, 0], scale: [1, 0.96, 1.06, 1] }
-        }
+        animate={prefersReducedMotion ? undefined : { x: [0, -22, 18, 0], y: [0, 18, -10, 0], scale: [1, 0.96, 1.06, 1] }}
         transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
       />
 
@@ -142,14 +129,14 @@ const Home: React.FC = () => {
                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
               </span>
               <span className="text-xs font-semibold uppercase tracking-[0.19em] text-slate-300">
-                Software Engineer · Dallas, TX
+                Senior Software Development Engineer · Dallas, TX
               </span>
             </motion.div>
 
-            <h1 className="text-5xl font-semibold tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl xl:text-[5.25rem]">
-              Engineering systems
+            <h1 className="text-5xl font-semibold tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl xl:text-[5.1rem]">
+              Backend systems
               <span className="block bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent">
-                from API to production.
+                built for production.
               </span>
             </h1>
 
@@ -159,9 +146,9 @@ const Home: React.FC = () => {
               transition={{ duration: 0.7, delay: 0.15 }}
               className="mx-auto mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg lg:mx-0"
             >
-              I'm Kartik Kataria, a Software Engineer at Cognizant working on Capital One systems.
-              I build backend services, validate them across environments, ship cloud infrastructure,
-              and stay close to production through monitoring and incident support.
+              I&apos;m Kartik Kataria, a backend software engineer with 5+ years building distributed,
+              cloud-native services and APIs for banking, payments and retail platforms. At Cognizant,
+              I own architecture and technical delivery across Capital One and Verizon engagements.
             </motion.p>
 
             <motion.div
@@ -179,24 +166,12 @@ const Home: React.FC = () => {
                   transition={{ duration: 0.35 }}
                   className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 backdrop-blur-xl"
                 >
-                  <div
-                    className={
-                      'flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ' +
-                      steps[currentStep].accent
-                    }
-                  >
-                    {React.createElement(steps[currentStep].icon, {
-                      size: 19,
-                      className: 'text-white'
-                    })}
+                  <div className={'flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ' + steps[currentStep].accent}>
+                    {React.createElement(steps[currentStep].icon, { size: 19, className: 'text-white' })}
                   </div>
                   <div className="text-left">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {steps[currentStep].eyebrow}
-                    </p>
-                    <p className="mt-0.5 text-sm font-medium text-slate-100 sm:text-base">
-                      {steps[currentStep].text}
-                    </p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">{steps[currentStep].eyebrow}</p>
+                    <p className="mt-0.5 text-sm font-medium text-slate-100 sm:text-base">{steps[currentStep].text}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -208,31 +183,15 @@ const Home: React.FC = () => {
               transition={{ duration: 0.7, delay: 0.35 }}
               className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
             >
-              <Link
-                to="/projects"
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(255,255,255,0.14)]"
-              >
+              <Link to="/projects" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(255,255,255,0.14)]">
                 Explore my work
-                <ArrowUpRight
-                  size={17}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
+                <ArrowUpRight size={17} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
-
-              <a
-                href="/KARTIK_KATARIA_CapOne'June25.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.045] px-5 py-3 text-sm font-semibold text-slate-100 backdrop-blur-lg transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.075]"
-              >
+              <a href="/Kartik_Kataria_Resume.pdf" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.045] px-5 py-3 text-sm font-semibold text-slate-100 backdrop-blur-lg transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.075]">
                 <Download size={17} />
                 Resume
               </a>
-
-              <Link
-                to="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-slate-300 transition duration-300 hover:text-white"
-              >
+              <Link to="/contact" className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-slate-300 transition duration-300 hover:text-white">
                 <Mail size={17} />
                 Contact
               </Link>
@@ -245,54 +204,25 @@ const Home: React.FC = () => {
               className="mt-9 flex flex-wrap justify-center gap-2 lg:justify-start"
             >
               {technologies.map((technology) => (
-                <span
-                  key={technology}
-                  className="rounded-lg border border-white/8 bg-white/[0.035] px-3 py-1.5 text-xs font-medium text-slate-400"
-                >
+                <span key={technology} className="rounded-lg border border-white/8 bg-white/[0.035] px-3 py-1.5 text-xs font-medium text-slate-400">
                   {technology}
                 </span>
               ))}
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
-              className="mt-8 flex items-center justify-center gap-3 lg:justify-start"
-            >
-              <a
-                href="https://github.com/kartik977"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub profile"
-                className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white"
-              >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.6 }} className="mt-8 flex items-center justify-center gap-3 lg:justify-start">
+              <a href="https://github.com/kartik977" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white">
                 <Github size={19} />
               </a>
-              <a
-                href="https://www.linkedin.com/in/kartikkataria2023/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn profile"
-                className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white"
-              >
+              <a href="https://www.linkedin.com/in/kartikkataria2023/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white">
                 <Linkedin size={19} />
               </a>
             </motion.div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 36, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.85, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mx-auto w-full max-w-xl [perspective:1200px]"
-          >
+          <motion.div initial={{ opacity: 0, y: 36, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.85, delay: 0.15, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto w-full max-w-xl [perspective:1200px]">
             <motion.div
-              style={{
-                rotateX: cardRotateX,
-                rotateY: cardRotateY,
-                transformPerspective: 1200
-              }}
+              style={{ rotateX: cardRotateX, rotateY: cardRotateY, transformPerspective: 1200 }}
               className="hero-console relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/55 shadow-[0_40px_100px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
             >
               <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
@@ -303,59 +233,49 @@ const Home: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
                   <TerminalSquare size={14} />
-                  engineering-workflow
+                  engineering-impact
                 </div>
               </div>
 
               <div className="relative p-5 sm:p-7">
-                <div className="absolute right-5 top-5 h-24 w-24 rounded-full bg-blue-500/15 blur-3xl" />
-
                 <div className="relative flex items-start gap-4">
                   <div className="relative shrink-0">
                     <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-cyan-400/35 via-blue-500/20 to-violet-500/35 blur-xl" />
-                    <img
-                      src="/WhatsApp Image 2025-08-07 at 10.48.20 AM.jpeg"
-                      alt="Kartik Kataria"
-                      className="relative h-20 w-20 rounded-2xl border border-white/10 object-cover shadow-2xl sm:h-24 sm:w-24"
-                    />
+                    <img src="/WhatsApp Image 2025-08-07 at 10.48.20 AM.jpeg" alt="Kartik Kataria" className="relative h-20 w-20 rounded-2xl border border-white/10 object-cover shadow-2xl sm:h-24 sm:w-24" />
                   </div>
-
                   <div className="min-w-0 pt-1">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                      Current focus
-                    </p>
-                    <h2 className="mt-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">
-                      Software Engineer 3
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-400">Cognizant · Capital One</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Current role</p>
+                    <h2 className="mt-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">Senior Software Development Engineer</h2>
+                    <p className="mt-1 text-sm text-slate-400">Cognizant · Plano, TX</p>
                   </div>
                 </div>
 
-                <div className="relative mt-8">
-                  <div className="absolute bottom-6 left-[23px] top-6 w-px bg-gradient-to-b from-cyan-400/50 via-blue-400/35 to-violet-400/15" />
+                <div className="mt-7 grid grid-cols-2 gap-3">
+                  {[
+                    ['~72 ms', 'Core API latency'],
+                    ['25%', 'Faster deployments'],
+                    ['100+', 'Vulnerabilities fixed'],
+                    ['35%', 'Faster incident detection']
+                  ].map(([value, label]) => (
+                    <motion.div key={label} whileHover={prefersReducedMotion ? undefined : { y: -3 }} className="rounded-2xl border border-white/[0.065] bg-white/[0.035] p-3.5">
+                      <p className="text-lg font-semibold text-white">{value}</p>
+                      <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</p>
+                    </motion.div>
+                  ))}
+                </div>
 
+                <div className="relative mt-7">
+                  <div className="absolute bottom-6 left-[23px] top-6 w-px bg-gradient-to-b from-cyan-400/50 via-blue-400/35 to-violet-400/15" />
                   <div className="space-y-3">
                     {workflow.map((item, index) => {
                       const Icon = item.icon;
-
                       return (
-                        <motion.div
-                          key={item.label}
-                          initial={{ opacity: 0, x: 14 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.5, delay: 0.45 + index * 0.1 }}
-                          whileHover={prefersReducedMotion ? undefined : { x: 5 }}
-                          className="group relative flex items-center gap-4 rounded-2xl border border-white/[0.065] bg-white/[0.035] p-3.5 transition-colors duration-300 hover:bg-white/[0.055]"
-                        >
-                          <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-300 shadow-lg">
-                            <Icon size={18} />
-                          </div>
+                        <motion.div key={item.label} initial={{ opacity: 0, x: 14 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.45 + index * 0.1 }} whileHover={prefersReducedMotion ? undefined : { x: 5 }} className="group relative flex items-center gap-4 rounded-2xl border border-white/[0.065] bg-white/[0.035] p-3.5 transition-colors duration-300 hover:bg-white/[0.055]">
+                          <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-300 shadow-lg"><Icon size={18} /></div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-3">
                               <p className="text-sm font-semibold text-slate-100">{item.label}</p>
-                              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
-                                0{index + 1}
-                              </span>
+                              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">0{index + 1}</span>
                             </div>
                             <p className="mt-0.5 text-xs text-slate-500">{item.detail}</p>
                           </div>
@@ -366,49 +286,8 @@ const Home: React.FC = () => {
                 </div>
 
                 <div className="mt-7 rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.035] p-4">
-                  <div className="flex items-center gap-2 text-xs font-semibold text-cyan-200">
-                    <Sparkles size={15} />
-                    End-to-end ownership
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
-                    Development, testing, cloud configuration, deployment, observability and production support—all presented as one connected engineering story.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="absolute -right-4 top-16 hidden rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-2xl backdrop-blur-xl sm:block lg:-right-10"
-              animate={prefersReducedMotion ? undefined : { y: [0, -7, 0] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300">
-                  <Briefcase size={17} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
-                    Production
-                  </p>
-                  <p className="text-xs font-medium text-slate-200">Build → ship → observe</p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-2xl backdrop-blur-xl sm:block lg:-left-10"
-              animate={prefersReducedMotion ? undefined : { y: [0, 8, 0] }}
-              transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-400/10 text-blue-300">
-                  <Code2 size={17} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
-                    Backend
-                  </p>
-                  <p className="text-xs font-medium text-slate-200">APIs at scale</p>
+                  <div className="flex items-center gap-2 text-xs font-semibold text-cyan-200"><Sparkles size={15} />AI-assisted engineering</div>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">Building Claude Code skills and agentic developer workflows to accelerate API development and security remediation.</p>
                 </div>
               </div>
             </motion.div>
