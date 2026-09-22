@@ -19,6 +19,7 @@ import GroceryCaseStudy from './components/GroceryCaseStudy';
 import ImageGeneratorCaseStudy from './components/ImageGeneratorCaseStudy';
 import CommandPalette from './components/CommandPalette';
 import EngineeringLab from './components/EngineeringLab';
+import RecruiterAssistant from './components/RecruiterAssistant';
 import './App.css';
 
 const GlobalFX: React.FC = () => {
@@ -101,6 +102,7 @@ function App() {
       <div className="App">
         <GlobalFX />
         <CommandPalette />
+        <RecruiterAssistant />
         <Navbar />
         <main>
           <AnimatedRoutes />
