@@ -18,6 +18,7 @@ import AIJobHunterCaseStudy from './components/AIJobHunterCaseStudy';
 import GroceryCaseStudy from './components/GroceryCaseStudy';
 import ImageGeneratorCaseStudy from './components/ImageGeneratorCaseStudy';
 import CommandPalette from './components/CommandPalette';
+import EngineeringLab from './components/EngineeringLab';
 import './App.css';
 
 const GlobalFX: React.FC = () => {
@@ -85,6 +86,7 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/projects/ai-job-hunter" element={<AIJobHunterCaseStudy />} />
           <Route path="/projects/grocery-ordering" element={<GroceryCaseStudy />} />
           <Route path="/projects/ai-image-generator" element={<ImageGeneratorCaseStudy />} />
+          <Route path="/lab" element={<EngineeringLab />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
