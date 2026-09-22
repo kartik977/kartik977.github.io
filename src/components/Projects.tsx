@@ -1,20 +1,22 @@
 import React, { useRef } from 'react';
 import {
   motion,
-  useMotionValue,
   useReducedMotion,
+  useScroll,
   useSpring,
   useTransform
 } from 'framer-motion';
 import {
   ArrowUpRight,
   Bot,
+  Check,
   Github,
   Image as ImageIcon,
   Search,
+  ShoppingBag,
   ShoppingCart,
   Sparkles,
-  Workflow
+  Wand2
 } from 'lucide-react';
 
 type Project = {
@@ -23,237 +25,394 @@ type Project = {
   description: string;
   technologies: string[];
   github: string;
-  icon: React.ElementType;
-  metric: string;
-  metricLabel: string;
-  flow: string[];
-  featured?: boolean;
+  number: string;
+  kind: 'job' | 'grocery' | 'image';
+  accent: string;
 };
 
 const projectData: Project[] = [
   {
     title: 'AI Job Hunter',
-    eyebrow: 'AI-powered career platform',
+    eyebrow: 'AI-POWERED CAREER PLATFORM',
     description: 'Analyzes resumes, matches jobs and scores ATS fit to surface personalized recommendations through an end-to-end TypeScript and Node.js platform.',
     technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'OpenAI API', 'Next.js', 'React'],
     github: 'https://github.com/kartik977/AI-Job-Hunter',
-    icon: Bot,
-    metric: 'AI + ATS',
-    metricLabel: 'Resume-to-job intelligence',
-    flow: ['Resume', 'Analyze', 'Match', 'Score'],
-    featured: true
+    number: '01',
+    kind: 'job',
+    accent: 'from-cyan-400/25 via-blue-500/10 to-transparent'
   },
   {
-    title: 'Grocery Ordering Application',
-    eyebrow: 'Full-stack ordering system',
+    title: 'Grocery Ordering',
+    eyebrow: 'FULL-STACK ORDERING SYSTEM',
     description: 'A Node.js, Express.js and MongoDB platform with a React client covering product catalog, inventory and end-to-end order management.',
     technologies: ['Node.js', 'Express.js', 'MongoDB', 'React.js'],
     github: 'https://github.com/kartik977/grocery-app',
-    icon: ShoppingCart,
-    metric: 'E2E',
-    metricLabel: 'Order lifecycle',
-    flow: ['Catalog', 'Inventory', 'Cart', 'Orders']
+    number: '02',
+    kind: 'grocery',
+    accent: 'from-emerald-400/25 via-teal-500/10 to-transparent'
   },
   {
     title: 'AI Image Generator',
-    eyebrow: 'Generative AI service',
+    eyebrow: 'GENERATIVE AI SERVICE',
     description: 'A Flask and Node.js service integrating the OpenAI DALL-E API to generate images from prompts through reusable API-driven components.',
     technologies: ['Flask', 'Node.js', 'OpenAI API', 'DALL-E', 'Python'],
     github: 'https://github.com/kartik977/Image-Generator-using-OpenAI-and-Dall-e',
-    icon: ImageIcon,
-    metric: 'Prompt → Image',
-    metricLabel: 'API-driven generation',
-    flow: ['Prompt', 'API', 'Generate', 'Render']
+    number: '03',
+    kind: 'image',
+    accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent'
   }
 ];
 
-const ProjectCard: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+const JobHunterMockup: React.FC = () => (
+  <div className="project-ui h-full min-h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#090f18] shadow-2xl">
+    <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-2">
+        <span className="h-2 w-2 rounded-full bg-rose-400/80" />
+        <span className="h-2 w-2 rounded-full bg-amber-300/80" />
+        <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
+      </div>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-slate-600">job-hunter.ai</span>
+    </div>
+
+    <div className="grid h-[calc(100%-45px)] grid-cols-[0.72fr_1.28fr]">
+      <div className="border-r border-white/[0.06] p-4">
+        <div className="flex items-center gap-2 text-cyan-300">
+          <Bot size={16} />
+          <span className="text-xs font-semibold">AI Resume Scan</span>
+        </div>
+        <div className="relative mt-5 overflow-hidden rounded-xl border border-white/[0.06] bg-white/[0.025] p-3">
+          <motion.div
+            className="absolute inset-x-0 h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_14px_rgba(34,211,238,0.9)]"
+            animate={{ y: [0, 128, 0] }}
+            transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <div className="space-y-2">
+            {[82, 94, 64, 88, 76, 58].map((width, index) => (
+              <motion.div
+                key={index}
+                initial={{ width: 0 }}
+                whileInView={{ width: width + '%' }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: index * 0.08 }}
+                className="h-1.5 rounded-full bg-white/[0.07]"
+              />
+            ))}
+          </div>
+          <div className="mt-5 flex items-center justify-between">
+            <span className="text-[9px] uppercase tracking-[0.14em] text-slate-600">ATS SCORE</span>
+            <motion.span
+              className="text-xl font-semibold text-cyan-300"
+              animate={{ opacity: [0.55, 1, 0.55] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              92
+            </motion.span>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">MATCHED ROLES</p>
+            <p className="mt-1 text-sm font-semibold text-white">Recommended for you</p>
+          </div>
+          <Search size={15} className="text-slate-600" />
+        </div>
+
+        <div className="mt-4 space-y-2.5">
+          {[
+            ['Backend Engineer', '96%'],
+            ['Software Engineer II', '91%'],
+            ['Platform Engineer', '88%']
+          ].map(([role, score], index) => (
+            <motion.div
+              key={role}
+              animate={{ x: [0, index === 0 ? 3 : 0, 0] }}
+              transition={{ duration: 2.8, repeat: Infinity, delay: index * 0.3 }}
+              className="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-200">{role}</span>
+                <span className="rounded-md bg-cyan-300/10 px-2 py-1 text-[9px] font-semibold text-cyan-300">{score}</span>
+              </div>
+              <div className="mt-2 h-1 overflow-hidden rounded-full bg-white/[0.05]">
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: [0, 1] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.25 + index * 0.12 }}
+                  style={{ transformOrigin: 'left' }}
+                  className="h-full bg-gradient-to-r from-cyan-400 to-blue-500"
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const GroceryMockup: React.FC = () => (
+  <div className="project-ui h-full min-h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#09110e] shadow-2xl">
+    <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-2 text-emerald-300">
+        <ShoppingBag size={15} />
+        <span className="text-xs font-semibold">FreshCart</span>
+      </div>
+      <span className="rounded-full border border-emerald-400/10 bg-emerald-400/[0.05] px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-emerald-300">
+        live inventory
+      </span>
+    </div>
+
+    <div className="grid gap-3 p-4 sm:grid-cols-[1.12fr_0.88fr]">
+      <div>
+        <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">PRODUCTS</p>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          {[
+            ['Avocado', '$2.49', '🥑'],
+            ['Orange', '$1.89', '🍊'],
+            ['Bread', '$3.99', '🍞'],
+            ['Milk', '$4.29', '🥛']
+          ].map(([name, price, emoji], index) => (
+            <motion.div
+              key={name}
+              whileHover={{ y: -4, scale: 1.02 }}
+              animate={{ y: [0, index % 2 === 0 ? -2 : 2, 0] }}
+              transition={{ duration: 3 + index * 0.25, repeat: Infinity }}
+              className="rounded-xl border border-white/[0.06] bg-white/[0.025] p-3"
+            >
+              <div className="text-2xl">{emoji}</div>
+              <p className="mt-2 text-[11px] font-medium text-white">{name}</p>
+              <p className="mt-0.5 text-[9px] text-emerald-300">{price}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+        <div className="flex items-center justify-between">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">ORDER FLOW</p>
+          <ShoppingCart size={14} className="text-emerald-300" />
+        </div>
+        <div className="mt-4 space-y-4">
+          {['Cart created', 'Inventory reserved', 'Order confirmed', 'Ready to ship'].map((step, index) => (
+            <motion.div
+              key={step}
+              initial={{ opacity: 0.25 }}
+              animate={{ opacity: [0.25, 1, 0.25] }}
+              transition={{ duration: 3.2, repeat: Infinity, delay: index * 0.55 }}
+              className="flex items-center gap-3"
+            >
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-emerald-400/15 bg-emerald-400/[0.06] text-emerald-300">
+                <Check size={11} />
+              </div>
+              <span className="text-[10px] font-medium text-slate-400">{step}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const ImageGeneratorMockup: React.FC = () => (
+  <div className="project-ui relative h-full min-h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#100a16] shadow-2xl">
+    <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-2 text-violet-300">
+        <Wand2 size={15} />
+        <span className="text-xs font-semibold">Imagine API</span>
+      </div>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">DALL·E pipeline</span>
+    </div>
+
+    <div className="grid gap-3 p-4 sm:grid-cols-[0.82fr_1.18fr]">
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+        <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">PROMPT</p>
+        <motion.div
+          animate={{ boxShadow: ['0 0 0 rgba(167,139,250,0)', '0 0 26px rgba(167,139,250,0.12)', '0 0 0 rgba(167,139,250,0)'] }}
+          transition={{ duration: 3, repeat: Infinity }}
+          className="mt-3 min-h-[90px] rounded-xl border border-violet-400/10 bg-violet-400/[0.04] p-3"
+        >
+          <p className="text-[10px] leading-5 text-slate-400">
+            “Futuristic city at dusk, cinematic light, reflections, atmospheric depth…”
+          </p>
+        </motion.div>
+        <div className="mt-3 flex items-center gap-2">
+          <motion.span
+            animate={{ rotate: 360 }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+            className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-400/10 text-violet-300"
+          >
+            <Sparkles size={13} />
+          </motion.span>
+          <span className="text-[9px] font-medium text-slate-500">Generating variations…</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          'linear-gradient(145deg,#1d4ed8,#7c3aed 48%,#ec4899)',
+          'linear-gradient(145deg,#0891b2,#2563eb 45%,#7c3aed)',
+          'linear-gradient(145deg,#7c3aed,#db2777 52%,#fb7185)',
+          'linear-gradient(145deg,#0f766e,#0891b2 48%,#4338ca)'
+        ].map((gradient, index) => (
+          <motion.div
+            key={gradient}
+            animate={{
+              y: [0, index % 2 === 0 ? -5 : 5, 0],
+              scale: [1, 1.015, 1]
+            }}
+            transition={{ duration: 4 + index * 0.35, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative overflow-hidden rounded-xl border border-white/10"
+            style={{ background: gradient }}
+          >
+            <motion.div
+              className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.42),transparent_24%)]"
+              animate={{ x: ['-10%', '12%', '-10%'], y: ['0%', '8%', '0%'] }}
+              transition={{ duration: 5, repeat: Infinity, delay: index * 0.25 }}
+            />
+            <div className="aspect-square" />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const ProjectVisual: React.FC<{ kind: Project['kind'] }> = ({ kind }) => {
+  if (kind === 'job') return <JobHunterMockup />;
+  if (kind === 'grocery') return <GroceryMockup />;
+  return <ImageGeneratorMockup />;
+};
+
+const ProjectStage: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const cardRef = useRef<HTMLElement>(null);
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 180, damping: 22 });
-  const sy = useSpring(my, { stiffness: 180, damping: 22 });
-  const rotateY = useTransform(sx, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-3.5, 3.5]);
-  const rotateX = useTransform(sy, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [3.5, -3.5]);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start 0.85', 'start 0.18']
+  });
 
-  const handleMove = (event: React.PointerEvent<HTMLElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    mx.set((event.clientX - rect.left) / rect.width - 0.5);
-    my.set((event.clientY - rect.top) / rect.height - 0.5);
-  };
-
-  const reset = () => {
-    mx.set(0);
-    my.set(0);
-  };
-
-  const Icon = project.icon;
+  const smooth = useSpring(scrollYProgress, {
+    stiffness: 95,
+    damping: 24,
+    mass: 0.35
+  });
+  const y = useTransform(smooth, [0, 1], prefersReducedMotion ? [0, 0] : [95, 0]);
+  const rotateX = useTransform(smooth, [0, 1], prefersReducedMotion ? [0, 0] : [8, 0]);
+  const scale = useTransform(smooth, [0, 1], prefersReducedMotion ? [1, 1] : [0.94, 1]);
+  const opacity = useTransform(smooth, [0, 0.25, 1], [0.35, 1, 1]);
 
   return (
-    <motion.article
-      ref={cardRef}
-      initial={{ opacity: 0, y: 30, scale: 0.985 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: prefersReducedMotion ? 0 : 0.68,
-        delay: prefersReducedMotion ? 0 : index * 0.08,
-        ease: [0.22, 1, 0.36, 1]
-      }}
-      onPointerMove={handleMove}
-      onPointerLeave={reset}
-      style={{ rotateX, rotateY, transformPerspective: 1100 }}
-      className={
-        'premium-project group relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-slate-950/52 shadow-[0_35px_100px_rgba(0,0,0,0.28)] backdrop-blur-xl ' +
-        (project.featured ? 'lg:col-span-2' : '')
-      }
-    >
-      <div className="premium-project-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-      <div className="premium-project-shine pointer-events-none absolute -left-1/3 top-0 h-full w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/[0.035] to-transparent opacity-0 transition-all duration-700 group-hover:left-[110%] group-hover:opacity-100" />
+    <div ref={ref} className="project-stack-section relative min-h-[118vh]">
+      <motion.article
+        style={{ y, rotateX, scale, opacity, transformPerspective: 1400 }}
+        className="premium-project-stage sticky top-[92px] mx-auto min-h-[calc(100vh-112px)] max-w-6xl overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#0a0f17]/95 shadow-[0_45px_140px_rgba(0,0,0,0.48)] backdrop-blur-2xl"
+      >
+        <div className={'pointer-events-none absolute -right-28 -top-28 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br blur-3xl ' + project.accent} />
+        <motion.div
+          className="pointer-events-none absolute -left-24 bottom-0 text-[12rem] font-black leading-none tracking-[-0.1em] text-white/[0.018] sm:text-[17rem]"
+          animate={prefersReducedMotion ? undefined : { x: [0, 18, 0], y: [0, -8, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          {project.number}
+        </motion.div>
 
-      <div className="relative p-6 sm:p-7">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/12 bg-cyan-300/[0.055] text-cyan-300">
-            <Icon size={21} />
-          </div>
-          <a
-            href={project.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group/link inline-flex items-center gap-2 rounded-xl border border-white/[0.075] bg-white/[0.03] px-3 py-2 text-xs font-semibold text-slate-400 transition hover:border-white/15 hover:text-white"
-          >
-            <Github size={15} />
-            Repository
-            <ArrowUpRight size={13} className="transition-transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-          </a>
-        </div>
-
-        <div className={project.featured ? 'mt-7 grid gap-8 lg:grid-cols-[1.12fr_0.88fr]' : 'mt-7'}>
+        <div className="relative grid min-h-[calc(100vh-112px)] items-center gap-8 p-6 sm:p-8 lg:grid-cols-[0.88fr_1.12fr] lg:p-10">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-cyan-300">{project.eyebrow}</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">{project.title}</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">{project.description}</p>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold tracking-[0.18em] text-cyan-300">{project.number}</span>
+              <span className="h-px w-10 bg-white/10" />
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-600">{project.eyebrow}</span>
+            </div>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              {project.technologies.map((technology) => (
-                <span key={technology} className="rounded-lg border border-white/[0.065] bg-white/[0.025] px-2.5 py-1.5 text-[11px] font-medium text-slate-400">
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.65 }}
+              className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-white sm:text-5xl lg:text-6xl"
+            >
+              {project.title}
+            </motion.h2>
+
+            <p className="mt-6 max-w-xl text-base leading-8 text-slate-400">{project.description}</p>
+
+            <div className="mt-7 flex flex-wrap gap-2">
+              {project.technologies.map((technology, techIndex) => (
+                <motion.span
+                  key={technology}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: techIndex * 0.04 }}
+                  className="rounded-xl border border-white/[0.07] bg-white/[0.035] px-3 py-2 text-[11px] font-medium text-slate-400"
+                >
                   {technology}
-                </span>
+                </motion.span>
               ))}
             </div>
+
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group mt-8 inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white px-5 py-3.5 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(255,255,255,0.12)]"
+            >
+              <Github size={17} />
+              View repository
+              <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
           </div>
 
-          {project.featured && (
-            <div className="rounded-2xl border border-white/[0.065] bg-white/[0.025] p-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-semibold text-white">{project.metric}</p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">{project.metricLabel}</p>
-                </div>
-                <Workflow size={20} className="text-violet-300" />
-              </div>
-
-              <div className="mt-6 space-y-3">
-                {project.flow.map((step, flowIndex) => (
-                  <motion.div
-                    key={step}
-                    initial={{ opacity: 0, x: 12 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: flowIndex * 0.07 }}
-                    className="flex items-center gap-3"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-cyan-300/10 bg-cyan-300/[0.04] text-[10px] font-semibold text-cyan-300">
-                      0{flowIndex + 1}
-                    </span>
-                    <span className="text-xs font-medium text-slate-300">{step}</span>
-                    {flowIndex < project.flow.length - 1 && <span className="ml-auto h-px flex-1 bg-gradient-to-r from-white/[0.08] to-transparent" />}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, x: 45, rotateY: prefersReducedMotion ? 0 : -5 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+            viewport={{ once: true, amount: 0.35 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.75, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="[perspective:1400px]"
+          >
+            <ProjectVisual kind={project.kind} />
+          </motion.div>
         </div>
-
-        {!project.featured && (
-          <div className="mt-7 rounded-2xl border border-white/[0.055] bg-white/[0.02] p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-lg font-semibold text-white">{project.metric}</p>
-                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-slate-600">{project.metricLabel}</p>
-              </div>
-              <div className="flex -space-x-1">
-                {project.flow.map((step, flowIndex) => (
-                  <motion.span
-                    key={step}
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: flowIndex * 0.05, type: 'spring' }}
-                    title={step}
-                    className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-900 bg-slate-800 text-[9px] font-semibold text-slate-400"
-                  >
-                    {flowIndex + 1}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </motion.article>
+      </motion.article>
+    </div>
   );
 };
 
 const Projects: React.FC = () => {
-  const prefersReducedMotion = useReducedMotion();
-
   return (
-    <section className="portfolio-page min-h-screen">
-      <div className="page-grid absolute inset-0" aria-hidden="true" />
-
-      <div className="container relative z-10 mx-auto px-4 py-20 sm:py-24">
+    <main className="projects-page relative bg-[#06090f]">
+      <section className="relative overflow-hidden px-4 pb-16 pt-20 sm:pt-24">
+        <div className="projects-aurora pointer-events-none absolute inset-0" />
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-14 max-w-3xl text-center"
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="container relative z-10 mx-auto text-center"
         >
-          <div className="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border border-violet-400/15 bg-violet-400/[0.05] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-violet-200">
-            <Sparkles size={14} />
-            Featured builds
+          <div className="mx-auto mb-6 flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 backdrop-blur-xl">
+            <Sparkles size={14} className="text-violet-300" />
+            Selected systems
           </div>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-            Projects with a
-            <span className="block text-slate-400">product-level story.</span>
+          <h1 className="mx-auto max-w-5xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl">
+            Don&apos;t browse cards.
+            <span className="block text-slate-500">Enter the projects.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            Three projects from my current resume, presented as real systems rather than a wall of technology badges.
+            Each project now has its own visual system and interaction. Scroll and the next build physically stacks over the previous one.
           </p>
         </motion.div>
+      </section>
 
-        <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-2">
-          {projectData.map((project, index) => (
-            <ProjectCard key={project.title} project={project} index={index} />
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.55 }}
-          className="mx-auto mt-10 flex max-w-3xl items-start gap-3 rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.03] p-4"
-        >
-          <Search size={17} className="mt-1 shrink-0 text-cyan-300" />
-          <p className="text-sm leading-6 text-slate-400">
-            Each card links directly to the matching GitHub repository. The next visual upgrade can add real screenshots,
-            architecture diagrams or short demo clips without changing this structure.
-          </p>
-        </motion.div>
+      <div className="px-4 pb-24">
+        {projectData.map((project, index) => (
+          <ProjectStage key={project.title} project={project} index={index} />
+        ))}
       </div>
-    </section>
+    </main>
   );
 };
 
