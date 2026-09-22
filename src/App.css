@@ -365,3 +365,37 @@ html {
     opacity: 0.1;
   }
 }
+
+
+/* Resume-aligned premium interactions */
+.experience-sheen {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(34, 211, 238, 0.055), transparent 32%),
+    linear-gradient(120deg, rgba(255, 255, 255, 0.025), transparent 38%, rgba(139, 92, 246, 0.025));
+}
+
+.premium-project {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.premium-project-glow {
+  background:
+    radial-gradient(circle at 15% 5%, rgba(34, 211, 238, 0.1), transparent 30%),
+    radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.08), transparent 34%);
+}
+
+.premium-project::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(255,255,255,0.035), transparent 20%, transparent 78%, rgba(34,211,238,0.025));
+}
+
+@media (hover: none) {
+  .premium-project {
+    transform: none !important;
+  }
+}
