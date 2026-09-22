@@ -535,83 +535,80 @@ const RecruiterAssistant: React.FC = () => {
     };
   };
 
-  const answerQuestion = useMemo(
-    () => (question: string): AssistantReply => {
-      const normalized = question.toLowerCase();
+  const answerQuestion = (question: string): AssistantReply => {
+    const normalized = question.toLowerCase();
 
-      if (jdActive) {
-        if (
-          ['why', 'fit', 'match', 'relevant', 'suitable', 'qualified', 'strongest'].some((word) =>
-            normalized.includes(word)
-          )
-        ) {
-          return buildFitReply();
-        }
-
-        if (
-          ['gap', 'missing', 'not evidenced', 'not match', 'lack', 'unsupported'].some((phrase) =>
-            normalized.includes(phrase)
-          )
-        ) {
-          return buildGapReply();
-        }
-
-        if (
-          normalized.includes('which project') ||
-          normalized.includes('project should') ||
-          normalized.includes('review first')
-        ) {
-          return buildProjectReply();
-        }
+    if (jdActive) {
+      if (
+        ['why', 'fit', 'match', 'relevant', 'suitable', 'qualified', 'strongest'].some((word) =>
+          normalized.includes(word)
+        )
+      ) {
+        return buildFitReply();
       }
 
-      let bestScore = 0;
-      let bestReply = fallbackReply;
+      if (
+        ['gap', 'missing', 'not evidenced', 'not match', 'lack', 'unsupported'].some((phrase) =>
+          normalized.includes(phrase)
+        )
+      ) {
+        return buildGapReply();
+      }
 
-      responseBank.forEach((entry) => {
-        const score = entry.keywords.reduce(
-          (total, keyword) =>
-            total + (normalized.includes(keyword) ? Math.max(1, keyword.split(' ').length) : 0),
-          0
-        );
+      if (
+        normalized.includes('which project') ||
+        normalized.includes('project should') ||
+        normalized.includes('review first')
+      ) {
+        return buildProjectReply();
+      }
+    }
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestReply = entry.reply;
-        }
-      });
+    let bestScore = 0;
+    let bestReply = fallbackReply;
 
-      if (!jdActive || bestScore === 0) return bestReply;
-
-      const relevantRequirement = strongMatches.find((requirement) =>
-        requirement.patterns.some((pattern) => containsPattern(normalized, pattern))
+    responseBank.forEach((entry) => {
+      const score = entry.keywords.reduce(
+        (total, keyword) =>
+          total + (normalized.includes(keyword) ? Math.max(1, keyword.split(' ').length) : 0),
+        0
       );
 
-      if (!relevantRequirement) {
-        const top = strongMatches.slice(0, 3).map((match) => match.label);
-        return {
-          ...bestReply,
-          text:
-            bestReply.text +
-            (top.length
-              ? ' For the active JD, the strongest overall overlaps remain ' + top.join(', ') + '.'
-              : ''),
-          source: 'JD-tailored · ' + bestReply.source
-        };
+      if (score > bestScore) {
+        bestScore = score;
+        bestReply = entry.reply;
       }
+    });
 
+    if (!jdActive || bestScore === 0) return bestReply;
+
+    const relevantRequirement = strongMatches.find((requirement) =>
+      requirement.patterns.some((pattern) => containsPattern(normalized, pattern))
+    );
+
+    if (!relevantRequirement) {
+      const top = strongMatches.slice(0, 3).map((match) => match.label);
       return {
         ...bestReply,
         text:
           bestReply.text +
-          ' For this JD, that directly supports the requirement around ' +
-          relevantRequirement.label +
-          '.',
+          (top.length
+            ? ' For the active JD, the strongest overall overlaps remain ' + top.join(', ') + '.'
+            : ''),
         source: 'JD-tailored · ' + bestReply.source
       };
-    },
-    [jdActive, strongMatches, relatedMatches, gapMatches]
-  );
+    }
+
+    return {
+      ...bestReply,
+      text:
+        bestReply.text +
+        ' For this JD, that directly supports the requirement around ' +
+        relevantRequirement.label +
+        '.',
+      source: 'JD-tailored · ' + bestReply.source
+    };
+  };
 
   const submit = (rawQuestion?: string) => {
     const question = (rawQuestion ?? input).trim();
