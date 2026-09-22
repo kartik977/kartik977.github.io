@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   motion,
   useReducedMotion,
@@ -27,6 +28,7 @@ type Project = {
   number: string;
   kind: 'job' | 'grocery' | 'image';
   accent: string;
+  caseStudy?: string;
 };
 
 const projectData: Project[] = [
@@ -38,7 +40,8 @@ const projectData: Project[] = [
     github: 'https://github.com/kartik977/AI-Job-Hunter',
     number: '01',
     kind: 'job',
-    accent: 'from-cyan-400/25 via-blue-500/10 to-transparent'
+    accent: 'from-cyan-400/25 via-blue-500/10 to-transparent',
+    caseStudy: '/projects/ai-job-hunter'
   },
   {
     title: 'Grocery Ordering',
@@ -354,16 +357,33 @@ const ProjectStage: React.FC<{ project: Project }> = ({ project }) => {
               ))}
             </div>
 
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group mt-8 inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white px-5 py-3.5 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(255,255,255,0.12)]"
-            >
-              <Github size={17} />
-              View repository
-              <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
+            <div className="mt-8 flex flex-wrap gap-3">
+              {project.caseStudy && (
+                <Link
+                  to={project.caseStudy}
+                  className="group inline-flex items-center gap-3 rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(255,255,255,0.12)]"
+                >
+                  View case study
+                  <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              )}
+
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  "group inline-flex items-center gap-3 rounded-2xl border px-5 py-3.5 text-sm font-semibold transition duration-300 hover:-translate-y-1 " +
+                  (project.caseStudy
+                    ? "border-white/10 bg-white/[0.035] text-slate-300 hover:border-white/20 hover:text-white"
+                    : "border-white/10 bg-white text-slate-950 hover:shadow-[0_18px_50px_rgba(255,255,255,0.12)]")
+                }
+              >
+                <Github size={17} />
+                View repository
+                <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            </div>
           </div>
 
           <motion.div
