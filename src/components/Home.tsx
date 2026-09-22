@@ -1,320 +1,433 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useAnimation } from 'framer-motion';
-import { Download, Mail, Github, Linkedin, User, Briefcase, Code, Award } from 'lucide-react';
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform
+} from 'framer-motion';
+import {
+  ArrowUpRight,
+  Briefcase,
+  CheckCircle2,
+  Cloud,
+  Code2,
+  Download,
+  Github,
+  Linkedin,
+  Mail,
+  Server,
+  ShieldCheck,
+  Sparkles,
+  TerminalSquare
+} from 'lucide-react';
 
 const Home: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const controls = useAnimation();
+  const prefersReducedMotion = useReducedMotion();
+
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const smoothX = useSpring(pointerX, { stiffness: 120, damping: 20, mass: 0.6 });
+  const smoothY = useSpring(pointerY, { stiffness: 120, damping: 20, mass: 0.6 });
+
+  const heroX = useTransform(smoothX, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-18, 18]);
+  const heroY = useTransform(smoothY, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-12, 12]);
+  const cardRotateY = useTransform(smoothX, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-5, 5]);
+  const cardRotateX = useTransform(smoothY, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [4, -4]);
+  const glowX = useTransform(smoothX, [-0.5, 0.5], ['28%', '72%']);
+  const glowY = useTransform(smoothY, [-0.5, 0.5], ['30%', '70%']);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (prefersReducedMotion) return;
+
+    const interval = window.setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % 4);
-    }, 3000);
+    }, 3200);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    controls.start({
-      y: [0, -10, 0],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    });
-  }, [controls]);
+    return () => window.clearInterval(interval);
+  }, [prefersReducedMotion]);
 
   const steps = [
-    { icon: User, text: "Hi, I'm Kartik!", color: "from-blue-500 to-cyan-500" },
-    { icon: Briefcase, text: "Software Engineer 3 at Cognizant", color: "from-purple-500 to-pink-500" },
-    { icon: Code, text: "Passionate about building scalable applications", color: "from-green-500 to-emerald-500" },
-    { icon: Award, text: "Specialized in Java, Node.js, TypeScript", color: "from-orange-500 to-red-500" }
+    {
+      icon: Code2,
+      eyebrow: 'API engineering',
+      text: 'Java, Node.js & TypeScript',
+      accent: 'from-cyan-400 to-blue-500'
+    },
+    {
+      icon: Cloud,
+      eyebrow: 'Cloud delivery',
+      text: 'AWS infrastructure & serverless',
+      accent: 'from-blue-500 to-violet-500'
+    },
+    {
+      icon: ShieldCheck,
+      eyebrow: 'Quality ownership',
+      text: 'Component, performance & dependency testing',
+      accent: 'from-violet-500 to-fuchsia-500'
+    },
+    {
+      icon: Server,
+      eyebrow: 'Production reliability',
+      text: 'Deployment, monitoring & incident support',
+      accent: 'from-emerald-400 to-cyan-500'
+    }
   ];
 
-  return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-800 via-blue-900 to-slate-800">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        {/* Floating geometric shapes */}
-        <motion.div
-          className="absolute top-20 left-20 w-32 h-32 border-2 border-blue-400/30 rounded-full"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute top-40 right-32 w-24 h-24 border-2 border-purple-400/30 rounded-lg"
-          animate={{
-            rotate: -360,
-            scale: [1.2, 1, 1.2],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-32 left-32 w-20 h-20 border-2 border-green-400/30 rounded-full"
-          animate={{
-            rotate: 360,
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-      </div>
+  const workflow = [
+    { label: 'Build', detail: 'APIs & services', icon: Code2 },
+    { label: 'Validate', detail: 'Functional + performance', icon: CheckCircle2 },
+    { label: 'Deploy', detail: 'AWS & CI/CD', icon: Cloud },
+    { label: 'Observe', detail: 'Logs, alerts & production', icon: Server }
+  ];
 
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Character Introduction */}
+  const technologies = ['Java', 'Spring Boot', 'Node.js', 'TypeScript', 'AWS', 'GraphQL'];
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
+    pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  const resetPointer = () => {
+    pointerX.set(0);
+    pointerY.set(0);
+  };
+
+  return (
+    <section
+      className="portfolio-hero relative min-h-[calc(100vh-80px)] overflow-hidden"
+      onPointerMove={handlePointerMove}
+      onPointerLeave={resetPointer}
+    >
+      <div className="hero-grid absolute inset-0" aria-hidden="true" />
+      <div className="hero-noise absolute inset-0" aria-hidden="true" />
+
+      <motion.div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: useTransform(
+            [glowX, glowY],
+            ([x, y]) =>
+              'radial-gradient(circle at ' +
+              x +
+              ' ' +
+              y +
+              ', rgba(56, 189, 248, 0.14), transparent 28%)'
+          )
+        }}
+        aria-hidden="true"
+      />
+
+      <motion.div
+        className="pointer-events-none absolute left-[8%] top-[15%] h-72 w-72 rounded-full bg-blue-500/10 blur-3xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: [0, 28, -12, 0], y: [0, -18, 14, 0], scale: [1, 1.08, 0.96, 1] }
+        }
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="pointer-events-none absolute bottom-[5%] right-[8%] h-80 w-80 rounded-full bg-violet-500/10 blur-3xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: [0, -22, 18, 0], y: [0, 18, -10, 0], scale: [1, 0.96, 1.06, 1] }
+        }
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <div className="container relative z-10 mx-auto flex min-h-[calc(100vh-80px)] items-center px-4 py-14 lg:py-20">
+        <div className="grid w-full items-center gap-14 lg:grid-cols-[1.08fr_0.92fr] lg:gap-16">
           <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
             className="text-center lg:text-left"
           >
-            {/* Character Avatar */}
             <motion.div
-              className="relative mb-8"
-              animate={controls}
+              style={{ x: heroX, y: heroY }}
+              className="mx-auto mb-8 flex w-fit items-center gap-3 rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.18)] backdrop-blur-xl lg:mx-0"
             >
-              <div className="relative w-48 h-48 mx-auto lg:mx-0">
-                {/* Character circle with photo */}
-                <motion.div
-                  className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl overflow-hidden"
-                  animate={{
-                    boxShadow: [
-                      "0 0 30px rgba(59, 130, 246, 0.5)",
-                      "0 0 60px rgba(147, 51, 234, 0.8)",
-                      "0 0 30px rgba(59, 130, 246, 0.5)",
-                    ],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <img 
-                    src="/WhatsApp Image 2025-08-07 at 10.48.20 AM.jpeg" 
-                    alt="Kartik Kataria" 
-                    className="w-full h-full object-cover rounded-full"
-                  />
-                </motion.div>
-                
-                {/* Floating elements around character */}
-                <motion.div
-                  className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg"
-                  animate={{
-                    y: [0, -20, 0],
-                    rotate: [0, 360],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Code size={20} className="text-white" />
-                </motion.div>
-                
-                <motion.div
-                  className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg"
-                  animate={{
-                    y: [0, 20, 0],
-                    rotate: [360, 0],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  <Briefcase size={16} className="text-white" />
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Animated introduction text */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mb-6"
-            >
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20"
-              >
-                <div className={`p-2 bg-gradient-to-r ${steps[currentStep].color} rounded-full`}>
-                  {React.createElement(steps[currentStep].icon, { size: 20, className: "text-white" })}
-                </div>
-                <span className="text-white font-medium">{steps[currentStep].text}</span>
-              </motion.div>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-4xl lg:text-6xl font-bold mb-6 text-white leading-tight"
-            >
-              Hi, I'm{' '}
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Kartik Kataria
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
               </span>
-            </motion.h1>
+              <span className="text-xs font-semibold uppercase tracking-[0.19em] text-slate-300">
+                Software Engineer · Dallas, TX
+              </span>
+            </motion.div>
+
+            <h1 className="text-5xl font-semibold tracking-[-0.045em] text-white sm:text-6xl lg:text-7xl xl:text-[5.25rem]">
+              Engineering systems
+              <span className="block bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 bg-clip-text text-transparent">
+                from API to production.
+              </span>
+            </h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="text-lg text-gray-300 mb-8 max-w-lg leading-relaxed"
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="mx-auto mt-7 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg lg:mx-0"
             >
-              A passionate Software Engineer with expertise in developing scalable applications 
-              and leveraging cutting-edge technologies. Currently working at Cognizant on Capital One 
-              projects, specializing in Java, Node.js, TypeScript, and cloud services with a focus 
-              on FinTech solutions.
+              I'm Kartik Kataria, a Software Engineer at Cognizant working on Capital One systems.
+              I build backend services, validate them across environments, ship cloud infrastructure,
+              and stay close to production through monitoring and incident support.
             </motion.p>
-            
+
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8"
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="mt-8 flex min-h-[76px] items-center justify-center lg:justify-start"
             >
-              <Link
-                to="/contact"
-                className="group relative px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-white font-semibold flex items-center justify-center gap-2 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Mail size={18} />
-                  Get In Touch
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Link>
-              
-              <a
-                href="/KARTIK_KATARIA_CapOne'June25.pdf"
-                className="group px-6 py-3 bg-transparent border-2 border-blue-400 rounded-full text-blue-300 font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-blue-400 hover:text-white hover:scale-105"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Download size={18} />
-                Download Resume
-              </a>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
+                  transition={{ duration: 0.35 }}
+                  className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 backdrop-blur-xl"
+                >
+                  <div
+                    className={
+                      'flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ' +
+                      steps[currentStep].accent
+                    }
+                  >
+                    {React.createElement(steps[currentStep].icon, {
+                      size: 19,
+                      className: 'text-white'
+                    })}
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                      {steps[currentStep].eyebrow}
+                    </p>
+                    <p className="mt-0.5 text-sm font-medium text-slate-100 sm:text-base">
+                      {steps[currentStep].text}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
 
-            {/* Social Links */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.3 }}
-              className="flex gap-4 justify-center lg:justify-start"
+              transition={{ duration: 0.7, delay: 0.35 }}
+              className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
             >
-              <motion.a
+              <Link
+                to="/projects"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(255,255,255,0.14)]"
+              >
+                Explore my work
+                <ArrowUpRight
+                  size={17}
+                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </Link>
+
+              <a
+                href="/KARTIK_KATARIA_CapOne'June25.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.045] px-5 py-3 text-sm font-semibold text-slate-100 backdrop-blur-lg transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/[0.075]"
+              >
+                <Download size={17} />
+                Resume
+              </a>
+
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-slate-300 transition duration-300 hover:text-white"
+              >
+                <Mail size={17} />
+                Contact
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="mt-9 flex flex-wrap justify-center gap-2 lg:justify-start"
+            >
+              {technologies.map((technology) => (
+                <span
+                  key={technology}
+                  className="rounded-lg border border-white/8 bg-white/[0.035] px-3 py-1.5 text-xs font-medium text-slate-400"
+                >
+                  {technology}
+                </span>
+              ))}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.6 }}
+              className="mt-8 flex items-center justify-center gap-3 lg:justify-start"
+            >
+              <a
                 href="https://github.com/kartik977"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
+                aria-label="GitHub profile"
+                className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white"
               >
-                <Github size={20} className="text-white group-hover:text-blue-300 transition-colors" />
-              </motion.a>
-              <motion.a
+                <Github size={19} />
+              </a>
+              <a
                 href="https://www.linkedin.com/in/kartikkataria2023/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
-                whileHover={{ scale: 1.1, rotate: -5 }}
-                whileTap={{ scale: 0.95 }}
+                aria-label="LinkedIn profile"
+                className="rounded-xl border border-white/8 bg-white/[0.035] p-2.5 text-slate-400 transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:text-white"
               >
-                <Linkedin size={20} className="text-white group-hover:text-blue-300 transition-colors" />
-              </motion.a>
+                <Linkedin size={19} />
+              </a>
             </motion.div>
           </motion.div>
 
-          {/* Right Column - Work Showcase */}
           <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-            className="relative"
+            initial={{ opacity: 0, y: 36, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.85, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="relative mx-auto w-full max-w-xl [perspective:1200px]"
           >
-            <div className="relative">
-              {/* Work showcase card */}
-              <motion.div
-                className="relative bg-white/10 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border border-white/20"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center">
-                  <motion.div
-                    className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl"
-                    animate={{
-                      boxShadow: [
-                        "0 0 20px rgba(59, 130, 246, 0.5)",
-                        "0 0 40px rgba(147, 51, 234, 0.8)",
-                        "0 0 20px rgba(59, 130, 246, 0.5)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <Briefcase size={32} className="text-white" />
-                  </motion.div>
-                  
-                  <h3 className="text-lg font-semibold mb-4 text-white">Current Work</h3>
-                  <div className="space-y-3 text-left">
-                    <motion.div
-                      className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-200">Software Engineer 3 at Cognizant</span>
-                    </motion.div>
-                    <motion.div
-                      className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-200">Capital One - Debit Card Team</span>
-                    </motion.div>
-                    <motion.div
-                      className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
-                      whileHover={{ scale: 1.02, x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-200">MS Computer Science - UTA</span>
-                    </motion.div>
+            <motion.div
+              style={{
+                rotateX: cardRotateX,
+                rotateY: cardRotateY,
+                transformPerspective: 1200
+              }}
+              className="hero-console relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/55 shadow-[0_40px_100px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
+            >
+              <div className="flex items-center justify-between border-b border-white/8 px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-300/80" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/80" />
+                </div>
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  <TerminalSquare size={14} />
+                  engineering-workflow
+                </div>
+              </div>
+
+              <div className="relative p-5 sm:p-7">
+                <div className="absolute right-5 top-5 h-24 w-24 rounded-full bg-blue-500/15 blur-3xl" />
+
+                <div className="relative flex items-start gap-4">
+                  <div className="relative shrink-0">
+                    <div className="absolute -inset-2 rounded-3xl bg-gradient-to-br from-cyan-400/35 via-blue-500/20 to-violet-500/35 blur-xl" />
+                    <img
+                      src="/WhatsApp Image 2025-08-07 at 10.48.20 AM.jpeg"
+                      alt="Kartik Kataria"
+                      className="relative h-20 w-20 rounded-2xl border border-white/10 object-cover shadow-2xl sm:h-24 sm:w-24"
+                    />
+                  </div>
+
+                  <div className="min-w-0 pt-1">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
+                      Current focus
+                    </p>
+                    <h2 className="mt-1 text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                      Software Engineer 3
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-400">Cognizant · Capital One</p>
                   </div>
                 </div>
-              </motion.div>
-            </div>
+
+                <div className="relative mt-8">
+                  <div className="absolute bottom-6 left-[23px] top-6 w-px bg-gradient-to-b from-cyan-400/50 via-blue-400/35 to-violet-400/15" />
+
+                  <div className="space-y-3">
+                    {workflow.map((item, index) => {
+                      const Icon = item.icon;
+
+                      return (
+                        <motion.div
+                          key={item.label}
+                          initial={{ opacity: 0, x: 14 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: 0.45 + index * 0.1 }}
+                          whileHover={prefersReducedMotion ? undefined : { x: 5 }}
+                          className="group relative flex items-center gap-4 rounded-2xl border border-white/[0.065] bg-white/[0.035] p-3.5 transition-colors duration-300 hover:bg-white/[0.055]"
+                        >
+                          <div className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-slate-950 text-cyan-300 shadow-lg">
+                            <Icon size={18} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="text-sm font-semibold text-slate-100">{item.label}</p>
+                              <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                                0{index + 1}
+                              </span>
+                            </div>
+                            <p className="mt-0.5 text-xs text-slate-500">{item.detail}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-7 rounded-2xl border border-cyan-400/10 bg-cyan-400/[0.035] p-4">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-cyan-200">
+                    <Sparkles size={15} />
+                    End-to-end ownership
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    Development, testing, cloud configuration, deployment, observability and production support—all presented as one connected engineering story.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="absolute -right-4 top-16 hidden rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-2xl backdrop-blur-xl sm:block lg:-right-10"
+              animate={prefersReducedMotion ? undefined : { y: [0, -7, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300">
+                  <Briefcase size={17} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+                    Production
+                  </p>
+                  <p className="text-xs font-medium text-slate-200">Build → ship → observe</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="absolute -bottom-4 -left-4 hidden rounded-2xl border border-white/10 bg-slate-900/80 px-4 py-3 shadow-2xl backdrop-blur-xl sm:block lg:-left-10"
+              animate={prefersReducedMotion ? undefined : { y: [0, 8, 0] }}
+              transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-400/10 text-blue-300">
+                  <Code2 size={17} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+                    Backend
+                  </p>
+                  <p className="text-xs font-medium text-slate-200">APIs at scale</p>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -322,4 +435,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;
