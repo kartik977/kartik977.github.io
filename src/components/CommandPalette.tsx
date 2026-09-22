@@ -9,6 +9,7 @@ import {
   Github,
   Home,
   Layers3,
+  FlaskConical,
   Linkedin,
   Mail,
   Search,
@@ -73,6 +74,15 @@ const CommandPalette: React.FC = () => {
         icon: Layers3,
         keywords: ['projects', 'portfolio', 'work', 'case studies'],
         action: () => navigate('/projects')
+      },
+      {
+        id: 'lab',
+        label: 'Engineering Lab',
+        description: 'Run performance, delivery, security and observability demos',
+        group: 'Navigate',
+        icon: FlaskConical,
+        keywords: ['lab', 'performance', 'latency', 'cicd', 'security', 'observability', 'new relic', 'vulnerabilities'],
+        action: () => navigate('/lab')
       },
       {
         id: 'skills',
