@@ -322,3 +322,46 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Shared inner-page atmosphere */
+.portfolio-page {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(14, 165, 233, 0.08), transparent 22%),
+    radial-gradient(circle at 88% 78%, rgba(124, 58, 237, 0.08), transparent 26%),
+    linear-gradient(145deg, #08111f 0%, #0a1220 50%, #090f1a 100%);
+}
+
+.page-grid {
+  opacity: 0.15;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.065) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent 96%);
+}
+
+.project-card-glow {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(34, 211, 238, 0.08), transparent 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 45%);
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.22);
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding-top: 76px;
+  }
+
+  .page-grid {
+    background-size: 38px 38px;
+    opacity: 0.1;
+  }
+}
