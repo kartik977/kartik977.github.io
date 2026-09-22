@@ -13,6 +13,7 @@ import {
   Linkedin,
   Mail,
   Search,
+  MessageCircle,
   Sparkles,
   UserRound,
   Wrench
@@ -128,6 +129,15 @@ const CommandPalette: React.FC = () => {
         icon: Sparkles,
         keywords: ['image generator', 'dall-e', 'openai', 'express'],
         action: () => navigate('/projects/ai-image-generator')
+      },
+      {
+        id: 'ask-kartik',
+        label: 'Ask Kartik AI',
+        description: 'Open the portfolio-grounded recruiter assistant',
+        group: 'Actions',
+        icon: MessageCircle,
+        keywords: ['ask', 'assistant', 'recruiter', 'ai', 'chat'],
+        action: () => window.dispatchEvent(new Event('portfolio:open-recruiter-assistant'))
       },
       {
         id: 'resume',
