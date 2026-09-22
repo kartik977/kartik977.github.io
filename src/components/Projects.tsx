@@ -46,22 +46,24 @@ const projectData: Project[] = [
   {
     title: 'Grocery Ordering',
     eyebrow: 'FULL-STACK ORDERING SYSTEM',
-    description: 'A Node.js, Express.js and MongoDB platform with a React client covering product catalog, inventory and end-to-end order management.',
-    technologies: ['Node.js', 'Express.js', 'MongoDB', 'React.js'],
+    description: 'A full-stack commerce application with an Angular 17 frontend and Spring Boot 3 backend covering catalog, JWT-secured cart, checkout and order tracking.',
+    technologies: ['Angular 17', 'TypeScript', 'Spring Boot 3', 'Java 17', 'Spring Security', 'JPA'],
     github: 'https://github.com/kartik977/grocery-app',
     number: '02',
     kind: 'grocery',
-    accent: 'from-emerald-400/25 via-teal-500/10 to-transparent'
+    accent: 'from-emerald-400/25 via-teal-500/10 to-transparent',
+    caseStudy: '/projects/grocery-ordering'
   },
   {
     title: 'AI Image Generator',
     eyebrow: 'GENERATIVE AI SERVICE',
-    description: 'A Flask and Node.js service integrating the OpenAI DALL-E API to generate images from prompts through reusable API-driven components.',
-    technologies: ['Flask', 'Node.js', 'OpenAI API', 'DALL-E', 'Python'],
+    description: 'A focused Node.js and Express application that accepts prompt and size input, calls OpenAI\'s image API, and returns the generated image URL to a browser UI.',
+    technologies: ['Node.js', 'Express', 'OpenAI SDK', 'DALL-E', 'JavaScript'],
     github: 'https://github.com/kartik977/Image-Generator-using-OpenAI-and-Dall-e',
     number: '03',
     kind: 'image',
-    accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent'
+    accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent',
+    caseStudy: '/projects/ai-image-generator'
   }
 ];
 
