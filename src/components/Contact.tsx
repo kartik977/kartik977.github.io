@@ -1,347 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { Mail, Phone, MapPin, Github, Linkedin, User, MessageCircle, Handshake, Heart, Star, Sparkles, Coffee } from 'lucide-react';
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  ArrowUpRight,
+  Github,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone
+} from 'lucide-react';
 
 const Contact: React.FC = () => {
-  const [currentMessage, setCurrentMessage] = useState(0);
-  const [currentInvite, setCurrentInvite] = useState(0);
-  const controls = useAnimation();
-
-  const inviteMessages = [
-    "Hey there! Ready to connect? 👋",
-    "Let's build something amazing together! 🚀",
-    "Your next project is waiting! 💫",
-    "Time to create something special! ✨"
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentMessage((prev) => (prev + 1) % 4);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const inviteInterval = setInterval(() => {
-      setCurrentInvite((prev) => (prev + 1) % inviteMessages.length);
-    }, 3000);
-
-    return () => clearInterval(inviteInterval);
-  }, [inviteMessages.length]);
-
-  useEffect(() => {
-    controls.start({
-      y: [0, -10, 0],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    });
-  }, [controls]);
+  const prefersReducedMotion = useReducedMotion();
 
   const contactInfo = [
     {
-      icon: <Mail size={24} className="text-blue-400" />,
+      icon: Mail,
       title: 'Email',
       value: 'katariakartik08@gmail.com',
       link: 'mailto:katariakartik08@gmail.com'
     },
     {
-      icon: <Phone size={24} className="text-blue-400" />,
+      icon: Phone,
       title: 'Phone',
       value: '607-262-4092',
       link: 'tel:607-262-4092'
     },
     {
-      icon: <MapPin size={24} className="text-blue-400" />,
+      icon: MapPin,
       title: 'Location',
       value: 'Dallas, TX',
       link: null
     }
   ];
 
-  const socialLinks = [
-    {
-      icon: <Github size={24} />,
-      title: 'GitHub',
-      url: 'https://github.com/kartik977',
-      color: 'text-gray-300 hover:text-white'
-    },
-    {
-      icon: <Linkedin size={24} />,
-      title: 'LinkedIn',
-      url: 'https://www.linkedin.com/in/kartikkataria2023/',
-      color: 'text-blue-400 hover:text-blue-300'
-    }
-  ];
-
-  const goodbyeMessages = [
-    "Thanks for exploring my portfolio! 🚀",
-    "Hope you enjoyed the journey through my work... ✨",
-    "Ready to create something amazing together? 💫",
-    "Let's connect and build the future! 🌟"
-  ];
-
   return (
-    <section className="section bg-gradient-to-br from-slate-800 via-blue-900 to-slate-800 min-h-screen">
-      <div className="container">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="section-title text-white"
-        >
-          Get In Touch
-        </motion.h2>
+    <section className="portfolio-page min-h-screen">
+      <div className="page-grid absolute inset-0" aria-hidden="true" />
 
-        {/* Character Avatar with Invitation */}
+      <div className="container relative z-10 mx-auto px-4 py-20 sm:py-24">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center mb-12"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto max-w-4xl"
         >
-          <div className="relative inline-block">
-            <motion.div
-              className="w-32 h-32 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl mx-auto mb-6"
-              animate={controls}
-            >
-              <MessageCircle size={48} className="text-white" />
-            </motion.div>
-            
-            {/* Floating elements around avatar */}
-            <motion.div
-              className="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg"
-              animate={{
-                y: [0, -20, 0],
-                rotate: [0, 360],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <Handshake size={20} className="text-white" />
-            </motion.div>
-            
-            <motion.div
-              className="absolute -bottom-4 -left-4 w-10 h-10 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg"
-              animate={{
-                y: [0, 20, 0],
-                rotate: [360, 0],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              <Heart size={16} className="text-white" />
-            </motion.div>
+          <div className="mb-5 flex w-fit items-center gap-2 rounded-full border border-emerald-400/15 bg-emerald-400/[0.05] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
+            <MessageCircle size={14} />
+            Let&apos;s connect
           </div>
-
-          {/* Animated invitation message */}
-          <motion.div
-            key={currentInvite}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-2xl mx-auto mb-8"
-          >
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full">
-                <User size={20} className="text-white" />
-              </div>
-              <span className="text-white font-medium">{inviteMessages[currentInvite]}</span>
-            </div>
-          </motion.div>
+          <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
+            Have a role, project
+            <span className="block text-slate-400">or engineering problem in mind?</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
+            I&apos;m always open to a useful conversation about software engineering, backend systems,
+            cloud delivery and new opportunities.
+          </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Information */}
+        <div className="mx-auto mt-14 grid max-w-5xl gap-6 lg:grid-cols-[0.86fr_1.14fr]">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0, x: -24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
+            className="rounded-[1.75rem] border border-white/[0.075] bg-slate-950/44 p-6 backdrop-blur-xl"
           >
-            <div className="card bg-white/10 backdrop-blur-xl border border-white/20">
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Contact Information</h3>
-              
-              <div className="space-y-6 mb-8">
-                {contactInfo.map((info, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="flex items-center gap-4"
-                  >
-                    <div className="p-3 bg-white/10 rounded-full border border-white/20">
-                      {info.icon}
+            <p className="text-xs font-semibold uppercase tracking-[0.17em] text-slate-500">Contact</p>
+            <div className="mt-5 space-y-3">
+              {contactInfo.map((item) => {
+                const Icon = item.icon;
+                const content = (
+                  <div className="flex items-center gap-4 rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 transition-colors duration-300 hover:bg-white/[0.045]">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-cyan-400/10 bg-cyan-400/[0.05] text-cyan-300">
+                      <Icon size={17} />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-white">{info.title}</h4>
-                      {info.link ? (
-                        <a
-                          href={info.link}
-                          className="text-gray-300 hover:text-blue-300 transition-colors duration-300"
-                        >
-                          {info.value}
-                        </a>
-                      ) : (
-                        <span className="text-gray-300">{info.value}</span>
-                      )}
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-600">{item.title}</p>
+                      <p className="mt-1 truncate text-sm font-medium text-slate-200">{item.value}</p>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
+                  </div>
+                );
 
-              {/* Social Links */}
-              <div>
-                <h4 className="text-lg font-semibold mb-4 text-white">Connect With Me</h4>
-                <div className="flex gap-4">
-                  {socialLinks.map((social, index) => (
-                    <motion.a
-                      key={index}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`p-3 bg-white/10 rounded-full border border-white/20 transition-all duration-300 hover:bg-white/20 ${social.color}`}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {social.icon}
-                    </motion.a>
-                  ))}
-                </div>
-              </div>
+                return item.link ? (
+                  <a key={item.title} href={item.link}>{content}</a>
+                ) : (
+                  <div key={item.title}>{content}</div>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <a
+                href="https://github.com/kartik977"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white"
+              >
+                <Github size={19} />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/kartikkataria2023/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white"
+              >
+                <Linkedin size={19} />
+              </a>
             </div>
           </motion.div>
 
-          {/* Portfolio Summary & Goodbye */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            initial={{ opacity: 0, x: 24 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.6, delay: 0.05 }}
+            className="relative overflow-hidden rounded-[1.75rem] border border-cyan-400/10 bg-gradient-to-br from-cyan-400/[0.07] via-slate-950/55 to-violet-400/[0.06] p-7 shadow-[0_30px_90px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:p-9"
           >
-            <div className="card bg-white/10 backdrop-blur-xl border border-white/20">
-              <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Portfolio Summary</h3>
-              
-              <div className="space-y-6">
-                {/* Rotating Goodbye Message */}
-                <motion.div
-                  key={currentMessage}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-center p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-lg border border-white/20"
-                >
-                  <p className="text-lg text-white font-medium">{goodbyeMessages[currentMessage]}</p>
-                </motion.div>
-
-                {/* Key Highlights */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="p-4 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <Star size={20} className="text-yellow-400" />
-                      <h4 className="text-white font-semibold">Experience</h4>
-                    </div>
-                    <p className="text-gray-300 text-sm">Software Engineer at Cognizant, specializing in Java, Node.js, and FinTech solutions</p>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="p-4 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <Sparkles size={20} className="text-blue-400" />
-                      <h4 className="text-white font-semibold">Skills</h4>
-                    </div>
-                    <p className="text-gray-300 text-sm">Full-stack development, React, TypeScript, Java, Node.js, and cloud technologies</p>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="p-4 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <Coffee size={20} className="text-orange-400" />
-                      <h4 className="text-white font-semibold">Projects</h4>
-                    </div>
-                    <p className="text-gray-300 text-sm">React apps, AI image generation, data visualization, and innovative solutions</p>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="p-4 bg-white/5 rounded-lg border border-white/10"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <Heart size={20} className="text-red-400" />
-                      <h4 className="text-white font-semibold">Passion</h4>
-                    </div>
-                    <p className="text-gray-300 text-sm">Creating impactful solutions and pushing the boundaries of technology</p>
-                  </motion.div>
-                </div>
-
-                {/* Call to Action */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                  className="text-center p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg border border-white/20"
-                >
-                  <p className="text-white font-medium mb-3">Ready to collaborate on something amazing?</p>
-                  <a
-                    href="mailto:katariakartik08@gmail.com"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
-                  >
-                    <Mail size={18} />
-                    Let's Connect
-                  </a>
-                </motion.div>
-              </div>
+            <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-cyan-400/10 blur-3xl" />
+            <div className="relative">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Start a conversation</p>
+              <h2 className="mt-4 max-w-xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                The easiest way to reach me is by email.
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400">
+                Tell me a little about the opportunity or problem, and I&apos;ll have the context I need when we connect.
+              </p>
+              <a
+                href="mailto:katariakartik08@gmail.com"
+                className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5"
+              >
+                Send an email
+                <ArrowUpRight size={17} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
             </div>
           </motion.div>
         </div>
-
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-12"
-        >
-          <div className="card bg-white/10 backdrop-blur-xl border border-white/20 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Handshake size={32} className="text-green-400" />
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">Let's Work Together</h3>
-            </div>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              I'm always interested in new opportunities and exciting projects. Whether you have a 
-              question about my work, want to discuss a potential collaboration, or just want to say 
-              hello, I'd love to hear from you!
-            </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   );
 };
 
-export default Contact; 
+export default Contact;
