@@ -11,7 +11,6 @@ import {
   Bot,
   Check,
   Github,
-  Image as ImageIcon,
   Search,
   ShoppingBag,
   ShoppingCart,
@@ -287,7 +286,7 @@ const ProjectVisual: React.FC<{ kind: Project['kind'] }> = ({ kind }) => {
   return <ImageGeneratorMockup />;
 };
 
-const ProjectStage: React.FC<{ project: Project; index: number }> = ({ project, index }) => {
+const ProjectStage: React.FC<{ project: Project }> = ({ project }) => {
   const ref = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
@@ -408,8 +407,8 @@ const Projects: React.FC = () => {
       </section>
 
       <div className="px-4 pb-24">
-        {projectData.map((project, index) => (
-          <ProjectStage key={project.title} project={project} index={index} />
+        {projectData.map((project) => (
+          <ProjectStage key={project.title} project={project} />
         ))}
       </div>
     </main>
