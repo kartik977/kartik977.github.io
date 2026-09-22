@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   Boxes,
-  CheckCircle2,
   Database,
   Github,
   KeyRound,
