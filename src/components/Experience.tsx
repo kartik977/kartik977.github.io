@@ -3,15 +3,13 @@ import {
   motion,
   useReducedMotion,
   useScroll,
-  useSpring
+  useSpring,
+  useTransform
 } from 'framer-motion';
 import {
   Activity,
   Bot,
-  Building2,
-  CalendarDays,
   CheckCircle2,
-  Clock3,
   Code2,
   Gauge,
   MapPin,
@@ -25,39 +23,45 @@ const experiences = [
     title: 'Senior Software Development Engineer',
     company: 'Cognizant',
     location: 'Plano, TX',
-    period: 'September 2023 – Present',
+    period: '2023 — Present',
+    kicker: 'BANKING · PAYMENTS · CLOUD',
+    statement: 'I moved from building services to owning architecture, delivery and production outcomes.',
     accent: 'cyan',
-    summary: 'Own architecture decisions and cross-team technical delivery for mission-critical debit-card, servicing, multi-lender and payment systems across Capital One and Verizon engagements.',
+    metrics: [
+      ['50%', 'lower API latency'],
+      ['25%', 'faster deployments'],
+      ['100+', 'vulnerabilities fixed']
+    ],
     highlights: [
       {
         icon: Gauge,
         title: '~72 ms core API latency',
-        text: 'Re-engineered Java and Spring Boot services, reducing API response time 50% across banking workflows.'
+        text: 'Re-engineered Java and Spring Boot services for banking workflows and cut response time by 50%.'
       },
       {
         icon: Rocket,
-        title: '25% faster deployments',
-        text: 'Automated serverless delivery with AWS Lambda and CloudFormation to improve release speed and consistency.'
+        title: 'Serverless delivery',
+        text: 'Automated AWS Lambda and CloudFormation deployments to improve release speed and consistency.'
       },
       {
         icon: Code2,
-        title: 'Java → Node.js / TypeScript',
-        text: 'Led migration of distributed APIs for core debit-card workflows while coordinating dependent interfaces and rollout.'
+        title: 'Java → TypeScript migration',
+        text: 'Led migration of distributed debit-card APIs to Node.js and TypeScript across dependent services.'
       },
       {
         icon: Bot,
         title: 'VulnHunter-Fix',
-        text: 'Built a Claude Code security-remediation skill that remediated 100+ vulnerabilities and saved an estimated 400+ hours of manual work.'
+        text: 'Built a Claude Code remediation skill that fixed 100+ vulnerabilities and saved an estimated 400+ hours.'
       },
       {
         icon: Activity,
-        title: '35% faster incident detection',
-        text: 'Implemented New Relic monitoring, structured logging and error tracking to improve production response.'
+        title: 'Production observability',
+        text: 'Used New Relic, structured logging and error tracking to cut incident detection time by 35%.'
       },
       {
         icon: ShieldCheck,
         title: 'Verizon payments',
-        text: 'Built backend services using Cassandra for high-throughput persistence, improving scalability 25% while maintaining data consistency.'
+        text: 'Built Cassandra-backed payment services that improved scalability by 25% while preserving consistency.'
       }
     ]
   },
@@ -65,14 +69,25 @@ const experiences = [
     title: 'Graduate Research & Teaching Assistant',
     company: 'University of Texas at Arlington',
     location: 'Arlington, TX',
-    period: 'August 2022 – May 2023',
+    period: '2022 — 2023',
+    kicker: 'DATA · MODELING · TEACHING',
+    statement: 'I learned how to turn complex technical ideas into something another person can actually use.',
     accent: 'violet',
-    summary: 'Supported instruction and research across data analysis, statistical modeling and predictive analytics.',
+    metrics: [
+      ['Python', 'hands-on instruction'],
+      ['R', 'statistical modeling'],
+      ['UTA', 'research + teaching']
+    ],
     highlights: [
       {
         icon: Code2,
-        title: 'Python & R instruction',
-        text: 'Guided students from analytical requirements through working code, modeling, visualization and project deliverables.'
+        title: 'From requirements to code',
+        text: 'Guided students through data analysis, predictive modeling, visualization and working project deliverables.'
+      },
+      {
+        icon: CheckCircle2,
+        title: 'Technical communication',
+        text: 'Translated analytical concepts into practical labs, tutorials and implementation guidance.'
       }
     ]
   },
@@ -80,213 +95,197 @@ const experiences = [
     title: 'Software Developer I',
     company: 'Perpule',
     location: 'Gurugram, India',
-    period: '2019 – 2021',
+    period: '2019 — 2021',
+    kicker: 'RETAIL · REST APIS · SCALE',
+    statement: 'This is where backend engineering became real: transactions, integrations and production issues.',
     accent: 'emerald',
-    summary: 'Built backend components and REST APIs for a high-volume self-checkout retail platform.',
+    metrics: [
+      ['REST', 'backend APIs'],
+      ['Python', 'core services'],
+      ['Retail', 'high-volume platform']
+    ],
     highlights: [
       {
         icon: Code2,
-        title: 'Backend + REST APIs',
-        text: 'Built and maintained Python-based backend components and scalable algorithms that improved transaction-processing efficiency.'
+        title: 'Self-checkout backend',
+        text: 'Built Python backend components and REST APIs for a high-volume self-checkout platform.'
       },
       {
         icon: CheckCircle2,
         title: 'Cross-functional delivery',
-        text: 'Partnered with product, QA and engineering teams to validate integrations, ship business-critical features and resolve production issues.'
+        text: 'Worked with product, QA and engineering to validate integrations, ship features and resolve production issues.'
       }
     ]
   }
 ];
 
-const impactStats = [
-  ['50%', 'API latency reduction'],
-  ['25%', 'Deployment speed'],
-  ['40%', 'Automated test coverage'],
-  ['100+', 'Vulnerabilities remediated']
-];
+const accentClasses: Record<string, string> = {
+  cyan: 'from-cyan-400/25 via-blue-500/10 to-transparent',
+  violet: 'from-violet-400/25 via-fuchsia-500/10 to-transparent',
+  emerald: 'from-emerald-400/25 via-cyan-500/10 to-transparent'
+};
 
-const Experience: React.FC = () => {
+const ExperienceChapter: React.FC<{
+  experience: typeof experiences[number];
+  index: number;
+}> = ({ experience, index }) => {
+  const ref = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const timelineRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
-    target: timelineRef,
-    offset: ['start 0.78', 'end 0.28']
+    target: ref,
+    offset: ['start 0.82', 'end 0.24']
   });
-  const progress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 24,
+
+  const eased = useSpring(scrollYProgress, {
+    stiffness: 95,
+    damping: 25,
     mass: 0.35
   });
+  const numberY = useTransform(eased, [0, 1], prefersReducedMotion ? [0, 0] : [80, -60]);
+  const glowScale = useTransform(eased, [0, 0.55, 1], prefersReducedMotion ? [1, 1, 1] : [0.82, 1.08, 0.94]);
+  const glowOpacity = useTransform(eased, [0, 0.35, 1], [0.1, 0.34, 0.08]);
 
   return (
-    <section className="portfolio-page min-h-screen">
-      <div className="page-grid absolute inset-0" aria-hidden="true" />
-
-      <div className="container relative z-10 mx-auto px-4 py-20 sm:py-24">
+    <section ref={ref} className="experience-chapter relative min-h-[118vh]">
+      <div className="sticky top-[88px] flex min-h-[calc(100vh-100px)] items-center overflow-hidden py-8">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-12 max-w-3xl text-center"
+          style={{ scale: glowScale, opacity: glowOpacity }}
+          className={'pointer-events-none absolute -right-20 top-[12%] h-[34rem] w-[34rem] rounded-full bg-gradient-to-br blur-3xl ' + accentClasses[experience.accent]}
+        />
+
+        <motion.div
+          style={{ y: numberY }}
+          className="pointer-events-none absolute -right-3 top-8 select-none text-[10rem] font-black leading-none tracking-[-0.08em] text-white/[0.025] sm:text-[14rem] lg:text-[18rem]"
         >
-          <div className="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
-            <Clock3 size={14} />
-            Professional journey
-          </div>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-            From implementation
-            <span className="block text-slate-400">to architecture and ownership.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            My work has evolved toward end-to-end responsibility across backend architecture, cloud delivery,
-            automated testing, observability, security remediation and production reliability.
-          </p>
+          0{index + 1}
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.12 }}
-          className="mx-auto mb-14 grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {impactStats.map(([value, label], index) => (
+        <div className="container relative z-10 mx-auto w-full px-4">
+          <div className="grid items-start gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
             <motion.div
-              key={label}
-              whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.015 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-slate-950/45 p-5 text-center backdrop-blur-xl"
+              initial={{ opacity: 0, x: -38 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ amount: 0.35 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.68, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:sticky lg:top-32"
             >
-              <motion.div
-                className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent"
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 + index * 0.08 }}
-              />
-              <div className="text-2xl font-semibold tracking-tight text-white">{value}</div>
-              <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-500">{label}</div>
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xs font-bold text-cyan-200 backdrop-blur-xl">
+                  0{index + 1}
+                </span>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-600">{experience.kicker}</p>
+                  <p className="mt-1 text-sm text-slate-400">{experience.period}</p>
+                </div>
+              </div>
+
+              <h2 className="max-w-xl text-4xl font-semibold tracking-[-0.045em] text-white sm:text-5xl lg:text-6xl">
+                {experience.company}
+              </h2>
+              <p className="mt-3 text-xl font-medium text-slate-400">{experience.title}</p>
+
+              <div className="mt-5 flex items-center gap-2 text-sm text-slate-500">
+                <MapPin size={15} />
+                {experience.location}
+              </div>
+
+              <p className="mt-8 max-w-xl text-lg leading-8 text-slate-300">
+                {experience.statement}
+              </p>
+
+              <div className="mt-8 grid grid-cols-3 gap-2">
+                {experience.metrics.map(([value, label], metricIndex) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: metricIndex * 0.08 }}
+                    whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.025 }}
+                    className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-3.5 backdrop-blur-xl"
+                  >
+                    <p className="text-base font-semibold text-white sm:text-lg">{value}</p>
+                    <p className="mt-1 text-[9px] font-semibold uppercase leading-4 tracking-[0.13em] text-slate-600">{label}</p>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
-          ))}
-        </motion.div>
 
-        <div ref={timelineRef} className="relative mx-auto max-w-5xl">
-          <div className="absolute bottom-0 left-[19px] top-3 w-px bg-white/[0.07] sm:left-[27px]" />
-          <motion.div
-            style={{ scaleY: progress, transformOrigin: 'top' }}
-            className="absolute bottom-0 left-[19px] top-3 w-px bg-gradient-to-b from-cyan-300 via-blue-400 to-violet-400 shadow-[0_0_18px_rgba(34,211,238,0.45)] sm:left-[27px]"
-          />
-
-          <div className="space-y-12">
-            {experiences.map((exp, index) => (
-              <motion.article
-                key={exp.company}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -34 : 34, y: 18 }}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true, amount: 0.18 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.7,
-                  delay: prefersReducedMotion ? 0 : index * 0.08,
-                  ease: [0.22, 1, 0.36, 1]
-                }}
-                className="relative pl-14 sm:pl-20"
-              >
-                <motion.div
-                  whileInView={prefersReducedMotion ? undefined : { scale: [0.82, 1.12, 1] }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.55, delay: 0.08 }}
-                  className="absolute left-0 top-1.5 flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-slate-950 text-cyan-200 shadow-[0_0_30px_rgba(34,211,238,0.12)] sm:h-14 sm:w-14"
-                >
-                  <Building2 size={20} />
-                </motion.div>
-
-                <motion.div
-                  whileHover={prefersReducedMotion ? undefined : { y: -4 }}
-                  className="group overflow-hidden rounded-[1.85rem] border border-white/[0.075] bg-slate-950/50 shadow-[0_28px_90px_rgba(0,0,0,0.26)] backdrop-blur-xl transition-colors duration-500 hover:border-cyan-300/15"
-                >
-                  <div className="experience-sheen pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                  <div className="relative border-b border-white/[0.065] p-5 sm:p-7">
-                    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">
-                            {String(index + 1).padStart(2, '0')}
-                          </span>
-                          {index === 0 && (
-                            <span className="rounded-full border border-emerald-400/15 bg-emerald-400/[0.06] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.14em] text-emerald-300">
-                              Current
-                            </span>
-                          )}
-                        </div>
-                        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">{exp.title}</h2>
-                        <p className="mt-1 text-base font-medium text-slate-300">{exp.company}</p>
-                        <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-400">{exp.summary}</p>
+            <div className="grid gap-4">
+              {experience.highlights.map((highlight, highlightIndex) => {
+                const Icon = highlight.icon;
+                return (
+                  <motion.div
+                    key={highlight.title}
+                    initial={{
+                      opacity: 0,
+                      y: 70,
+                      rotateX: prefersReducedMotion ? 0 : 8,
+                      scale: prefersReducedMotion ? 1 : 0.96
+                    }}
+                    whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.7,
+                      delay: prefersReducedMotion ? 0 : highlightIndex * 0.07,
+                      ease: [0.22, 1, 0.36, 1]
+                    }}
+                    whileHover={prefersReducedMotion ? undefined : { x: 10, scale: 1.012 }}
+                    className="experience-feature group relative overflow-hidden rounded-[1.6rem] border border-white/[0.075] bg-slate-950/58 p-5 shadow-[0_22px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl sm:p-6"
+                  >
+                    <div className="experience-feature-light pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    <div className="relative flex items-start gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-400/12 bg-cyan-400/[0.055] text-cyan-300">
+                        <Icon size={18} />
                       </div>
-
-                      <div className="flex flex-wrap gap-2 text-xs font-medium text-slate-400">
-                        <span className="inline-flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.035] px-3 py-2">
-                          <MapPin size={14} /> {exp.location}
-                        </span>
-                        <span className="inline-flex items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.035] px-3 py-2">
-                          <CalendarDays size={14} /> {exp.period}
-                        </span>
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-600">
+                          IMPACT {String(highlightIndex + 1).padStart(2, '0')}
+                        </p>
+                        <h3 className="mt-2 text-lg font-semibold tracking-tight text-white">{highlight.title}</h3>
+                        <p className="mt-2 text-sm leading-6 text-slate-400">{highlight.text}</p>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="relative grid gap-3 p-5 sm:grid-cols-2 sm:p-7">
-                    {exp.highlights.map((highlight, highlightIndex) => {
-                      const Icon = highlight.icon;
-                      return (
-                        <motion.div
-                          key={highlight.title}
-                          initial={{ opacity: 0, y: 15, scale: 0.98 }}
-                          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                          viewport={{ once: true, amount: 0.3 }}
-                          transition={{
-                            duration: prefersReducedMotion ? 0 : 0.5,
-                            delay: prefersReducedMotion ? 0 : highlightIndex * 0.055
-                          }}
-                          whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.01 }}
-                          className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-4 transition-colors duration-300 hover:bg-white/[0.045]"
-                        >
-                          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-400/10 bg-cyan-400/[0.05] text-cyan-300">
-                            <Icon size={16} />
-                          </div>
-                          <h3 className="mt-4 text-sm font-semibold text-slate-100">{highlight.title}</h3>
-                          <p className="mt-2 text-xs leading-5 text-slate-500">{highlight.text}</p>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              </motion.article>
-            ))}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: prefersReducedMotion ? 0 : 0.6 }}
-          className="mx-auto mt-16 max-w-5xl rounded-[1.75rem] border border-violet-400/10 bg-gradient-to-br from-violet-400/[0.05] to-cyan-400/[0.025] p-6 backdrop-blur-xl sm:p-8"
-        >
-          <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-violet-400/15 bg-violet-400/[0.06] text-violet-300">
-              <Sparkles size={19} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-white">The pattern behind the timeline</p>
-              <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-400">
-                Each role moved me closer to full engineering ownership: building services, validating integrations,
-                optimizing performance, automating delivery, monitoring production and now creating AI-assisted tooling
-                that improves the development lifecycle itself.
-              </p>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
+  );
+};
+
+const Experience: React.FC = () => {
+  return (
+    <main className="experience-page relative bg-[#070b12]">
+      <div className="experience-intro relative overflow-hidden px-4 pb-12 pt-20 sm:pt-24">
+        <div className="experience-beam pointer-events-none absolute left-1/2 top-0 h-[36rem] w-[70rem] -translate-x-1/2 opacity-70" />
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="container relative z-10 mx-auto text-center"
+        >
+          <div className="mx-auto mb-6 flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.035] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400 backdrop-blur-xl">
+            <Sparkles size={14} className="text-cyan-300" />
+            Career as a scroll story
+          </div>
+          <h1 className="mx-auto max-w-5xl text-5xl font-semibold tracking-[-0.055em] text-white sm:text-6xl lg:text-8xl">
+            Three chapters.
+            <span className="block text-slate-500">One engineering trajectory.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
+            Scroll slowly. Each role takes over the screen and reveals the work that moved me closer to end-to-end engineering ownership.
+          </p>
+        </motion.div>
+      </div>
+
+      {experiences.map((experience, index) => (
+        <ExperienceChapter key={experience.company} experience={experience} index={index} />
+      ))}
+    </main>
   );
 };
 
