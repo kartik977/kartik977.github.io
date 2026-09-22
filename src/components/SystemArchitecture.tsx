@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   Activity,
   Braces,
+  CheckCircle2,
   CloudCog,
   Database,
   Globe2,
+  LoaderCircle,
   Network,
+  Play,
+  RotateCcw,
   ShieldCheck
 } from 'lucide-react';
 
@@ -26,6 +30,13 @@ type Connection = {
   from: string;
   to: string;
   delay: number;
+};
+
+type TraceStep = {
+  node: string;
+  label: string;
+  latency: string;
+  status: string;
 };
 
 const nodes: ArchitectureNode[] = [
@@ -119,6 +130,23 @@ const connections: Connection[] = [
   { from: 'data', to: 'observe', delay: 2.24 }
 ];
 
+const traceSteps: TraceStep[] = [
+  { node: 'client', label: 'GET /card/status', latency: '0 ms', status: 'request' },
+  { node: 'gateway', label: 'Route + validate', latency: '7 ms', status: 'accepted' },
+  { node: 'java', label: 'Execute business logic', latency: '31 ms', status: 'processing' },
+  { node: 'cloud', label: 'Invoke runtime', latency: '45 ms', status: 'healthy' },
+  { node: 'data', label: 'Read account state', latency: '63 ms', status: 'found' },
+  { node: 'observe', label: 'Publish telemetry', latency: '72 ms', status: '200 OK' }
+];
+
+const tracePairs = new Set([
+  'client-gateway',
+  'gateway-java',
+  'java-cloud',
+  'cloud-data',
+  'data-observe'
+]);
+
 const accentClasses: Record<string, string> = {
   cyan: 'border-cyan-300/25 bg-cyan-300/[0.08] text-cyan-200',
   blue: 'border-blue-300/25 bg-blue-300/[0.08] text-blue-200',
@@ -128,8 +156,56 @@ const accentClasses: Record<string, string> = {
 
 const SystemArchitecture: React.FC = () => {
   const [activeId, setActiveId] = useState('java');
+  const [runStep, setRunStep] = useState(-1);
+  const [isRunning, setIsRunning] = useState(false);
+  const [runComplete, setRunComplete] = useState(false);
   const prefersReducedMotion = useReducedMotion();
   const activeNode = nodes.find((node) => node.id === activeId) ?? nodes[0];
+
+  useEffect(() => {
+    if (!isRunning || runStep < 0) return;
+
+    setActiveId(traceSteps[runStep].node);
+
+    const timer = window.setTimeout(() => {
+      if (runStep >= traceSteps.length - 1) {
+        setIsRunning(false);
+        setRunComplete(true);
+        return;
+      }
+      setRunStep((step) => step + 1);
+    }, prefersReducedMotion ? 220 : 720);
+
+    return () => window.clearTimeout(timer);
+  }, [isRunning, runStep, prefersReducedMotion]);
+
+  const startRun = () => {
+    setRunComplete(false);
+    setRunStep(0);
+    setIsRunning(true);
+  };
+
+  const resetRun = () => {
+    setRunStep(-1);
+    setRunComplete(false);
+    setIsRunning(false);
+    setActiveId('java');
+  };
+
+  const visitedTraceNode = (nodeId: string) => {
+    if (runStep < 0) return false;
+    const index = traceSteps.findIndex((step) => step.node === nodeId);
+    return index >= 0 && index <= runStep;
+  };
+
+  const traversedConnection = (from: string, to: string) => {
+    if (runStep <= 0 || !tracePairs.has(from + '-' + to)) return false;
+
+    const fromIndex = traceSteps.findIndex((step) => step.node === from);
+    const toIndex = traceSteps.findIndex((step) => step.node === to);
+
+    return fromIndex >= 0 && toIndex >= 0 && toIndex <= runStep;
+  };
 
   return (
     <motion.div
@@ -140,23 +216,49 @@ const SystemArchitecture: React.FC = () => {
     >
       <div className="architecture-ambient pointer-events-none absolute inset-0" />
 
-      <div className="relative flex items-center justify-between gap-4 border-b border-white/[0.07] px-5 py-4">
+      <div className="relative flex items-center justify-between gap-3 border-b border-white/[0.07] px-5 py-4">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
             Interactive engineering system
           </p>
           <p className="mt-1 truncate text-[11px] text-slate-500">
-            Representative architecture · hover or click a node
+            Representative architecture · hover a node or run a request
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2 rounded-full border border-emerald-400/10 bg-emerald-400/[0.045] px-3 py-1.5">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-300" />
-          </span>
-          <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-emerald-200">
-            traffic live
-          </span>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={isRunning ? undefined : runComplete ? resetRun : startRun}
+            disabled={isRunning}
+            className={
+              'architecture-run-button inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] transition ' +
+              (isRunning
+                ? 'cursor-wait border-cyan-300/15 bg-cyan-300/[0.06] text-cyan-200'
+                : runComplete
+                  ? 'border-violet-300/15 bg-violet-300/[0.06] text-violet-200 hover:bg-violet-300/[0.1]'
+                  : 'border-white/10 bg-white/[0.04] text-slate-300 hover:border-cyan-300/20 hover:text-white')
+            }
+          >
+            {isRunning ? (
+              <LoaderCircle size={11} className="animate-spin" />
+            ) : runComplete ? (
+              <RotateCcw size={11} />
+            ) : (
+              <Play size={11} />
+            )}
+            {isRunning ? 'Running' : runComplete ? 'Reset' : 'Run request'}
+          </button>
+
+          <div className="hidden items-center gap-2 rounded-full border border-emerald-400/10 bg-emerald-400/[0.045] px-3 py-1.5 xl:flex">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-300" />
+            </span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-emerald-200">
+              traffic live
+            </span>
+          </div>
         </div>
       </div>
 
@@ -173,6 +275,26 @@ const SystemArchitecture: React.FC = () => {
                 </span>
               ))}
             </div>
+
+            <AnimatePresence>
+              {(isRunning || runComplete) && runStep >= 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg border border-cyan-300/10 bg-[#07101a]/90 px-2.5 py-1.5 backdrop-blur-xl"
+                >
+                  {runComplete ? (
+                    <CheckCircle2 size={11} className="text-emerald-300" />
+                  ) : (
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300" />
+                  )}
+                  <span className="text-[8px] font-semibold uppercase tracking-[0.13em] text-slate-400">
+                    {runComplete ? '200 OK · 72 ms' : traceSteps[runStep].latency + ' · tracing'}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <svg
               viewBox="0 0 1000 500"
@@ -198,7 +320,8 @@ const SystemArchitecture: React.FC = () => {
               {connections.map((connection) => {
                 const from = nodes.find((node) => node.id === connection.from)!;
                 const to = nodes.find((node) => node.id === connection.to)!;
-                const active = activeId === from.id || activeId === to.id;
+                const selected = activeId === from.id || activeId === to.id;
+                const traversed = traversedConnection(connection.from, connection.to);
 
                 return (
                   <g key={connection.from + '-' + connection.to}>
@@ -207,15 +330,21 @@ const SystemArchitecture: React.FC = () => {
                       y1={from.y}
                       x2={to.x}
                       y2={to.y}
-                      stroke={active ? 'rgba(103,232,249,0.55)' : 'url(#architecture-line)'}
-                      strokeWidth={active ? 2.2 : 1.2}
-                      strokeDasharray={active ? '0' : '7 10'}
+                      stroke={
+                        traversed
+                          ? 'rgba(110,231,183,0.88)'
+                          : selected
+                            ? 'rgba(103,232,249,0.55)'
+                            : 'url(#architecture-line)'
+                      }
+                      strokeWidth={traversed ? 3 : selected ? 2.2 : 1.2}
+                      strokeDasharray={traversed || selected ? '0' : '7 10'}
                       initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: active ? 1 : 0.68 }}
-                      transition={{ duration: 0.8, delay: connection.delay * 0.12 }}
+                      animate={{ pathLength: 1, opacity: traversed || selected ? 1 : 0.68 }}
+                      transition={{ duration: 0.65 }}
                     />
 
-                    {!prefersReducedMotion && (
+                    {!prefersReducedMotion && !isRunning && !runComplete && (
                       <motion.circle
                         r="5"
                         fill="rgba(103,232,249,0.96)"
@@ -242,27 +371,46 @@ const SystemArchitecture: React.FC = () => {
             {nodes.map((node, index) => {
               const Icon = node.icon;
               const active = activeId === node.id;
+              const visited = visitedTraceNode(node.id);
+              const current = isRunning && runStep >= 0 && traceSteps[runStep].node === node.id;
 
               return (
                 <motion.button
                   key={node.id}
                   type="button"
                   aria-pressed={active}
-                  onMouseEnter={() => setActiveId(node.id)}
-                  onFocus={() => setActiveId(node.id)}
-                  onClick={() => setActiveId(node.id)}
+                  onMouseEnter={() => {
+                    if (!isRunning) setActiveId(node.id);
+                  }}
+                  onFocus={() => {
+                    if (!isRunning) setActiveId(node.id);
+                  }}
+                  onClick={() => {
+                    if (!isRunning) setActiveId(node.id);
+                  }}
                   initial={{ opacity: 0, scale: 0.82 }}
-                  animate={{ opacity: 1, scale: active ? 1.055 : 1 }}
+                  animate={{
+                    opacity: 1,
+                    scale: current ? 1.11 : active ? 1.055 : 1,
+                    boxShadow: current
+                      ? '0 0 0 1px rgba(110,231,183,0.45), 0 0 36px rgba(16,185,129,0.2)'
+                      : '0 16px 38px rgba(0,0,0,0.28)'
+                  }}
                   transition={{
                     opacity: { duration: 0.45, delay: 0.18 + index * 0.055 },
-                    scale: { type: 'spring', stiffness: 260, damping: 20 }
+                    scale: { type: 'spring', stiffness: 260, damping: 20 },
+                    boxShadow: { duration: 0.25 }
                   }}
-                  whileHover={prefersReducedMotion ? undefined : { y: -4 }}
+                  whileHover={prefersReducedMotion || isRunning ? undefined : { y: -4 }}
                   className={
-                    'architecture-node absolute z-10 w-[102px] -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border p-2.5 text-left shadow-[0_16px_38px_rgba(0,0,0,0.28)] backdrop-blur-xl transition-colors duration-300 xl:w-[110px] ' +
-                    (active
-                      ? accentClasses[node.accent] + ' architecture-node-active'
-                      : 'border-white/[0.08] bg-[#0b1420]/92 text-slate-400 hover:border-white/15')
+                    'architecture-node absolute z-10 w-[102px] -translate-x-1/2 -translate-y-1/2 rounded-[1rem] border p-2.5 text-left backdrop-blur-xl transition-colors duration-300 xl:w-[110px] ' +
+                    (current
+                      ? 'border-emerald-300/35 bg-emerald-300/[0.1] text-emerald-100'
+                      : visited
+                        ? 'border-emerald-300/18 bg-emerald-300/[0.055] text-slate-300'
+                        : active
+                          ? accentClasses[node.accent] + ' architecture-node-active'
+                          : 'border-white/[0.08] bg-[#0b1420]/92 text-slate-400 hover:border-white/15')
                   }
                   style={{ left: node.x / 10 + '%', top: node.y / 5 + '%' }}
                 >
@@ -285,20 +433,33 @@ const SystemArchitecture: React.FC = () => {
 
           <div className="relative flex min-h-[390px] flex-col bg-black/[0.08] p-4">
             <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-slate-700">
-              Selected node
+              {isRunning || runComplete ? 'Live trace' : 'Selected node'}
             </p>
 
             <AnimatePresence mode="wait">
-              <motion.div
-                key={activeNode.id}
-                initial={{ opacity: 0, x: 10, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
-                transition={{ duration: 0.26 }}
-                className="mt-5"
-              >
-                <NodeDetail node={activeNode} />
-              </motion.div>
+              {isRunning || runComplete ? (
+                <motion.div
+                  key="trace"
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.26 }}
+                  className="mt-4"
+                >
+                  <TracePanel runStep={runStep} runComplete={runComplete} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={activeNode.id}
+                  initial={{ opacity: 0, x: 10, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
+                  transition={{ duration: 0.26 }}
+                  className="mt-5"
+                >
+                  <NodeDetail node={activeNode} />
+                </motion.div>
+              )}
             </AnimatePresence>
 
             <div className="mt-auto border-t border-white/[0.06] pt-4">
@@ -314,21 +475,36 @@ const SystemArchitecture: React.FC = () => {
       </div>
 
       <div className="p-4 sm:hidden">
+        <button
+          type="button"
+          onClick={isRunning ? undefined : runComplete ? resetRun : startRun}
+          disabled={isRunning}
+          className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/15 bg-cyan-300/[0.05] px-4 py-3 text-xs font-semibold text-cyan-100"
+        >
+          {isRunning ? <LoaderCircle size={14} className="animate-spin" /> : runComplete ? <RotateCcw size={14} /> : <Play size={14} />}
+          {isRunning ? 'Running request…' : runComplete ? 'Reset trace' : 'Run request'}
+        </button>
+
         <div className="grid gap-2">
           {nodes.map((node) => {
             const Icon = node.icon;
             const active = activeId === node.id;
+            const visited = visitedTraceNode(node.id);
 
             return (
               <button
                 key={node.id}
                 type="button"
-                onClick={() => setActiveId(node.id)}
+                onClick={() => {
+                  if (!isRunning) setActiveId(node.id);
+                }}
                 className={
                   'flex items-center gap-3 rounded-xl border p-3 text-left transition ' +
-                  (active
-                    ? accentClasses[node.accent]
-                    : 'border-white/[0.07] bg-white/[0.025] text-slate-400')
+                  (visited
+                    ? 'border-emerald-300/18 bg-emerald-300/[0.055] text-emerald-100'
+                    : active
+                      ? accentClasses[node.accent]
+                      : 'border-white/[0.07] bg-white/[0.025] text-slate-400')
                 }
               >
                 <Icon size={16} />
@@ -342,10 +518,98 @@ const SystemArchitecture: React.FC = () => {
         </div>
 
         <div className="mt-3 rounded-2xl border border-white/[0.07] bg-black/10 p-4">
-          <NodeDetail node={activeNode} />
+          {isRunning || runComplete ? (
+            <TracePanel runStep={runStep} runComplete={runComplete} />
+          ) : (
+            <NodeDetail node={activeNode} />
+          )}
         </div>
       </div>
     </motion.div>
+  );
+};
+
+const TracePanel: React.FC<{ runStep: number; runComplete: boolean }> = ({ runStep, runComplete }) => {
+  return (
+    <div>
+      <div className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3">
+        <p className="text-[8px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+          Trace ID
+        </p>
+        <p className="mt-1 font-mono text-[9px] text-cyan-300">req_72ms_prod</p>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {traceSteps.map((step, index) => {
+          const complete = index < runStep || runComplete;
+          const current = index === runStep && !runComplete;
+          const waiting = index > runStep && !runComplete;
+
+          return (
+            <motion.div
+              key={step.node}
+              initial={{ opacity: 0.35 }}
+              animate={{ opacity: waiting ? 0.28 : 1 }}
+              className="flex items-start gap-2.5"
+            >
+              <div
+                className={
+                  'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ' +
+                  (complete
+                    ? 'border-emerald-300/20 bg-emerald-300/[0.07] text-emerald-300'
+                    : current
+                      ? 'border-cyan-300/20 bg-cyan-300/[0.07] text-cyan-300'
+                      : 'border-white/[0.07] bg-white/[0.02] text-slate-700')
+                }
+              >
+                {complete ? (
+                  <CheckCircle2 size={10} />
+                ) : current ? (
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-300" />
+                ) : (
+                  <span className="h-1 w-1 rounded-full bg-slate-700" />
+                )}
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-[9px] font-medium text-slate-300">{step.label}</p>
+                  <span className="shrink-0 font-mono text-[8px] text-slate-600">{step.latency}</span>
+                </div>
+                <p
+                  className={
+                    'mt-0.5 text-[7px] font-semibold uppercase tracking-[0.12em] ' +
+                    (complete
+                      ? 'text-emerald-400/70'
+                      : current
+                        ? 'text-cyan-400/70'
+                        : 'text-slate-700')
+                  }
+                >
+                  {step.status}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {runComplete && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 rounded-xl border border-emerald-300/12 bg-emerald-300/[0.045] p-3"
+        >
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={13} className="text-emerald-300" />
+            <p className="text-[9px] font-semibold text-emerald-200">200 OK</p>
+          </div>
+          <p className="mt-1.5 text-[8px] leading-4 text-slate-500">
+            Request completed and telemetry published in 72 ms.
+          </p>
+        </motion.div>
+      )}
+    </div>
   );
 };
 
