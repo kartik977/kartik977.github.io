@@ -7,7 +7,8 @@ import {
   Mail,
   MapPin,
   MessageCircle,
-  Phone
+  Phone,
+  Plane
 } from 'lucide-react';
 
 const Contact: React.FC = () => {
@@ -17,8 +18,8 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       title: 'Email',
-      value: 'katariakartik08@gmail.com',
-      link: 'mailto:katariakartik08@gmail.com'
+      value: 'kartikkataria0697@gmail.com',
+      link: 'mailto:kartikkataria0697@gmail.com'
     },
     {
       icon: Phone,
@@ -30,6 +31,12 @@ const Contact: React.FC = () => {
       icon: MapPin,
       title: 'Location',
       value: 'Dallas, TX',
+      link: null
+    },
+    {
+      icon: Plane,
+      title: 'Mobility',
+      value: 'Open to relocation',
       link: null
     }
   ];
@@ -50,12 +57,12 @@ const Contact: React.FC = () => {
             Let&apos;s connect
           </div>
           <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-            Have a role, project
-            <span className="block text-slate-400">or engineering problem in mind?</span>
+            Backend engineering,
+            <span className="block text-slate-400">cloud systems or AI tooling?</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            I&apos;m always open to a useful conversation about software engineering, backend systems,
-            cloud delivery and new opportunities.
+            I&apos;m open to conversations about software engineering roles, distributed backend systems,
+            cloud-native delivery and developer productivity.
           </p>
         </motion.div>
 
@@ -83,31 +90,15 @@ const Contact: React.FC = () => {
                   </div>
                 );
 
-                return item.link ? (
-                  <a key={item.title} href={item.link}>{content}</a>
-                ) : (
-                  <div key={item.title}>{content}</div>
-                );
+                return item.link ? <a key={item.title} href={item.link}>{content}</a> : <div key={item.title}>{content}</div>;
               })}
             </div>
 
             <div className="mt-6 flex gap-3">
-              <a
-                href="https://github.com/kartik977"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white"
-              >
+              <a href="https://github.com/kartik977" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white">
                 <Github size={19} />
               </a>
-              <a
-                href="https://www.linkedin.com/in/kartikkataria2023/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white"
-              >
+              <a href="https://www.linkedin.com/in/kartikkataria2023/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-400 transition hover:-translate-y-0.5 hover:text-white">
                 <Linkedin size={19} />
               </a>
             </div>
@@ -127,12 +118,9 @@ const Contact: React.FC = () => {
                 The easiest way to reach me is by email.
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400">
-                Tell me a little about the opportunity or problem, and I&apos;ll have the context I need when we connect.
+                Share the role, system or problem you&apos;re working on, and I&apos;ll have the context I need when we connect.
               </p>
-              <a
-                href="mailto:katariakartik08@gmail.com"
-                className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5"
-              >
+              <a href="mailto:kartikkataria0697@gmail.com" className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5">
                 Send an email
                 <ArrowUpRight size={17} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
