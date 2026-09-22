@@ -17,6 +17,7 @@ import Contact from './components/Contact';
 import AIJobHunterCaseStudy from './components/AIJobHunterCaseStudy';
 import GroceryCaseStudy from './components/GroceryCaseStudy';
 import ImageGeneratorCaseStudy from './components/ImageGeneratorCaseStudy';
+import CommandPalette from './components/CommandPalette';
 import './App.css';
 
 const GlobalFX: React.FC = () => {
@@ -97,6 +98,7 @@ function App() {
     <Router>
       <div className="App">
         <GlobalFX />
+        <CommandPalette />
         <Navbar />
         <main>
           <AnimatedRoutes />
