@@ -1,49 +1,50 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
-  BarChart3,
+  Bot,
   Cloud,
   Code2,
   Database,
-  Globe2,
+  Eye,
   Layers3,
-  Wrench
+  Network,
+  TestTube2
 } from 'lucide-react';
 
 const skillCategories = [
   {
-    title: 'Programming Languages',
+    title: 'Languages',
     icon: Code2,
-    skills: ['Python', 'Java', 'JavaScript', 'TypeScript', 'R', 'SQL', 'HTML', 'CSS']
+    skills: ['Java', 'TypeScript', 'JavaScript', 'Python', 'SQL']
   },
   {
-    title: 'Cloud Services',
+    title: 'Frameworks & APIs',
+    icon: Network,
+    skills: ['Spring Boot', 'Node.js', 'NestJS', 'Express.js', 'REST APIs', 'GraphQL', 'React.js', 'Next.js', 'Flask', 'Microservices']
+  },
+  {
+    title: 'Cloud & DevOps',
     icon: Cloud,
-    skills: ['Google Cloud Platform (GCP)', 'Amazon Web Services (AWS)', 'Microsoft Azure']
+    skills: ['AWS Lambda', 'AWS CloudFormation', 'Docker', 'Kubernetes', 'Jenkins', 'GitHub Actions', 'CI/CD']
   },
   {
-    title: 'Databases',
+    title: 'Databases & Messaging',
     icon: Database,
-    skills: ['MS SQL Server', 'MySQL', 'Oracle DB', 'Postgres', 'MongoDB']
+    skills: ['Cassandra', 'PostgreSQL', 'MySQL', 'MongoDB', 'SQL Server', 'Oracle', 'Apache Kafka']
   },
   {
-    title: 'Data Visualization',
-    icon: BarChart3,
-    skills: ['Excel', 'Tableau', 'PowerBI']
+    title: 'Testing & Observability',
+    icon: TestTube2,
+    skills: ['JUnit', 'Rest Assured', 'Karate BDD', 'JMeter', 'k6', 'New Relic', 'Postman']
   },
   {
-    title: 'Web & Frameworks',
-    icon: Globe2,
-    skills: ['React.js', 'Node.js', 'Express.js', 'Flask', 'Django', 'Rest Assured', 'Karate', 'TypeScript', 'GraphQL']
-  },
-  {
-    title: 'Engineering Tooling',
-    icon: Wrench,
-    skills: ['Git', 'Docker', 'Kubernetes', 'Restful API', 'Big Query', 'Pandas', 'Numpy', 'PyTorch', 'CI/CD', 'TensorFlow', 'Jenkins', 'Kafka', 'JMeter', 'K6', 'Junit']
+    title: 'AI & Developer Tools',
+    icon: Bot,
+    skills: ['Claude Code', 'Claude Skills', 'GitHub Copilot', 'OpenAI API', 'Prompt Engineering', 'Agentic AI Workflows']
   }
 ];
 
-const coreStack = ['Java', 'Spring Boot', 'Node.js', 'TypeScript', 'AWS', 'GraphQL', 'REST', 'JMeter'];
+const coreStack = ['Java', 'Spring Boot', 'Node.js', 'TypeScript', 'AWS', 'GraphQL', 'REST APIs', 'New Relic'];
 
 const Skills: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
@@ -64,11 +65,11 @@ const Skills: React.FC = () => {
             Technical stack
           </div>
           <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-            Tools for building,
-            <span className="block text-slate-400">shipping and understanding systems.</span>
+            Backend depth,
+            <span className="block text-slate-400">cloud delivery and AI tooling.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            My stack spans backend development, cloud platforms, testing, data and modern web technologies.
+            The stack from my current resume, organized around how I actually build, ship, test and operate software.
           </p>
         </motion.div>
 
@@ -78,13 +79,16 @@ const Skills: React.FC = () => {
           transition={{ duration: 0.6, delay: 0.12 }}
           className="mx-auto mb-8 flex max-w-5xl flex-wrap justify-center gap-2 rounded-2xl border border-white/[0.065] bg-white/[0.02] p-4 backdrop-blur-xl"
         >
-          {coreStack.map((skill) => (
-            <span
+          {coreStack.map((skill, index) => (
+            <motion.span
               key={skill}
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.16 + index * 0.035 }}
               className="rounded-xl border border-cyan-300/10 bg-cyan-300/[0.04] px-3 py-2 text-xs font-semibold text-cyan-100"
             >
               {skill}
-            </span>
+            </motion.span>
           ))}
         </motion.div>
 
@@ -110,10 +114,7 @@ const Skills: React.FC = () => {
                 <h2 className="mt-5 text-lg font-semibold text-white">{category.title}</h2>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {category.skills.map((skill) => (
-                    <span
-                      key={skill}
-                      className="rounded-lg border border-white/[0.055] bg-white/[0.02] px-2.5 py-1.5 text-[11px] font-medium text-slate-400 transition-colors duration-300 group-hover:text-slate-300"
-                    >
+                    <span key={skill} className="rounded-lg border border-white/[0.055] bg-white/[0.02] px-2.5 py-1.5 text-[11px] font-medium text-slate-400 transition-colors duration-300 group-hover:text-slate-300">
                       {skill}
                     </span>
                   ))}
@@ -122,6 +123,19 @@ const Skills: React.FC = () => {
             );
           })}
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mx-auto mt-10 flex max-w-4xl items-start gap-4 rounded-2xl border border-violet-400/10 bg-violet-400/[0.03] p-5"
+        >
+          <Eye size={18} className="mt-1 shrink-0 text-violet-300" />
+          <p className="text-sm leading-6 text-slate-400">
+            The portfolio intentionally avoids percentage-style skill bars. The stronger signal is where each technology appears in real work:
+            APIs, migrations, deployments, testing, observability, security remediation and production support.
+          </p>
+        </motion.div>
       </div>
     </section>
   );
