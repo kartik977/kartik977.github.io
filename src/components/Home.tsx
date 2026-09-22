@@ -183,7 +183,7 @@ const Home: React.FC = () => {
               transition={{ duration: 0.7, delay: 0.35 }}
               className="mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
             >
-              <Link to="/projects" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(255,255,255,0.14)]">
+              <Link to="/experience" className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(255,255,255,0.14)]">
                 Explore my work
                 <ArrowUpRight size={17} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
