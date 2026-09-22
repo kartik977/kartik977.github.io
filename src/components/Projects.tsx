@@ -11,7 +11,6 @@ import {
   Bot,
   Github,
   Image as ImageIcon,
-  PackageCheck,
   Search,
   ShoppingCart,
   Sparkles,
