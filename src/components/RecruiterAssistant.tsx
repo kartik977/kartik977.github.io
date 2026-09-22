@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   Bot,
-  Code2,
   ExternalLink,
   Send,
   Sparkles,
