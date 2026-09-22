@@ -4,16 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   Bot,
-  BriefcaseBusiness,
-  Cloud,
   Code2,
   ExternalLink,
-  GraduationCap,
-  Mail,
-  MessageCircle,
   Send,
   Sparkles,
-  Wrench,
   X
 } from 'lucide-react';
 
