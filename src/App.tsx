@@ -14,6 +14,7 @@ import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Contact from './components/Contact';
+import AIJobHunterCaseStudy from './components/AIJobHunterCaseStudy';
 import './App.css';
 
 const GlobalFX: React.FC = () => {
@@ -78,6 +79,7 @@ const AnimatedRoutes: React.FC = () => {
           <Route path="/about" element={<About />} />
           <Route path="/experience" element={<Experience />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/ai-job-hunter" element={<AIJobHunterCaseStudy />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
