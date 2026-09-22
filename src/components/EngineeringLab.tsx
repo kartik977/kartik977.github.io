@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   Activity,
-  ArrowRight,
   Bot,
   CheckCircle2,
   CircleDot,
@@ -17,8 +16,7 @@ import {
   Server,
   ShieldCheck,
   Sparkles,
-  TerminalSquare,
-  Wrench
+  TerminalSquare
 } from 'lucide-react';
 
 type StageStatus = 'idle' | 'running' | 'done';
