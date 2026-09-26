@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ChevronRight, Coffee, Map, Play, RotateCcw, X } from 'lucide-react';
+import { ChevronRight, Coffee, Map, RotateCcw, X } from 'lucide-react';
 import './Kartik3DGuide.css';
 
 type TourStop = {
