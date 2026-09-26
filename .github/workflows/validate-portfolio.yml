@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - portfolio-motion-v2
+      - kartik-3d-guide
   workflow_dispatch:
 
 jobs:
