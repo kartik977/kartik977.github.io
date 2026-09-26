@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ChevronRight, Coffee, Map, Play, RotateCcw, X } from 'lucide-react';
+import './Kartik3DGuide.css';
 
 type TourStop = {
   path: string;
@@ -9,6 +10,8 @@ type TourStop = {
   title: string;
   message: string;
 };
+
+const START_TOUR_EVENT = 'portfolio:start-kartik-tour';
 
 const tourStops: TourStop[] = [
   {
@@ -62,7 +65,7 @@ const getStopForPath = (pathname: string) => {
   return tourStops.find((stop) => stop.path === pathname) ?? tourStops[0];
 };
 
-const KartikAvatar: React.FC<{ walking: boolean; compact: boolean; sipping: boolean }> = ({
+export const KartikAvatar: React.FC<{ walking: boolean; compact: boolean; sipping: boolean }> = ({
   walking,
   compact,
   sipping
@@ -184,27 +187,10 @@ const Kartik3DGuide: React.FC = () => {
   const [visible, setVisible] = useState(true);
   const [tourActive, setTourActive] = useState(false);
   const [walking, setWalking] = useState(false);
-  const [welcomeReady, setWelcomeReady] = useState(false);
   const [bubbleOpen, setBubbleOpen] = useState(true);
 
   const currentStop = useMemo(() => getStopForPath(location.pathname), [location.pathname]);
   const currentIndex = tourStops.findIndex((stop) => stop.path === location.pathname);
-  const compact = location.pathname !== '/';
-
-  useEffect(() => {
-    if (location.pathname !== '/') {
-      setWelcomeReady(true);
-      return;
-    }
-
-    const timer = window.setTimeout(() => setWelcomeReady(true), prefersReducedMotion ? 100 : 1850);
-    return () => window.clearTimeout(timer);
-  }, [location.pathname, prefersReducedMotion]);
-
-  useEffect(() => {
-    if (!tourActive) return;
-    setBubbleOpen(true);
-  }, [location.pathname, tourActive]);
 
   const travelTo = (path: string) => {
     setWalking(true);
@@ -223,9 +209,21 @@ const Kartik3DGuide: React.FC = () => {
   };
 
   const startTour = () => {
+    setVisible(true);
     setTourActive(true);
     travelTo('/experience');
   };
+
+  useEffect(() => {
+    const handleStartTour = () => startTour();
+    window.addEventListener(START_TOUR_EVENT, handleStartTour);
+    return () => window.removeEventListener(START_TOUR_EVENT, handleStartTour);
+  });
+
+  useEffect(() => {
+    if (!tourActive) return;
+    setBubbleOpen(true);
+  }, [location.pathname, tourActive]);
 
   const nextStop = () => {
     if (location.pathname.startsWith('/projects/')) {
@@ -242,6 +240,8 @@ const Kartik3DGuide: React.FC = () => {
 
     travelTo(tourStops[index + 1].path);
   };
+
+  if (location.pathname === '/') return null;
 
   if (!visible) {
     return (
@@ -261,9 +261,9 @@ const Kartik3DGuide: React.FC = () => {
   }
 
   return (
-    <div className={'kartik-guide-shell ' + (compact ? 'kartik-guide-shell-compact' : '')}>
+    <div className="kartik-guide-shell kartik-guide-shell-compact">
       <AnimatePresence>
-        {bubbleOpen && welcomeReady && (
+        {bubbleOpen && (
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.96, filter: 'blur(8px)' }}
             animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
@@ -294,17 +294,10 @@ const Kartik3DGuide: React.FC = () => {
             <p className="mt-2.5 text-[11px] leading-5 text-slate-400 sm:text-xs sm:leading-6">{currentStop.message}</p>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              {location.pathname === '/' && !tourActive ? (
-                <button type="button" onClick={startTour} className="kartik-guide-primary-action">
-                  <Play size={12} />
-                  Start walkthrough
-                </button>
-              ) : (
-                <button type="button" onClick={nextStop} className="kartik-guide-primary-action">
-                  {currentIndex >= tourStops.length - 1 ? <RotateCcw size={12} /> : <ChevronRight size={12} />}
-                  {currentIndex >= tourStops.length - 1 ? 'Back to Home' : 'Next stop'}
-                </button>
-              )}
+              <button type="button" onClick={nextStop} className="kartik-guide-primary-action">
+                {currentIndex >= tourStops.length - 1 ? <RotateCcw size={12} /> : <ChevronRight size={12} />}
+                {currentIndex >= tourStops.length - 1 ? 'Back to Home' : 'Next stop'}
+              </button>
 
               <button
                 type="button"
@@ -314,12 +307,6 @@ const Kartik3DGuide: React.FC = () => {
                 Hide guide
               </button>
             </div>
-
-            {location.pathname === '/' && (
-              <p className="mt-3 border-t border-white/[0.055] pt-2.5 text-[8px] leading-4 text-slate-700">
-                Stylized prototype avatar · personalized likeness coming next
-              </p>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -336,7 +323,7 @@ const Kartik3DGuide: React.FC = () => {
         </button>
       )}
 
-      <KartikAvatar walking={walking} compact={compact} sipping={location.pathname === '/' && !walking} />
+      <KartikAvatar walking={walking} compact sipping={false} />
     </div>
   );
 };
