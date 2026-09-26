@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import './KartikWebGLAvatar.css';
 
 type SceneMode = 'hero' | 'guide';
 
@@ -593,7 +594,7 @@ const KartikWebGLAvatar: React.FC<KartikWebGLAvatarProps> = ({
     };
   }, [mode, sipping, walking]);
 
-  return <canvas ref={canvasRef} className={'block h-full w-full ' + className} aria-label="Animated 3D Kartik guide" />;
+  return <canvas ref={canvasRef} className={'kartik-webgl-canvas block h-full w-full ' + className} aria-label="Animated 3D Kartik guide" />;
 };
 
 export default KartikWebGLAvatar;
