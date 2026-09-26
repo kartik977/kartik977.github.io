@@ -1,0 +1,171 @@
+.kartik-webgl-canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  user-select: none;
+  filter: drop-shadow(0 36px 65px rgba(0, 0, 0, 0.34));
+}
+
+.kartik-webgl-canvas-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.kartik-webgl-canvas-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background:
+    radial-gradient(circle at 30% 40%, transparent 0 28%, rgba(5, 10, 18, 0.08) 55%, rgba(5, 10, 18, 0.5) 100%),
+    linear-gradient(180deg, rgba(4, 8, 15, 0.02), rgba(4, 8, 15, 0.18) 62%, rgba(4, 8, 15, 0.68));
+}
+
+.kartik-hero-scene-v2 {
+  transform: translateZ(0);
+}
+
+.kartik-hero-scene-v2::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(125, 211, 252, 0.025),
+    inset 0 -80px 100px rgba(2, 6, 23, 0.3);
+}
+
+.kartik-hero-v2-badge {
+  position: absolute;
+  left: 30px;
+  bottom: 24px;
+  z-index: 14;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(125, 211, 252, 0.09);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(2, 8, 18, 0.58);
+  color: rgba(148, 163, 184, 0.55);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.kartik-hero-v2-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+}
+
+.kartik-hero-orbit-hint {
+  position: absolute;
+  left: 30px;
+  bottom: 57px;
+  z-index: 14;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(100, 116, 139, 0.6);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kartik-hero-dialogue-card-v2 {
+  z-index: 16;
+}
+
+.kartik-guide-webgl-avatar {
+  position: relative;
+  z-index: 3;
+  width: 8.6rem;
+  height: 11.4rem;
+  margin: -0.45rem 0 0 0.45rem;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.kartik-guide-webgl-avatar::before {
+  content: '';
+  position: absolute;
+  inset: 12% 2% 5%;
+  z-index: -2;
+  border-radius: 48% 48% 42% 42%;
+  background:
+    radial-gradient(circle at 50% 32%, rgba(34, 211, 238, 0.08), transparent 45%),
+    linear-gradient(180deg, rgba(9, 18, 33, 0.62), rgba(5, 10, 18, 0.14));
+  filter: blur(0.2px);
+}
+
+.kartik-guide-webgl-ring {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 6%;
+  height: 12%;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 211, 238, 0.16);
+  background: radial-gradient(ellipse, rgba(34, 211, 238, 0.1), transparent 68%);
+  box-shadow: 0 0 30px rgba(34, 211, 238, 0.08);
+  transform: rotateX(64deg);
+  z-index: -1;
+}
+
+.kartik-guide-webgl-label {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  padding: 3px 6px;
+  border: 1px solid rgba(125, 211, 252, 0.08);
+  border-radius: 999px;
+  background: rgba(3, 9, 18, 0.74);
+  color: rgba(103, 232, 249, 0.5);
+  font-size: 5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+}
+
+@media (max-width: 1180px) {
+  .kartik-hero-orbit-hint,
+  .kartik-hero-v2-badge {
+    left: 22px;
+  }
+}
+
+@media (max-width: 720px) {
+  .kartik-hero-orbit-hint,
+  .kartik-hero-v2-badge {
+    display: none;
+  }
+
+  .kartik-webgl-canvas-shell {
+    inset: -10px -45px 90px -45px;
+  }
+
+  .kartik-guide-webgl-avatar {
+    width: 7.4rem;
+    height: 9.8rem;
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kartik-webgl-canvas {
+    pointer-events: none;
+  }
+}
