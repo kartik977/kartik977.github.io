@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ChevronRight, Coffee, Map, RotateCcw, X } from 'lucide-react';
+import KartikWebGLAvatar from './KartikWebGLAvatar';
 import './Kartik3DGuide.css';
 
 type TourStop = {
@@ -65,121 +66,6 @@ const getStopForPath = (pathname: string) => {
   return tourStops.find((stop) => stop.path === pathname) ?? tourStops[0];
 };
 
-export const KartikAvatar: React.FC<{ walking: boolean; compact: boolean; sipping: boolean }> = ({
-  walking,
-  compact,
-  sipping
-}) => {
-  const prefersReducedMotion = useReducedMotion();
-
-  return (
-    <motion.div
-      className={'kartik-avatar-stage ' + (compact ? 'kartik-avatar-compact' : '')}
-      animate={
-        prefersReducedMotion
-          ? undefined
-          : walking
-            ? { x: [0, -14, 14, 0], y: [0, -5, 0] }
-            : { y: [0, -4, 0], rotateY: [-3, 3, -3] }
-      }
-      transition={{ duration: walking ? 0.6 : 4.8, repeat: walking ? 0 : Infinity, ease: 'easeInOut' }}
-      aria-hidden="true"
-    >
-      <div className="kartik-avatar-shadow" />
-      <div className="kartik-avatar-person">
-        <motion.div
-          className="kartik-avatar-head"
-          animate={
-            prefersReducedMotion
-              ? undefined
-              : sipping
-                ? { rotateZ: [0, -5, -5, 0], y: [0, 2, 2, 0] }
-                : { rotateZ: [0, 2, 0, -2, 0] }
-          }
-          transition={{ duration: sipping ? 2.7 : 6, repeat: Infinity, repeatDelay: sipping ? 1.6 : 0 }}
-        >
-          <div className="kartik-avatar-hair" />
-          <div className="kartik-avatar-ear kartik-avatar-ear-left" />
-          <div className="kartik-avatar-ear kartik-avatar-ear-right" />
-          <div className="kartik-avatar-face">
-            <span className="kartik-avatar-brow kartik-avatar-brow-left" />
-            <span className="kartik-avatar-brow kartik-avatar-brow-right" />
-            <span className="kartik-avatar-eye kartik-avatar-eye-left" />
-            <span className="kartik-avatar-eye kartik-avatar-eye-right" />
-            <span className="kartik-avatar-nose" />
-            <span className="kartik-avatar-smile" />
-          </div>
-        </motion.div>
-
-        <div className="kartik-avatar-neck" />
-        <div className="kartik-avatar-torso">
-          <div className="kartik-avatar-shirt-panel" />
-          <div className="kartik-avatar-shirt-line" />
-        </div>
-
-        <motion.div
-          className="kartik-avatar-arm kartik-avatar-arm-left"
-          animate={prefersReducedMotion ? undefined : walking ? { rotateZ: [18, -20, 18] } : { rotateZ: [8, 2, 8] }}
-          transition={{ duration: walking ? 0.5 : 3.8, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="kartik-avatar-hand" />
-        </motion.div>
-
-        <motion.div
-          className="kartik-avatar-arm kartik-avatar-arm-right"
-          animate={
-            prefersReducedMotion
-              ? undefined
-              : sipping
-                ? { rotateZ: [8, -58, -58, 8], x: [0, -9, -9, 0], y: [0, -18, -18, 0] }
-                : walking
-                  ? { rotateZ: [-18, 20, -18] }
-                  : { rotateZ: [6, 10, 6] }
-          }
-          transition={{
-            duration: sipping ? 2.7 : walking ? 0.5 : 3.8,
-            repeat: Infinity,
-            repeatDelay: sipping ? 1.6 : 0,
-            ease: 'easeInOut'
-          }}
-        >
-          <div className="kartik-avatar-hand kartik-avatar-coffee-hand">
-            <div className="kartik-avatar-mug">
-              <span className="kartik-avatar-mug-handle" />
-              <motion.span
-                className="kartik-avatar-steam kartik-avatar-steam-one"
-                animate={prefersReducedMotion ? undefined : { y: [0, -12], x: [0, 3, -2], opacity: [0, 0.72, 0] }}
-                transition={{ duration: 1.7, repeat: Infinity }}
-              />
-              <motion.span
-                className="kartik-avatar-steam kartik-avatar-steam-two"
-                animate={prefersReducedMotion ? undefined : { y: [0, -14], x: [0, -2, 2], opacity: [0, 0.55, 0] }}
-                transition={{ duration: 1.9, repeat: Infinity, delay: 0.45 }}
-              />
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="kartik-avatar-hips" />
-        <motion.div
-          className="kartik-avatar-leg kartik-avatar-leg-left"
-          animate={prefersReducedMotion ? undefined : walking ? { rotateZ: [-17, 18, -17] } : { rotateZ: 0 }}
-          transition={{ duration: 0.5, repeat: walking ? Infinity : 0, ease: 'easeInOut' }}
-        >
-          <div className="kartik-avatar-shoe" />
-        </motion.div>
-        <motion.div
-          className="kartik-avatar-leg kartik-avatar-leg-right"
-          animate={prefersReducedMotion ? undefined : walking ? { rotateZ: [17, -18, 17] } : { rotateZ: 0 }}
-          transition={{ duration: 0.5, repeat: walking ? Infinity : 0, ease: 'easeInOut' }}
-        >
-          <div className="kartik-avatar-shoe" />
-        </motion.div>
-      </div>
-    </motion.div>
-  );
-};
-
 const Kartik3DGuide: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -192,37 +78,39 @@ const Kartik3DGuide: React.FC = () => {
   const currentStop = useMemo(() => getStopForPath(location.pathname), [location.pathname]);
   const currentIndex = tourStops.findIndex((stop) => stop.path === location.pathname);
 
-  const travelTo = (path: string) => {
-    setWalking(true);
-    setBubbleOpen(false);
+  const travelTo = useCallback(
+    (path: string) => {
+      setWalking(true);
+      setBubbleOpen(false);
 
-    window.setTimeout(
-      () => {
-        navigate(path);
-        window.setTimeout(() => {
-          setWalking(false);
-          setBubbleOpen(true);
-        }, prefersReducedMotion ? 40 : 420);
-      },
-      prefersReducedMotion ? 40 : 520
-    );
-  };
+      window.setTimeout(
+        () => {
+          navigate(path);
+          window.setTimeout(() => {
+            setWalking(false);
+            setBubbleOpen(true);
+          }, prefersReducedMotion ? 40 : 420);
+        },
+        prefersReducedMotion ? 40 : 520
+      );
+    },
+    [navigate, prefersReducedMotion]
+  );
 
-  const startTour = () => {
+  const startTour = useCallback(() => {
     setVisible(true);
     setTourActive(true);
     travelTo('/experience');
-  };
+  }, [travelTo]);
 
   useEffect(() => {
     const handleStartTour = () => startTour();
     window.addEventListener(START_TOUR_EVENT, handleStartTour);
     return () => window.removeEventListener(START_TOUR_EVENT, handleStartTour);
-  });
+  }, [startTour]);
 
   useEffect(() => {
-    if (!tourActive) return;
-    setBubbleOpen(true);
+    if (tourActive) setBubbleOpen(true);
   }, [location.pathname, tourActive]);
 
   const nextStop = () => {
@@ -279,7 +167,9 @@ const Kartik3DGuide: React.FC = () => {
                     {currentStop.eyebrow}
                   </p>
                 </div>
-                <h3 className="mt-2 text-sm font-semibold tracking-tight text-white sm:text-base">{currentStop.title}</h3>
+                <h3 className="mt-2 text-sm font-semibold tracking-tight text-white sm:text-base">
+                  {currentStop.title}
+                </h3>
               </div>
               <button
                 type="button"
@@ -291,7 +181,9 @@ const Kartik3DGuide: React.FC = () => {
               </button>
             </div>
 
-            <p className="mt-2.5 text-[11px] leading-5 text-slate-400 sm:text-xs sm:leading-6">{currentStop.message}</p>
+            <p className="mt-2.5 text-[11px] leading-5 text-slate-400 sm:text-xs sm:leading-6">
+              {currentStop.message}
+            </p>
 
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <button type="button" onClick={nextStop} className="kartik-guide-primary-action">
@@ -323,7 +215,15 @@ const Kartik3DGuide: React.FC = () => {
         </button>
       )}
 
-      <KartikAvatar walking={walking} compact sipping={false} />
+      <motion.div
+        className="kartik-guide-webgl-avatar"
+        animate={walking && !prefersReducedMotion ? { x: [0, 16, -8, 0], y: [0, -4, 0] } : undefined}
+        transition={{ duration: 0.62, ease: 'easeInOut' }}
+      >
+        <div className="kartik-guide-webgl-ring" aria-hidden="true" />
+        <KartikWebGLAvatar mode="guide" walking={walking} sipping={false} />
+        <div className="kartik-guide-webgl-label">WEBGL GUIDE</div>
+      </motion.div>
     </div>
   );
 };
