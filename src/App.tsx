@@ -20,6 +20,8 @@ import ImageGeneratorCaseStudy from './components/ImageGeneratorCaseStudy';
 import CommandPalette from './components/CommandPalette';
 import EngineeringLab from './components/EngineeringLab';
 import RecruiterAssistant from './components/RecruiterAssistant';
+import Kartik3DGuide from './components/Kartik3DGuide';
+import './components/Kartik3DGuide.css';
 import './App.css';
 
 const GlobalFX: React.FC = () => {
@@ -102,6 +104,7 @@ function App() {
       <div className="App">
         <GlobalFX />
         <CommandPalette />
+        <Kartik3DGuide />
         <RecruiterAssistant />
         <Navbar />
         <main>
