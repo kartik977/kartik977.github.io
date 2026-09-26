@@ -1,59 +1,50 @@
 import React from 'react';
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, Coffee, Cpu, Play, Sparkles } from 'lucide-react';
-import { KartikAvatar } from './Kartik3DGuide';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Coffee, Cpu, MousePointer2, Play, Sparkles } from 'lucide-react';
+import KartikWebGLAvatar from './KartikWebGLAvatar';
 import './KartikHeroScene.css';
 
 const START_TOUR_EVENT = 'portfolio:start-kartik-tour';
 
 const KartikHeroScene: React.FC = () => {
   const prefersReducedMotion = useReducedMotion();
-  const pointerX = useMotionValue(0);
-  const pointerY = useMotionValue(0);
-  const smoothX = useSpring(pointerX, { stiffness: 110, damping: 18, mass: 0.5 });
-  const smoothY = useSpring(pointerY, { stiffness: 110, damping: 18, mass: 0.5 });
-
-  const sceneRotateY = useTransform(smoothX, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [-5, 5]);
-  const sceneRotateX = useTransform(smoothY, [-0.5, 0.5], prefersReducedMotion ? [0, 0] : [4, -4]);
-  const glowX = useTransform(smoothX, [-0.5, 0.5], ['28%', '72%']);
-  const glowY = useTransform(smoothY, [-0.5, 0.5], ['32%', '68%']);
-
-  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    pointerX.set((event.clientX - rect.left) / rect.width - 0.5);
-    pointerY.set((event.clientY - rect.top) / rect.height - 0.5);
-  };
-
-  const resetPointer = () => {
-    pointerX.set(0);
-    pointerY.set(0);
-  };
 
   const startTour = () => {
     window.dispatchEvent(new Event(START_TOUR_EVENT));
   };
 
   return (
-    <div
-      className="kartik-hero-scene-wrap"
-      onPointerMove={handlePointerMove}
-      onPointerLeave={resetPointer}
-    >
+    <div className="kartik-hero-scene-wrap">
       <motion.div
         className="kartik-hero-scene-glow"
-        style={{ left: glowX, top: glowY }}
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : {
+                x: [0, 70, -30, 0],
+                y: [0, -45, 25, 0],
+                scale: [1, 1.12, 0.94, 1]
+              }
+        }
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
         aria-hidden="true"
       />
 
-      <motion.div
-        className="kartik-hero-scene"
-        style={{ rotateX: sceneRotateX, rotateY: sceneRotateY }}
-      >
+      <div className="kartik-hero-scene kartik-hero-scene-v2">
         <div className="kartik-hero-window" aria-hidden="true">
           <span className="kartik-hero-city-dot kartik-hero-city-dot-1" />
           <span className="kartik-hero-city-dot kartik-hero-city-dot-2" />
           <span className="kartik-hero-city-dot kartik-hero-city-dot-3" />
           <span className="kartik-hero-city-line" />
+        </div>
+
+        <div className="kartik-webgl-canvas-shell">
+          <KartikWebGLAvatar mode="hero" walking={false} sipping={!prefersReducedMotion} />
+        </div>
+
+        <div className="kartik-hero-v2-badge" aria-hidden="true">
+          <span className="kartik-hero-v2-dot" />
+          WebGL character runtime
         </div>
 
         <div className="kartik-hero-ambient-panel kartik-hero-ambient-panel-left" aria-hidden="true">
@@ -85,44 +76,16 @@ const KartikHeroScene: React.FC = () => {
           <span className="ml-2 text-emerald-300">72 ms</span>
         </motion.div>
 
-        <div className="kartik-hero-character-zone">
-          <div className="kartik-hero-chair" aria-hidden="true">
-            <div className="kartik-hero-chair-back" />
-            <div className="kartik-hero-chair-seat" />
-          </div>
-
-          <div className="kartik-hero-character-scale">
-            <KartikAvatar walking={false} compact={false} sipping />
-          </div>
-        </div>
-
-        <div className="kartik-hero-desk" aria-hidden="true">
-          <div className="kartik-hero-desk-edge" />
-          <div className="kartik-hero-laptop">
-            <div className="kartik-hero-laptop-screen">
-              <div className="kartik-hero-laptop-topbar">
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className="kartik-hero-terminal-line kartik-hero-terminal-line-1" />
-              <div className="kartik-hero-terminal-line kartik-hero-terminal-line-2" />
-              <div className="kartik-hero-terminal-line kartik-hero-terminal-line-3" />
-              <div className="kartik-hero-terminal-status">
-                <span>deploy</span>
-                <strong>healthy</strong>
-              </div>
-            </div>
-            <div className="kartik-hero-laptop-base" />
-          </div>
-          <div className="kartik-hero-desk-light" />
+        <div className="kartik-hero-orbit-hint" aria-hidden="true">
+          <MousePointer2 size={11} />
+          Move cursor to orbit
         </div>
 
         <motion.div
-          className="kartik-hero-dialogue-card"
+          className="kartik-hero-dialogue-card kartik-hero-dialogue-card-v2"
           initial={{ opacity: 0, y: 18, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.65, delay: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.65, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="flex items-center gap-2">
             <Coffee size={13} className="text-cyan-300" />
@@ -135,7 +98,8 @@ const KartikHeroScene: React.FC = () => {
             Hey — I’m Kartik.
           </h2>
           <p className="mt-3 max-w-md text-xs leading-6 text-slate-400 sm:text-sm">
-            I’ll walk you through the production systems, projects and engineering decisions behind my work.
+            This version is actually rendered in 3D. Move around the scene, then I’ll walk you through the systems,
+            projects and engineering decisions behind my work.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -151,12 +115,12 @@ const KartikHeroScene: React.FC = () => {
 
           <div className="mt-4 flex items-center gap-2 border-t border-white/[0.055] pt-3 text-[8px] font-semibold uppercase tracking-[0.13em] text-slate-700">
             <Sparkles size={10} className="text-violet-300/60" />
-            stage 1 · stylized 3D guide prototype
+            v2 · real meshes · lighting · camera depth
           </div>
         </motion.div>
 
         <div className="kartik-hero-floor-glow" aria-hidden="true" />
-      </motion.div>
+      </div>
     </div>
   );
 };
