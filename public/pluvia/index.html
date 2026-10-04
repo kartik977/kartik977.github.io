@@ -71,27 +71,43 @@
         </div>
       </div>
 
-      <aside class="weather-card glass reveal reveal-delay" aria-live="polite">
-        <div class="weather-top">
-          <div>
-            <span class="tiny-label">NOW EXPERIENCING</span>
-            <h2 id="selectedCity">Tokyo</h2>
+      <div class="hero-stack reveal reveal-delay">
+        <aside class="weather-card glass" aria-live="polite">
+          <div class="weather-top">
+            <div>
+              <span class="tiny-label">NOW EXPERIENCING</span>
+              <h2 id="selectedCity">Tokyo</h2>
+            </div>
+            <span class="weather-icon" id="weatherIcon">☂</span>
           </div>
-          <span class="weather-icon" id="weatherIcon">☂</span>
-        </div>
-        <div class="weather-main">
-          <strong id="selectedTemp">—°</strong>
-          <div>
-            <span id="selectedCondition">Reading the sky…</span>
-            <small><b id="selectedRain">—</b> mm rain · <b id="selectedWind">—</b> km/h wind</small>
+          <div class="weather-main">
+            <strong id="selectedTemp">—°</strong>
+            <div>
+              <span id="selectedCondition">Reading the sky…</span>
+              <small><b id="selectedRain">—</b> mm rain · <b id="selectedWind">—</b> km/h wind</small>
+            </div>
           </div>
-        </div>
-        <div class="weather-line"><span id="weatherLineFill"></span></div>
-        <div class="weather-meta">
-          <span>LIVE SIGNAL</span>
-          <span id="selectedTime">SYNCING</span>
-        </div>
-      </aside>
+          <div class="weather-line"><span id="weatherLineFill"></span></div>
+          <div class="weather-meta">
+            <span>LIVE SIGNAL</span>
+            <span id="selectedTime">SYNCING</span>
+          </div>
+        </aside>
+
+        <article class="scene-card glass" aria-live="polite">
+          <img class="scene-image" id="sceneImage" src="" alt="Tokyo city scene" />
+          <div class="scene-overlay">
+            <span class="tiny-label">CITY FRAME</span>
+            <div class="scene-caption">
+              <div>
+                <h3 id="sceneCity">Tokyo</h3>
+                <p id="sceneTagline">Neon reflections and midnight crossings.</p>
+              </div>
+              <span class="scene-badge" id="sceneBadge">JAPAN / RAIN</span>
+            </div>
+          </div>
+        </article>
+      </div>
 
       <div class="scroll-cue" aria-hidden="true">
         <span></span>
@@ -105,7 +121,7 @@
           <span class="kicker">01 / LIVE RAIN</span>
           <h2>Choose a sky.</h2>
         </div>
-        <p>Live precipitation signals refresh from Open-Meteo. Pick a city and Pluvia reshapes the atmosphere around it.</p>
+        <p>Live precipitation signals refresh from Open-Meteo. Pick a city and Pluvia reshapes the atmosphere around it — now with a visual city frame too.</p>
       </div>
 
       <div class="city-grid" id="cityGrid" aria-live="polite">
@@ -178,7 +194,7 @@
     <section class="closing">
       <div class="closing-inner reveal">
         <span class="brand-drop large"></span>
-        <span class="kicker">PLUVIA / 01</span>
+        <span class="kicker">PLUVIA / 02</span>
         <h2>Don't check the rain.<br/><em>Enter it.</em></h2>
         <a href="#top">Back to the clouds ↑</a>
       </div>
@@ -193,5 +209,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="./app.js"></script>
+  <script src="./v2.js"></script>
 </body>
 </html>
