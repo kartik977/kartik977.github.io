@@ -186,12 +186,12 @@
   let startY = null;
   let suppressNextClick = false;
   window.addEventListener('pointerdown', event => {
-    if (!isImmersive() || event.target.closest?.('.immersive-music-btn')) return;
+    if (!isImmersive() || event.target.closest?.('.immersive-music-btn,.soundscape-panel')) return;
     startX = event.clientX;
     startY = event.clientY;
   }, true);
   window.addEventListener('pointerup', event => {
-    if (!isImmersive() || startX == null || startY == null) return;
+    if (!isImmersive() || event.target.closest?.('.soundscape-panel') || startX == null || startY == null) return;
     const dx = event.clientX - startX;
     const dy = event.clientY - startY;
     startX = startY = null;
@@ -214,7 +214,7 @@
   // Trackpad horizontal swipe.
   let wheelCooldown = false;
   window.addEventListener('wheel', event => {
-    if (!isImmersive() || wheelCooldown) return;
+    if (!isImmersive() || wheelCooldown || event.target.closest?.('.soundscape-panel')) return;
     if (Math.abs(event.deltaX) < 55 || Math.abs(event.deltaX) < Math.abs(event.deltaY) * 1.2) return;
     event.preventDefault();
     wheelCooldown = true;
