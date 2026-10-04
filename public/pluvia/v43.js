@@ -155,7 +155,13 @@
     }
 
     if (!document.body.classList.contains('pluvia-city-immersive')) return;
+
+    // The visible immersive button internally clicks the hidden Pluvia Radio toggle.
+    // Those synthetic radio clicks must be allowed to reach the radio handlers without
+    // being interpreted as a request to exit immersive city mode.
     if (event.target.closest('.immersive-music-btn')) return;
+    if (!event.isTrusted && event.target.closest('.pluvia-radio, #radioToggle, #radioNext')) return;
+
     exitImmersive();
   }, true);
 
@@ -191,5 +197,5 @@
   });
 
   const version = document.querySelector('.closing .kicker');
-  if (version) version.textContent = 'PLUVIA / 04.3';
+  if (version) version.textContent = 'PLUVIA / 04.3.1';
 })();
