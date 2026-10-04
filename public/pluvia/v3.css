@@ -47,3 +47,36 @@ main,.topbar,footer{z-index:7!important}
 @media(max-width:900px){.globe-wrap{height:540px!important}.globe-3d-shell{width:min(86vw,520px);height:min(86vw,520px);min-width:0;min-height:0;margin:auto}.world-section{overflow:hidden}.globe-drag-pill{display:none}}
 @media(max-width:600px){.globe-wrap{height:430px!important}.globe-3d-shell{width:92vw;height:92vw}.globe-hud-top{top:6px;left:6px;right:6px}.globe-city-readout{bottom:4px}.weather-card,.scene-card{backdrop-filter:blur(15px)!important}}
 @media(prefers-reduced-motion:reduce){body:before,.scene-card:before{animation:none!important}}
+
+/* PLUVIA 4.1 — hardened interface layering + music-reactive room */
+html,body{min-height:100%;background:#03080c}
+body{position:relative!important;isolation:isolate!important}
+.pluvia-window{z-index:0!important;pointer-events:none!important}
+body:before,body:after{z-index:1!important;pointer-events:none!important}
+.ambient,.cloud,.skyline{z-index:2!important;pointer-events:none!important}
+#stormCanvas{z-index:3!important;pointer-events:none!important}
+#rainCanvas{z-index:4!important;pointer-events:none!important}
+#fogCanvas{z-index:5!important;pointer-events:none!important}
+.lightning{z-index:6!important;pointer-events:none!important}
+.window-hud{z-index:12!important}
+main{position:relative!important;z-index:30!important;isolation:isolate!important;visibility:visible!important;opacity:1!important}
+.topbar{position:relative!important;z-index:70!important;visibility:visible!important;opacity:1!important}
+footer{position:relative!important;z-index:30!important;visibility:visible!important;opacity:1!important}
+.hero,.section,.closing{position:relative!important;z-index:31!important}
+.hero-copy,.hero-stack,.section-heading,.city-grid,.world-copy,.globe-wrap,.mixer,.closing-inner{position:relative!important;z-index:32!important}
+.weather-card,.scene-card,.city-card,.mixer,.globe-3d-shell{position:relative;z-index:33}
+.pluvia-radio{z-index:90!important}
+.toast{z-index:100!important}
+/* Make sure WebKit never leaves reveal content behind a newly composited fixed layer. */
+.reveal{opacity:1!important;transform:none!important;visibility:visible!important}
+/* Music-reactive glass/room light using the radio's actual playing state. */
+body:has(.pluvia-radio.playing):before{opacity:1;filter:blur(18px) brightness(1.16);animation-duration:14s}
+body:has(.pluvia-radio.playing) .window-reflection{animation:reflectionMusicPulse 5.8s ease-in-out infinite}
+body:has(.pluvia-radio.playing) .window-picture.current{animation:windowMusicBreath 7s ease-in-out infinite}
+body:has(.pluvia-radio.playing) #rainCanvas{filter:drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 13%,transparent))}
+body:has(.pluvia-radio.playing) .weather-card,
+body:has(.pluvia-radio.playing) .scene-card{box-shadow:0 32px 95px rgba(0,0,0,.44),0 0 55px color-mix(in srgb,var(--accent) 8%,transparent),inset 0 1px rgba(255,255,255,.06)!important}
+@keyframes reflectionMusicPulse{0%,100%{opacity:.2}50%{opacity:.38}}
+@keyframes windowMusicBreath{0%,100%{filter:brightness(.45) saturate(.82) contrast(1.08) blur(.35px);transform:scale(1.035)}50%{filter:brightness(.53) saturate(.92) contrast(1.06) blur(.2px);transform:scale(1.049)}}
+@media(max-width:700px){.window-hud{z-index:11!important}.pluvia-radio{z-index:95!important}}
+@media(prefers-reduced-motion:reduce){body:has(.pluvia-radio.playing) .window-reflection,body:has(.pluvia-radio.playing) .window-picture.current{animation:none!important}}
