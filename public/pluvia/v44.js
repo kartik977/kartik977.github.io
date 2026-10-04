@@ -44,6 +44,7 @@
   const audio = new Audio();
   audio.preload = 'none';
   audio.crossOrigin = 'anonymous';
+  audio.volume = .72;
 
   let cityId = 'tokyo';
   let trackIndex = -1;
@@ -51,6 +52,11 @@
   function selectedId(){
     const name = selectedCity?.textContent?.trim().toLowerCase();
     return cityNameToId[name] || cityId;
+  }
+
+  function currentTrack(){
+    const list = catalog[cityId] || [];
+    return list[trackIndex] || null;
   }
 
   function chooseTrack(id, preservePlayback = false){
@@ -78,6 +84,18 @@
     button.classList.toggle('is-playing', playing);
     button.setAttribute('aria-label', playing ? 'Pause city rain music' : 'Play city rain music');
   }
+
+  window.PluviaImmersiveMusic = {
+    audio,
+    setVolume(value){ audio.volume = Math.max(0, Math.min(1, Number(value) || 0)); },
+    getVolume(){ return audio.volume; },
+    getTrack(){ return currentTrack(); },
+    getCity(){ return cityId; },
+    isPlaying(){ return !audio.paused && !audio.ended; },
+    play(){ return audio.play(); },
+    pause(){ audio.pause(); },
+    chooseTrack
+  };
 
   // Capture on the button itself so this handler runs before the older v4.3 bubble handler.
   // stopImmediatePropagation prevents that older handler from clicking the hidden radio control.
