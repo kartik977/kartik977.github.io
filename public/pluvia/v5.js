@@ -302,16 +302,19 @@
   window.addEventListener('deviceorientation',e=>{
     if(typeof e.gamma==='number'&&typeof e.beta==='number') setParallax(e.gamma/22,(e.beta-45)/28);
   },{passive:true});
-  function animateParallax(){
+  let parallaxLast=0;
+  function animateParallax(ts=0){
+    requestAnimationFrame(animateParallax);
+    if(document.hidden||ts-parallaxLast<33)return;
+    parallaxLast=ts;
     currentX+=(targetX-currentX)*.055;
     currentY+=(targetY-currentY)*.055;
     if(windowLayer){
       windowLayer.style.setProperty('--parallax-x',`${currentX.toFixed(2)}px`);
       windowLayer.style.setProperty('--parallax-y',`${currentY.toFixed(2)}px`);
     }
-    requestAnimationFrame(animateParallax);
   }
-  animateParallax();
+  requestAnimationFrame(animateParallax);
 
   // Lightning now illuminates the landmark/window rather than only flashing the page.
   let flashTimer=null;
