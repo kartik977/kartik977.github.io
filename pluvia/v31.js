@@ -65,7 +65,7 @@
     .window-sill:after{content:"";position:absolute;left:8%;right:8%;top:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(170,211,235,.12),transparent)}
 
     .window-droplets{position:absolute;inset:0;opacity:.75;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
-    .window-drop{position:absolute;width:var(--s);height:calc(var(--s)*1.32);left:var(--x);top:var(--y);border-radius:55% 48% 60% 44%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.38),rgba(183,215,232,.08) 40%,rgba(4,16,23,.08) 70%);border:1px solid rgba(220,239,249,.12);backdrop-filter:blur(.7px);transform:rotate(var(--r))}
+    .window-drop{position:absolute;width:var(--s);height:calc(var(--s)*1.32);left:var(--x);top:var(--y);border-radius:55% 48% 60% 44%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.38),rgba(183,215,232,.08) 40%,rgba(4,16,23,.08) 70%);border:1px solid rgba(220,239,249,.12);transform:rotate(var(--r))}
     .window-drop:after{content:"";position:absolute;width:1px;height:var(--tail);left:50%;top:90%;background:linear-gradient(rgba(211,232,243,.2),transparent);opacity:.55}
 
     .window-hud{position:fixed;z-index:5;left:24px;bottom:calc(7vh + 24px);display:flex;align-items:flex-end;gap:16px;pointer-events:auto;color:#dce7ed;text-shadow:0 2px 12px rgba(0,0,0,.8)}
