@@ -17,7 +17,7 @@
   const load = () => {
     if (loaded) return;
     loaded = true;
-    import('./v3.js').catch(() => {
+    import('./v3.js?v=perf3').catch(() => {
       document.documentElement.classList.add('pluvia-lite-world');
       if (pill) pill.textContent = 'PLUVIA 6.0 · LIGHTWEIGHT WORLD';
     });
