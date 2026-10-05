@@ -43,8 +43,8 @@
         inset 1px 1px 3px rgba(255,255,255,.22),
         0 3px 6px rgba(0,0,0,.34),
         0 0 8px rgba(207,236,249,.08);
-      animation:v501GlassFall var(--duration) cubic-bezier(.37,.02,.52,1) var(--delay) infinite;
-      will-change:transform,opacity;
+      animation:none;
+      will-change:auto;
     }
     .v501-glass-drop:before{
       content:"";
@@ -71,6 +71,8 @@
     }
     body.pluvia-city-immersive .v501-glass-drop{
       filter:drop-shadow(0 2px 3px rgba(0,0,0,.42));
+      animation:v501GlassFall var(--duration) cubic-bezier(.37,.02,.52,1) var(--delay) infinite;
+      will-change:transform,opacity;
     }
 
     .immersive-nav-zone{
