@@ -44,6 +44,123 @@
   const rainCanvas = $('#rainCanvas');
   const ctx = rainCanvas.getContext('2d', {alpha:true});
 
+  // PLUVIA 7.1 — Rain Passport
+  const passportMeta = {
+    tokyo:{code:'TYO · JP',mark:'東京'},
+    london:{code:'LON · UK',mark:'LON'},
+    mumbai:{code:'BOM · IN',mark:'मुं'},
+    seattle:{code:'SEA · US',mark:'SEA'},
+    singapore:{code:'SIN · SG',mark:'SG'},
+    saopaulo:{code:'SAO · BR',mark:'SP'}
+  };
+
+  let visited = new Set();
+  try {
+    const saved = JSON.parse(localStorage.getItem('pluvia-v71-passport') || '[]');
+    if (Array.isArray(saved)) visited = new Set(saved.filter(id => cities[id]));
+  } catch (_) {}
+
+  let pendingStamp = null;
+  let passportToastTimer = null;
+
+  const passportBtn = document.createElement('button');
+  passportBtn.className = 'pill passport-pill';
+  passportBtn.type = 'button';
+  passportBtn.innerHTML = '<span>Rain Passport</span><span class="passport-count" id="passportButtonCount">0 / 6 skies</span>';
+  document.querySelector('.actions')?.appendChild(passportBtn);
+
+  const passportScrim = document.createElement('div');
+  passportScrim.className = 'passport-scrim';
+
+  const passportPanel = document.createElement('section');
+  passportPanel.className = 'passport-panel';
+  passportPanel.setAttribute('role','dialog');
+  passportPanel.setAttribute('aria-modal','true');
+  passportPanel.setAttribute('aria-label','Pluvia Rain Passport');
+  passportPanel.innerHTML = '<div class="passport-head">'+
+    '<div><span class="micro">PLUVIA / 07.1 · RAIN PASSPORT</span><h3>Skies you\'ve experienced.</h3><p>Every city you enter leaves a rain stamp behind. Complete the six-city collection to earn the World of Rain mark.</p></div>'+
+    '<button class="passport-close" type="button" aria-label="Close passport">×</button></div>'+
+    '<div class="passport-progress"><div class="passport-progress-track"><i id="passportProgressFill"></i></div><strong id="passportProgressText">0 / 6 skies experienced</strong></div>'+
+    '<div class="passport-grid" id="passportGrid"></div>'+
+    '<div class="passport-complete" id="passportComplete"><div><span>COLLECTION COMPLETE</span><strong>World of Rain</strong></div><span>06 / 06 · ALL SKIES STAMPED</span></div>';
+  document.body.append(passportScrim, passportPanel);
+
+  const passportToast = document.createElement('div');
+  passportToast.className = 'passport-toast';
+  document.body.appendChild(passportToast);
+
+  const passportGrid = passportPanel.querySelector('#passportGrid');
+  const passportProgressFill = passportPanel.querySelector('#passportProgressFill');
+  const passportProgressText = passportPanel.querySelector('#passportProgressText');
+  const passportComplete = passportPanel.querySelector('#passportComplete');
+  const passportButtonCount = passportBtn.querySelector('#passportButtonCount');
+
+  function persistPassport(){
+    try { localStorage.setItem('pluvia-v71-passport', JSON.stringify([...visited])); } catch (_) {}
+  }
+
+  function renderPassport(){
+    const count = visited.size;
+    passportButtonCount.textContent = count + ' / ' + order.length + ' skies';
+    passportProgressText.textContent = count + ' / ' + order.length + ' skies experienced';
+    passportProgressFill.style.width = ((count / order.length) * 100) + '%';
+    passportComplete.classList.toggle('show', count === order.length);
+    passportGrid.innerHTML = order.map(id => {
+      const c = cities[id];
+      const meta = passportMeta[id];
+      const unlocked = visited.has(id);
+      return '<button class="passport-stamp '+(unlocked?'visited':'locked')+'" data-passport-city="'+id+'" type="button" '+(unlocked?'':'disabled')+'>'+
+        '<div class="stamp-top"><span class="stamp-code">'+meta.code+'</span><span class="stamp-mark">'+meta.mark+'</span></div>'+
+        '<strong>'+c.name+'</strong><small>'+c.landmark+' · '+c.country+'</small>'+
+        '<span class="stamp-status">'+(unlocked?'Stamped · enter again':'Locked · visit to unlock')+'</span></button>';
+    }).join('');
+  }
+
+  function openPassport(){
+    if (body.classList.contains('immersive')) return;
+    renderPassport();
+    passportScrim.classList.add('open');
+    passportPanel.classList.add('open');
+    body.style.overflow = 'hidden';
+  }
+
+  function closePassport(){
+    passportScrim.classList.remove('open');
+    passportPanel.classList.remove('open');
+    if (!body.classList.contains('immersive')) body.style.overflow = '';
+  }
+
+  function showPassportToast(message){
+    if (body.classList.contains('immersive')) return;
+    passportToast.textContent = message;
+    passportToast.classList.remove('show');
+    void passportToast.offsetWidth;
+    passportToast.classList.add('show');
+    clearTimeout(passportToastTimer);
+    passportToastTimer = setTimeout(() => passportToast.classList.remove('show'), 3000);
+  }
+
+  function earnStamp(id){
+    if (!cities[id] || visited.has(id)) return;
+    visited.add(id);
+    persistPassport();
+    renderPassport();
+    pendingStamp = cities[id].name;
+  }
+
+  passportBtn.addEventListener('click', openPassport);
+  passportScrim.addEventListener('click', closePassport);
+  passportPanel.querySelector('.passport-close').addEventListener('click', closePassport);
+  passportGrid.addEventListener('click', event => {
+    const stamp = event.target.closest('[data-passport-city]');
+    if (!stamp || !visited.has(stamp.dataset.passportCity)) return;
+    const id = stamp.dataset.passportCity;
+    closePassport();
+    selectCity(id,{enter:true});
+  });
+
+  renderPassport();
+
   let active = 'tokyo';
   let weather = null;
   let env = localStorage.getItem('pluvia-v7-env') || 'cafe';
@@ -122,7 +239,7 @@
     body.dataset.phase=phaseFor(c.tz);
     chooseTrack();
     fetchWeather(id);
-    if(enter) enterImmersive();
+    if(enter){ earnStamp(id); enterImmersive(); }
     const next=order[(order.indexOf(id)+1)%order.length];
     const p=new Image(); p.src=cities[next].image;
   }
@@ -157,6 +274,13 @@
   function exitImmersive(){
     body.classList.remove('immersive');
     soundPanel.classList.remove('open');
+    body.style.overflow = '';
+    if (pendingStamp){
+      const name = pendingStamp;
+      pendingStamp = null;
+      const allDone = visited.size === order.length;
+      showPassportToast(allDone ? 'World of Rain complete · 6 / 6 skies' : name + ' stamped in your Rain Passport');
+    }
   }
 
   const audio = new Audio();
@@ -282,7 +406,10 @@
   },true);
 
   window.addEventListener('keydown',e=>{
-    if(!body.classList.contains('immersive')) return;
+    if (!body.classList.contains('immersive')) {
+      if (e.key === 'Escape' && passportPanel.classList.contains('open')) closePassport();
+      return;
+    }
     if(e.key==='Escape') exitImmersive();
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       const i=order.indexOf(active);
