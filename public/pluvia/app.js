@@ -157,7 +157,9 @@
   let drops = [];
   let vw = innerWidth;
   let vh = innerHeight;
-  let dpr = Math.min(devicePixelRatio || 1, 2);
+  let dpr = Math.min(devicePixelRatio || 1, matchMedia('(max-width:760px)').matches ? 1 : 1.5);
+  let rainLast = 0;
+  let fogLast = 0;
 
   class Drop {
     constructor(randomY = true) { this.reset(randomY); }
@@ -177,7 +179,7 @@
   }
 
   function resizeCanvases() {
-    vw = innerWidth; vh = innerHeight; dpr = Math.min(devicePixelRatio || 1, 2);
+    vw = innerWidth; vh = innerHeight; dpr = Math.min(devicePixelRatio || 1, matchMedia('(max-width:760px)').matches ? 1 : 1.5);
     [els.rainCanvas, els.fogCanvas].forEach((canvas) => {
       canvas.width = Math.floor(vw * dpr);
       canvas.height = Math.floor(vh * dpr);
@@ -190,11 +192,15 @@
   }
 
   function buildDrops() {
-    const count = Math.round(90 + rainStrength * 300);
+    const mobile = matchMedia('(max-width:760px)').matches;
+    const count = Math.round((mobile ? 48 : 68) + rainStrength * (mobile ? 105 : 155));
     drops = Array.from({ length: count }, () => new Drop(true));
   }
 
-  function animateRain() {
+  function animateRain(ts = 0) {
+    requestAnimationFrame(animateRain);
+    if (document.hidden || ts - rainLast < 33) return;
+    rainLast = ts;
     rctx.clearRect(0, 0, vw, vh);
     rctx.lineWidth = 1;
     for (const d of drops) {
@@ -206,7 +212,6 @@
       rctx.strokeStyle = `rgba(197,225,242,${d.opacity})`;
       rctx.stroke();
     }
-    requestAnimationFrame(animateRain);
   }
 
   const fctx = els.fogCanvas.getContext("2d");
@@ -238,7 +243,10 @@
     fctx.restore();
   }
 
-  function refog() {
+  function refog(ts = 0) {
+    requestAnimationFrame(refog);
+    if (document.hidden || ts - fogLast < 100) return;
+    fogLast = ts;
     if (fogStrength > 0.02) {
       fctx.save();
       fctx.globalCompositeOperation = "source-over";
@@ -246,7 +254,6 @@
       fctx.fillRect(0, 0, vw, vh);
       fctx.restore();
     }
-    requestAnimationFrame(refog);
   }
 
   window.addEventListener("pointermove", (e) => wipeFog(e.clientX, e.clientY), { passive: true });
@@ -386,8 +393,8 @@
   updateRainControl();
   updateWindControl();
   updateFogControl();
-  animateRain();
-  refog();
+  requestAnimationFrame(animateRain);
+  requestAnimationFrame(refog);
   scheduleLightning();
   loadCities();
 })();
