@@ -1,4 +1,3 @@
-import './v31.js';
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
 const cityData={
@@ -10,21 +9,8 @@ const cityData={
   saopaulo:{name:'São Paulo',country:'BRAZIL',lat:-23.5505,lon:-46.6333}
 };
 
-// ---------- richer storm background ----------
-const stormCanvas=document.createElement('canvas');
-stormCanvas.id='stormCanvas';stormCanvas.setAttribute('aria-hidden','true');document.body.appendChild(stormCanvas);
-const sctx=stormCanvas.getContext('2d');
-let sw=innerWidth,sh=innerHeight,sdpr=Math.min(devicePixelRatio||1,1.5),stormDrops=[],ripples=[],stormLast=0;
-function stormResize(){sw=innerWidth;sh=innerHeight;sdpr=Math.min(devicePixelRatio||1,1.5);stormCanvas.width=Math.floor(sw*sdpr);stormCanvas.height=Math.floor(sh*sdpr);stormCanvas.style.width=`${sw}px`;stormCanvas.style.height=`${sh}px`;sctx.setTransform(sdpr,0,0,sdpr,0,0);buildStorm()}
-function buildStorm(){const n=Math.max(32,Math.round(sw/26));stormDrops=Array.from({length:n},()=>({x:Math.random()*sw,y:Math.random()*sh,l:30+Math.random()*70,v:8+Math.random()*13,a:.035+Math.random()*.08,w:.7+Math.random()*1.4}))}
-function drawStorm(ts=0){requestAnimationFrame(drawStorm);if(document.hidden)return;if(ts-stormLast<33)return;stormLast=ts;sctx.clearRect(0,0,sw,sh);const rainRange=document.querySelector('#rainRange');const strength=rainRange?Number(rainRange.value)/100:.72;
-  for(const d of stormDrops){d.y+=d.v*(.42+strength);d.x+=1.4*strength;if(d.y>sh+80){d.y=-100-Math.random()*180;d.x=Math.random()*sw}if(d.x>sw+100)d.x=-80;sctx.beginPath();sctx.moveTo(d.x,d.y);sctx.lineTo(d.x+8+strength*9,d.y+d.l);sctx.strokeStyle=`rgba(190,225,243,${d.a*strength})`;sctx.lineWidth=d.w;sctx.stroke();}
-  if(Math.random()<.055*strength)ripples.push({x:Math.random()*sw,y:sh*(.77+Math.random()*.2),r:4,a:.16+Math.random()*.12});
-  ripples=ripples.filter(p=>p.a>.006&&p.r<85);for(const p of ripples){p.r+=1.15+strength;p.a*=.965;sctx.beginPath();sctx.ellipse(p.x,p.y,p.r,p.r*.23,0,0,Math.PI*2);sctx.strokeStyle=`rgba(174,218,240,${p.a})`;sctx.lineWidth=.8;sctx.stroke();}
-}
-window.addEventListener('resize',stormResize);window.addEventListener('pointermove',e=>{document.body.style.setProperty('--mx',`${(e.clientX/innerWidth)*100}%`);document.body.style.setProperty('--my',`${(e.clientY/innerHeight)*100}%`)},{passive:true});stormResize();requestAnimationFrame(drawStorm);
+// ---------- lazy 3D globe enhancement ----------
 
-// ---------- interactive 3D globe ----------
 const wrap=document.querySelector('.globe-wrap');
 if(wrap){
   const shell=document.createElement('div');shell.className='globe-3d-shell';shell.innerHTML=`<canvas id="globe3dCanvas" aria-label="Interactive 3D rain globe"></canvas><div class="globe-hud"><div class="globe-hud-top"><span class="globe-live-pill">WORLD RAIN SIGNAL</span><span class="globe-drag-pill">DRAG TO ROTATE · CLICK A LIGHT</span></div><div class="globe-city-readout"><b id="globeCityName">Tokyo</b><span id="globeCityMeta">JAPAN · SELECTED SKY</span></div></div>`;wrap.appendChild(shell);
