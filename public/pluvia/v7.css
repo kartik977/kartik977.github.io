@@ -155,3 +155,56 @@ body.immersive .glass-mist{opacity:.26}
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{animation:none!important;transition:none!important}
 }
+
+
+/* PLUVIA 7.1 — Rain Passport */
+.passport-pill .passport-count{font:700 8px/1 "Manrope",sans-serif;letter-spacing:.12em;color:#7892a0;text-transform:uppercase}
+.passport-scrim{position:fixed;inset:0;z-index:90;background:rgba(1,6,10,.72);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility 0s linear .22s}
+.passport-scrim.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .22s ease}
+.passport-panel{position:fixed;z-index:91;left:50%;top:50%;width:min(820px,calc(100vw - 32px));max-height:min(760px,calc(100svh - 32px));overflow:auto;transform:translate(-50%,-47%) scale(.98);opacity:0;visibility:hidden;pointer-events:none;border:1px solid rgba(226,243,251,.13);border-radius:28px;background:#071219;box-shadow:0 36px 120px rgba(0,0,0,.58);transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s}
+.passport-panel.open{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,-50%) scale(1);transition:opacity .22s ease,transform .22s ease}
+.passport-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;padding:25px 26px 19px;border-bottom:1px solid rgba(255,255,255,.075)}
+.passport-head h3{margin:7px 0 0;font:600 clamp(30px,5vw,52px)/.95 "Playfair Display",serif;letter-spacing:-.045em}
+.passport-head p{max-width:500px;margin:11px 0 0;color:#8399a6;font-size:11px;line-height:1.6}
+.passport-close{width:42px;height:42px;flex:0 0 42px;border-radius:50%;border:1px solid rgba(255,255,255,.1);background:#0b1820;color:#edf6fa;cursor:pointer;font-size:20px}
+.passport-progress{padding:16px 26px;border-bottom:1px solid rgba(255,255,255,.065);display:flex;align-items:center;gap:14px}
+.passport-progress-track{height:4px;flex:1;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.passport-progress-track i{display:block;height:100%;width:0;background:linear-gradient(90deg,#73c6f0,#d8f2ff);border-radius:inherit;transition:width .35s ease}
+.passport-progress strong{font:700 9px/1 "Manrope",sans-serif;letter-spacing:.13em;color:#91a8b5;text-transform:uppercase;white-space:nowrap}
+.passport-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px 20px}
+.passport-stamp{position:relative;min-height:190px;padding:18px;border:1px solid rgba(225,242,250,.09);border-radius:22px;background:#09151d;overflow:hidden;text-align:left;color:#edf6fa;cursor:pointer;transition:transform .2s ease,border-color .2s ease,opacity .2s ease}
+.passport-stamp:hover{transform:translateY(-2px);border-color:rgba(225,242,250,.2)}
+.passport-stamp.locked{opacity:.34;cursor:default;filter:grayscale(.6)}
+.passport-stamp.locked:hover{transform:none;border-color:rgba(225,242,250,.09)}
+.passport-stamp:before{content:"";position:absolute;inset:13px;border:1px dashed rgba(215,238,248,.16);border-radius:50% 46% 53% 48%;transform:rotate(-4deg);pointer-events:none}
+.passport-stamp:after{content:"";position:absolute;width:86px;height:86px;right:-15px;top:-18px;border:1px solid rgba(220,241,250,.10);border-radius:50%;box-shadow:0 0 0 7px rgba(220,241,250,.025),0 0 0 14px rgba(220,241,250,.015);pointer-events:none}
+.stamp-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.stamp-code{font:700 9px/1 "Manrope",sans-serif;letter-spacing:.18em;color:#7893a2;text-transform:uppercase}
+.stamp-mark{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;border:1px solid rgba(226,243,251,.16);font:600 18px/1 "Playfair Display",serif;transform:rotate(7deg);background:rgba(255,255,255,.025)}
+.passport-stamp strong{position:relative;display:block;margin-top:34px;font:600 25px/1 "Playfair Display",serif}
+.passport-stamp small{position:relative;display:block;margin-top:7px;color:#718b99;font:700 7px/1.35 "Manrope",sans-serif;letter-spacing:.13em;text-transform:uppercase}
+.passport-stamp .stamp-status{position:absolute;right:16px;bottom:15px;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.14em;color:#6f8997;text-transform:uppercase}
+.passport-stamp.visited .stamp-status{color:#b8ddec}
+.passport-stamp[data-passport-city="tokyo"]{background:radial-gradient(circle at 72% 18%,rgba(190,63,77,.12),transparent 38%),#09141c}
+.passport-stamp[data-passport-city="tokyo"] .stamp-mark{border-color:rgba(219,104,113,.28);color:#e4a0a6}
+.passport-stamp[data-passport-city="mumbai"]{background:radial-gradient(circle at 72% 18%,rgba(236,167,79,.11),transparent 38%),#0b151b}
+.passport-stamp[data-passport-city="mumbai"] .stamp-mark{border-color:rgba(237,180,100,.28);color:#e8c28d}
+.passport-stamp[data-passport-city="london"]{background:radial-gradient(circle at 72% 18%,rgba(109,139,174,.14),transparent 38%),#09131b}
+.passport-stamp[data-passport-city="london"] .stamp-mark{border-color:rgba(135,163,196,.28);color:#b8d0e5}
+.passport-stamp[data-passport-city="seattle"]{background:radial-gradient(circle at 72% 18%,rgba(88,163,159,.12),transparent 38%),#08151a}
+.passport-stamp[data-passport-city="seattle"] .stamp-mark{border-color:rgba(106,181,176,.26);color:#a9d9d4}
+.passport-stamp[data-passport-city="singapore"]{background:radial-gradient(circle at 72% 18%,rgba(169,99,190,.12),transparent 38%),#0b131d}
+.passport-stamp[data-passport-city="singapore"] .stamp-mark{border-color:rgba(184,122,202,.28);color:#d3ace0}
+.passport-stamp[data-passport-city="saopaulo"]{background:radial-gradient(circle at 72% 18%,rgba(95,167,109,.12),transparent 38%),#09161b}
+.passport-stamp[data-passport-city="saopaulo"] .stamp-mark{border-color:rgba(113,184,126,.28);color:#b2dcb9}
+.passport-complete{margin:0 20px 22px;padding:17px 18px;border:1px solid rgba(150,215,246,.15);border-radius:18px;background:linear-gradient(90deg,rgba(92,181,225,.08),rgba(255,255,255,.02));display:none;align-items:center;justify-content:space-between;gap:14px}
+.passport-complete.show{display:flex}
+.passport-complete strong{font:600 20px/1 "Playfair Display",serif}.passport-complete span{color:#7992a0;font:700 8px/1 "Manrope",sans-serif;letter-spacing:.13em;text-transform:uppercase}
+.passport-toast{position:fixed;z-index:95;left:50%;bottom:26px;transform:translate(-50%,12px);padding:11px 15px;border:1px solid rgba(225,242,250,.13);border-radius:999px;background:#07131a;color:#bcd6e2;font:700 8px/1 "Manrope",sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:0;pointer-events:none;transition:.25s ease}
+.passport-toast.show{opacity:1;transform:translate(-50%,0)}
+body.immersive .passport-panel,body.immersive .passport-scrim,body.immersive .passport-toast{display:none!important}
+@media(max-width:700px){
+  .passport-grid{grid-template-columns:1fr 1fr;padding:14px}.passport-stamp{min-height:164px;padding:15px}
+  .passport-stamp strong{margin-top:25px;font-size:21px}.passport-head{padding:20px 18px 16px}.passport-progress{padding:14px 18px}.passport-complete{margin:0 14px 16px}
+}
+@media(max-width:460px){.passport-grid{grid-template-columns:1fr}.passport-stamp{min-height:142px}}
