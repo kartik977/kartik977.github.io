@@ -105,6 +105,7 @@
 
     @media(max-width:700px){
       .immersive-nav-zone{width:22vw}
+      .window-drop:nth-of-type(n+17),.living-streak:nth-of-type(n+11),.v501-glass-drop:nth-of-type(n+13){display:none!important}
       .v501-glass-drop{border-color:rgba(238,249,255,.36)}
     }
     @media(prefers-reduced-motion:reduce){
@@ -115,7 +116,8 @@
 
   const dropletLayer = document.querySelector('.window-droplets');
   if (dropletLayer) {
-    for (let i = 0; i < 30; i++) {
+    const extraDropCount = matchMedia('(max-width:700px)').matches ? 12 : 20;
+    for (let i = 0; i < extraDropCount; i++) {
       const drop = document.createElement('i');
       drop.className = 'v501-glass-drop';
       const size = 7 + Math.random() * 17;
