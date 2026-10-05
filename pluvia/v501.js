@@ -18,6 +18,8 @@
         inset -2px -3px 5px rgba(6,17,24,.22),
         inset 1px 1px 3px rgba(255,255,255,.2),
         0 2px 5px rgba(0,0,0,.28)!important;
+      backdrop-filter:blur(1.4px)!important;
+      -webkit-backdrop-filter:blur(1.4px)!important;
     }
     .window-drop:after{
       width:1.5px!important;
@@ -43,6 +45,8 @@
         inset 1px 1px 3px rgba(255,255,255,.22),
         0 3px 6px rgba(0,0,0,.34),
         0 0 8px rgba(207,236,249,.08);
+      backdrop-filter:blur(1.8px);
+      -webkit-backdrop-filter:blur(1.8px);
       animation:v501GlassFall var(--duration) cubic-bezier(.37,.02,.52,1) var(--delay) infinite;
       will-change:transform,opacity;
     }
