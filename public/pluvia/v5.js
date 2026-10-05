@@ -47,7 +47,8 @@
       will-change:transform;
     }
 
-    .window-drop{
+    .window-drop{animation:none;will-change:auto}
+    body.pluvia-city-immersive .window-drop{
       animation:livingDrop var(--fall-duration,11s) linear var(--fall-delay,0s) infinite;
       will-change:transform,opacity;
     }
@@ -64,10 +65,11 @@
       background:linear-gradient(to bottom,rgba(230,245,252,.04),rgba(218,239,249,.32),rgba(218,239,249,0));
       box-shadow:0 0 6px rgba(185,223,241,.08);
       transform:rotate(var(--sr));
-      animation:livingStreak var(--sd) linear var(--sdelay) infinite;
-      will-change:transform,opacity;
+      animation:none;
+      will-change:auto;
     }
 
+    body.pluvia-city-immersive .living-streak{animation:livingStreak var(--sd) linear var(--sdelay) infinite;will-change:transform,opacity}
     .living-glass-bloom{
       position:absolute;
       inset:0;
@@ -305,7 +307,7 @@
   let parallaxLast=0;
   function animateParallax(ts=0){
     requestAnimationFrame(animateParallax);
-    if(document.hidden||ts-parallaxLast<33)return;
+    if(document.hidden||!document.body.classList.contains('pluvia-city-immersive')||ts-parallaxLast<50)return;
     parallaxLast=ts;
     currentX+=(targetX-currentX)*.055;
     currentY+=(targetY-currentY)*.055;
