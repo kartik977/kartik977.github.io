@@ -277,6 +277,48 @@
     cities[id].songs.push(...citySongExtras[id].map(([title,artist])=>[title,artist,null]));
   });
 
+
+  // PLUVIA 8.0 — City Views
+  const commonsView=(file,pos='50% 50%',label='City view')=>({
+    src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(file)+'?width=1600',
+    pos,label
+  });
+  const cityViews = {
+    tokyo:[
+      {src:cities.tokyo.image,pos:cities.tokyo.pos,label:'Tokyo Tower'},
+      commonsView('Shibuya crossing at night, Tokyo, Japan.jpg','50% 52%','Shibuya Crossing'),
+      commonsView('Shinjuku at night, August 2019.jpg','50% 50%','Shinjuku'),
+      commonsView('Rainbow Bridge, Tokyo at Night.jpg','50% 54%','Rainbow Bridge')
+    ],
+    mumbai:[
+      {src:cities.mumbai.image,pos:cities.mumbai.pos,label:'Gateway of India'},
+      commonsView('Marine Drive of Mumbai.jpg','50% 56%','Marine Drive'),
+      commonsView('Bandra Worli Sea Link at night.jpg','50% 50%','Bandra–Worli Sea Link'),
+      commonsView('Chhatrapati Shivaji Maharaj Terminus at night, Mumbai, Maharashtra, India (2013) 1.jpg','50% 52%','CST')
+    ],
+    london:[
+      {src:cities.london.image,pos:cities.london.pos,label:'Big Ben'},
+      commonsView('TowerBridge at night.jpg','50% 52%','Tower Bridge'),
+      commonsView('Piccadilly Circus at night.jpg','50% 50%','Piccadilly Circus'),
+      commonsView('London Eye at night.jpg','50% 50%','London Eye')
+    ],
+    newyork:[
+      {src:cities.newyork.image,pos:cities.newyork.pos,label:'Empire State Building'},
+      commonsView('Brooklyn Bridge night view.jpg','50% 52%','Brooklyn Bridge'),
+      commonsView('Times Square at night, NYC, USA.jpg','50% 50%','Times Square'),
+      commonsView('Manhattan skyline at night.jpg','50% 52%','Manhattan Skyline')
+    ],
+    paris:[
+      {src:cities.paris.image,pos:cities.paris.pos,label:'Eiffel Tower'},
+      commonsView('La Seine a nuit.jpg','50% 54%','The Seine'),
+      commonsView('Arc de Triomphe at night.jpg','50% 50%','Arc de Triomphe'),
+      commonsView('Palais du Louvre nuit.JPG','50% 52%','Palais du Louvre')
+    ]
+  };
+  Object.keys(cities).forEach(id=>{
+    if(!cityViews[id])cityViews[id]=[{src:cities[id].image,pos:cities[id].pos,label:cities[id].landmark}];
+  });
+
   const order = Object.keys(cities);
 
   const citySoul = {
@@ -304,6 +346,19 @@
   const $ = s => document.querySelector(s);
   const body = document.body;
   const img = $('#cityPhoto');
+  img.classList.add('active-view');
+  const imgAlt=img.cloneNode(false);
+  imgAlt.removeAttribute('id');
+  imgAlt.classList.remove('active-view','is-switching');
+  imgAlt.classList.add('city-photo-alt');
+  img.insertAdjacentElement('afterend',imgAlt);
+  const photoLayers=[img,imgAlt];
+  let activePhotoLayer=0;
+  let currentView=null;
+  let currentViewIndex=0;
+  let viewTimer=null;
+  let viewSwapSeq=0;
+
   const selectedCity = $('#selectedCity');
   const selectedTemp = $('#selectedTemp');
   const selectedCondition = $('#selectedCondition');
@@ -546,6 +601,87 @@
     }
   }
 
+
+
+  function cityViewList(id=active){
+    return cityViews[id]||[{src:cities[id].image,pos:cities[id].pos,label:cities[id].landmark}];
+  }
+
+  function pickEntryView(id){
+    const list=cityViewList(id);
+    return Math.floor(Math.random()*list.length);
+  }
+
+  function preloadView(view){
+    return new Promise(resolve=>{
+      const pre=new Image();
+      pre.onload=()=>resolve(true);
+      pre.onerror=()=>resolve(false);
+      pre.src=view.src;
+    });
+  }
+
+  function applyCityView(index,{immediate=false}={}){
+    const list=cityViewList(active);
+    if(!list.length)return;
+    index=((index%list.length)+list.length)%list.length;
+    const view=list[index];
+    const seq=++viewSwapSeq;
+    const targetIndex=immediate?activePhotoLayer:1-activePhotoLayer;
+    const target=photoLayers[targetIndex];
+    const previous=photoLayers[activePhotoLayer];
+
+    const commit=()=>{
+      if(seq!==viewSwapSeq)return;
+      target.src=view.src;
+      target.style.objectPosition=view.pos||'50% 50%';
+      target.dataset.viewLabel=view.label||'City view';
+      target.classList.add('active-view');
+
+      if(immediate){
+        const other=photoLayers[1-targetIndex];
+        other.classList.remove('active-view');
+        other.removeAttribute('src');
+      }else{
+        previous.classList.remove('active-view');
+      }
+
+      activePhotoLayer=targetIndex;
+      currentViewIndex=index;
+      currentView=view;
+
+      const next=list[(index+1)%list.length];
+      if(next&&next!==view){const p=new Image();p.src=next.src;}
+    };
+
+    if(immediate){
+      commit();
+    }else{
+      preloadView(view).then(ok=>{
+        if(seq!==viewSwapSeq)return;
+        if(ok)commit();
+        else scheduleViewRotation(false);
+      });
+    }
+  }
+
+  function rotateCityView(){
+    if(!body.classList.contains('immersive')||document.hidden)return scheduleViewRotation(false);
+    const list=cityViewList(active);
+    if(list.length<2)return;
+    let next=currentViewIndex;
+    while(next===currentViewIndex)next=Math.floor(Math.random()*list.length);
+    applyCityView(next);
+    scheduleViewRotation(false);
+  }
+
+  function scheduleViewRotation(first=false){
+    clearTimeout(viewTimer);
+    viewTimer=null;
+    if(!body.classList.contains('immersive')||cityViewList(active).length<2)return;
+    const delay=first?11000+Math.random()*3000:13000+Math.random()*5000;
+    viewTimer=setTimeout(rotateCityView,delay);
+  }
 
   const weatherPanel = document.querySelector('.weather');
   const rainStoryBtn = document.createElement('button');
@@ -1141,8 +1277,9 @@
       condition:weather?weatherText(weather.code):'Live weather syncing',
       envKey:env,
       environment:environmentLabels[env]||env,
-      image:c.image,
-      imagePos:c.pos||'50% 50%',
+      image:currentView?.src||c.image,
+      imagePos:currentView?.pos||c.pos||'50% 50%',
+      viewLabel:currentView?.label||c.landmark,
       accent:soul.accent,
       accent2:soul.accent2,
       phase:phaseFor(c.tz),
@@ -1643,15 +1780,17 @@
     const c=cities[id];
     const cinematic=enter&&!matchMedia('(prefers-reduced-motion:reduce)').matches;
     const seq=++transitionSeq;
+    const entryViewIndex=pickEntryView(id);
+    const entryView=cityViews[id][entryViewIndex];
 
     if(cinematic) beginPassage(id);
 
-    img.classList.add('is-switching');
     const preload=new Image();
 
     const commit=()=>{
       if(seq!==transitionSeq) return;
 
+      clearTimeout(viewTimer);viewTimer=null;
       active=id;
       applyCityTheme(id);
       rainStory.classList.remove('show');
@@ -1660,8 +1799,15 @@
       rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
       weather=null;
 
-      img.src=c.image;
-      img.style.objectPosition=c.pos;
+      currentViewIndex=entryViewIndex;
+      currentView=entryView;
+      const layer=photoLayers[activePhotoLayer];
+      layer.src=entryView.src;
+      layer.style.objectPosition=entryView.pos||c.pos;
+      layer.dataset.viewLabel=entryView.label||c.landmark;
+      layer.classList.add('active-view');
+      photoLayers[1-activePhotoLayer].classList.remove('active-view');
+
       selectedCity.textContent=c.name;
       selectedTime.textContent=localTime(c.tz)+' local';
       body.dataset.phase=phaseFor(c.tz);
@@ -1673,10 +1819,9 @@
         earnStamp(id);
       }
 
-      setTimeout(()=>img.classList.remove('is-switching'),30);
-
-      const next=order[(order.indexOf(id)+1)%order.length];
-      const p=new Image(); p.src=cities[next].image;
+      const nextCity=order[(order.indexOf(id)+1)%order.length];
+      const nextViews=cityViews[nextCity];
+      if(nextViews?.length){const p=new Image();p.src=nextViews[0].src;}
 
       if(cinematic){
         setTimeout(()=>revealPassage(seq),260);
@@ -1687,7 +1832,7 @@
 
     preload.onload=commit;
     preload.onerror=commit;
-    preload.src=c.image;
+    preload.src=entryView.src;
   }
 
   cityGrid.addEventListener('click',e=>{
@@ -1724,8 +1869,10 @@
     soundPanel.classList.remove('open');
     resizeRain();
     scheduleEnvironmentBehavior(true);
+    scheduleViewRotation(true);
   }
   function exitImmersive(){
+    clearTimeout(viewTimer);viewTimer=null;
     stopEnvironmentBehavior();
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
