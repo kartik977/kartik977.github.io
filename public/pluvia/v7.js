@@ -105,6 +105,9 @@
     drop.style.setProperty('--gd',duration+'s');
     drop.style.setProperty('--gdelay',delay+'s');
     drop.style.setProperty('--gdrift',drift+'px');
+    drop.style.setProperty('--gdrift1',(drift*.2)+'px');
+    drop.style.setProperty('--gdrift2',(drift*.48)+'px');
+    drop.style.setProperty('--gdrift3',(drift*.75)+'px');
     drop.style.setProperty('--gtrail',trail+'px');
     livingGlass.appendChild(drop);
   }
