@@ -102,6 +102,7 @@
     const trail=20+Math.random()*48;
     drop.style.setProperty('--gx',x+'vw');
     drop.style.setProperty('--gs',size+'px');
+    drop.style.setProperty('--gsh',(size*1.22)+'px');
     drop.style.setProperty('--gd',duration+'s');
     drop.style.setProperty('--gdelay',delay+'s');
     drop.style.setProperty('--gdrift',drift+'px');
@@ -122,7 +123,7 @@
   let fogW=0,fogH=0,fogScale=1;
   let refogTimer=null,refogSteps=0;
   let lastWipePaint=0;
-  let wipePointer=null;
+  let wipeTrail=[];
 
   function paintFogBase(alpha=.12){
     if(!fogW||!fogH) return;
@@ -162,6 +163,20 @@
     paintFogBase(.26);
   }
 
+  function paintFogSpot(x,y,radius,alpha=.02){
+    fogCtx.save();
+    fogCtx.globalCompositeOperation='source-over';
+    const rg=fogCtx.createRadialGradient(x,y,0,x,y,radius*1.14);
+    rg.addColorStop(0,'rgba(220,236,243,'+alpha+')');
+    rg.addColorStop(.68,'rgba(205,225,234,'+(alpha*.74)+')');
+    rg.addColorStop(1,'rgba(205,225,234,0)');
+    fogCtx.fillStyle=rg;
+    fogCtx.beginPath();
+    fogCtx.arc(x,y,radius*1.14,0,Math.PI*2);
+    fogCtx.fill();
+    fogCtx.restore();
+  }
+
   function wipeCondensation(clientX,clientY){
     if(!body.classList.contains('immersive')) return;
     if(body.classList.contains('memory-open')||focusPanel?.classList.contains('open')) return;
@@ -185,22 +200,25 @@
     fogCtx.fill();
     fogCtx.restore();
 
+    wipeTrail.push({x,y,r:radius});
+    if(wipeTrail.length>28) wipeTrail.shift();
     refogSteps=0;
-    clearInterval(refogTimer);
-    refogTimer=setInterval(()=>{
-      if(!body.classList.contains('immersive')){
-        clearInterval(refogTimer);refogTimer=null;return;
-      }
-      paintFogBase(.018);
-      refogSteps++;
-      if(refogSteps>=22){
-        clearInterval(refogTimer);refogTimer=null;
-      }
-    },240);
+    if(!refogTimer){
+      refogTimer=setInterval(()=>{
+        if(!body.classList.contains('immersive')){
+          clearInterval(refogTimer);refogTimer=null;wipeTrail=[];return;
+        }
+        wipeTrail.forEach(point=>paintFogSpot(point.x,point.y,point.r,.018));
+        refogSteps++;
+        if(refogSteps>=22){
+          clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
+        }
+      },240);
+    }
   }
 
   function resetGlassFog(){
-    clearInterval(refogTimer);refogTimer=null;refogSteps=0;
+    clearInterval(refogTimer);refogTimer=null;refogSteps=0;wipeTrail=[];
     fogCtx.clearRect(0,0,fogW,fogH);
     paintFogBase(.26);
   }
@@ -1114,7 +1132,7 @@
     resizeRain();
   }
   function exitImmersive(){
-    clearInterval(refogTimer);refogTimer=null;
+    clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive');
     soundPanel.classList.remove('open');
@@ -1252,7 +1270,6 @@
     if(!body.classList.contains('immersive')) return;
     if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
-    wipePointer={x:e.clientX,y:e.clientY};
     holdShown=false;
     if(focusSession) return;
     holdTimer=setTimeout(()=>{
