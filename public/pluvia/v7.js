@@ -84,6 +84,128 @@
   const rainCanvas = $('#rainCanvas');
   const ctx = rainCanvas.getContext('2d', {alpha:true});
 
+
+  // PLUVIA 7.6 — Living Glass
+  const livingGlass=document.createElement('div');
+  livingGlass.className='living-glass-layer';
+  livingGlass.setAttribute('aria-hidden','true');
+
+  const glassDropCount=matchMedia('(max-width:700px)').matches?7:10;
+  for(let i=0;i<glassDropCount;i++){
+    const drop=document.createElement('i');
+    drop.className='living-glass-drop'+(i%3===0?' merge-drop':'');
+    const x=7+Math.random()*86;
+    const size=7+Math.random()*8;
+    const duration=12+Math.random()*15;
+    const delay=-(Math.random()*duration);
+    const drift=-7+Math.random()*14;
+    const trail=20+Math.random()*48;
+    drop.style.setProperty('--gx',x+'vw');
+    drop.style.setProperty('--gs',size+'px');
+    drop.style.setProperty('--gd',duration+'s');
+    drop.style.setProperty('--gdelay',delay+'s');
+    drop.style.setProperty('--gdrift',drift+'px');
+    drop.style.setProperty('--gtrail',trail+'px');
+    livingGlass.appendChild(drop);
+  }
+
+  const condensation=document.createElement('canvas');
+  condensation.className='glass-condensation';
+  condensation.setAttribute('aria-hidden','true');
+  const fogCtx=condensation.getContext('2d',{alpha:true});
+
+  document.body.append(livingGlass,condensation);
+
+  let fogW=0,fogH=0,fogScale=1;
+  let refogTimer=null,refogSteps=0;
+  let lastWipePaint=0;
+  let wipePointer=null;
+
+  function paintFogBase(alpha=.12){
+    if(!fogW||!fogH) return;
+    fogCtx.save();
+    fogCtx.globalCompositeOperation='source-over';
+    const g=fogCtx.createLinearGradient(0,0,fogW,fogH);
+    g.addColorStop(0,'rgba(220,235,242,'+(alpha*.82)+')');
+    g.addColorStop(.48,'rgba(185,206,216,'+(alpha*.42)+')');
+    g.addColorStop(1,'rgba(225,239,245,'+(alpha*.72)+')');
+    fogCtx.fillStyle=g;
+    fogCtx.fillRect(0,0,fogW,fogH);
+
+    fogCtx.fillStyle='rgba(235,245,249,'+(alpha*.28)+')';
+    const blobs=7;
+    for(let i=0;i<blobs;i++){
+      const x=(i*83%97)/100*fogW;
+      const y=(i*47%91)/100*fogH;
+      const r=Math.max(fogW,fogH)*(.08+(i%3)*.025);
+      const rg=fogCtx.createRadialGradient(x,y,0,x,y,r);
+      rg.addColorStop(0,'rgba(238,247,250,'+(alpha*.42)+')');
+      rg.addColorStop(1,'rgba(238,247,250,0)');
+      fogCtx.fillStyle=rg;
+      fogCtx.fillRect(x-r,y-r,r*2,r*2);
+    }
+    fogCtx.restore();
+  }
+
+  function resizeCondensation(){
+    const targetW=Math.min(540,Math.max(280,Math.round(innerWidth*.52)));
+    const ratio=Math.max(.55,innerHeight/Math.max(1,innerWidth));
+    fogW=targetW;
+    fogH=Math.max(260,Math.round(targetW*ratio));
+    condensation.width=fogW;
+    condensation.height=fogH;
+    fogScale=fogW/Math.max(1,innerWidth);
+    fogCtx.clearRect(0,0,fogW,fogH);
+    paintFogBase(.26);
+  }
+
+  function wipeCondensation(clientX,clientY){
+    if(!body.classList.contains('immersive')) return;
+    if(body.classList.contains('memory-open')||focusPanel?.classList.contains('open')) return;
+    const now=performance.now();
+    if(now-lastWipePaint<42) return;
+    lastWipePaint=now;
+
+    const x=clientX*fogScale;
+    const y=clientY*(fogH/Math.max(1,innerHeight));
+    const radius=Math.max(24,Math.min(46,fogW*.07));
+
+    fogCtx.save();
+    fogCtx.globalCompositeOperation='destination-out';
+    const rg=fogCtx.createRadialGradient(x,y,0,x,y,radius);
+    rg.addColorStop(0,'rgba(0,0,0,.88)');
+    rg.addColorStop(.58,'rgba(0,0,0,.56)');
+    rg.addColorStop(1,'rgba(0,0,0,0)');
+    fogCtx.fillStyle=rg;
+    fogCtx.beginPath();
+    fogCtx.arc(x,y,radius,0,Math.PI*2);
+    fogCtx.fill();
+    fogCtx.restore();
+
+    refogSteps=0;
+    clearInterval(refogTimer);
+    refogTimer=setInterval(()=>{
+      if(!body.classList.contains('immersive')){
+        clearInterval(refogTimer);refogTimer=null;return;
+      }
+      paintFogBase(.018);
+      refogSteps++;
+      if(refogSteps>=22){
+        clearInterval(refogTimer);refogTimer=null;
+      }
+    },240);
+  }
+
+  function resetGlassFog(){
+    clearInterval(refogTimer);refogTimer=null;refogSteps=0;
+    fogCtx.clearRect(0,0,fogW,fogH);
+    paintFogBase(.26);
+  }
+
+  window.addEventListener('resize',resizeCondensation,{passive:true});
+  resizeCondensation();
+
+
   const weatherPanel = document.querySelector('.weather');
   const rainStoryBtn = document.createElement('button');
   rainStoryBtn.className = 'rain-story-btn';
@@ -877,6 +999,7 @@
       selectedTemp.textContent=Math.round(weather.temp)+'°';
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
+      document.documentElement.style.setProperty('--glass-rain-opacity',String(Math.min(.9,.42+Number(weather.rain||0)*.08)));
       if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
       if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
       return weather;
@@ -977,6 +1100,7 @@
 
   function enterImmersive(){
     body.classList.add('immersive');
+    resetGlassFog();
     recordExperience(active);
     if(pendingFocusStart){
       const modeKey=pendingFocusStart;
@@ -987,6 +1111,7 @@
     resizeRain();
   }
   function exitImmersive(){
+    clearInterval(refogTimer);refogTimer=null;
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive');
     soundPanel.classList.remove('open');
@@ -1124,6 +1249,7 @@
     if(!body.classList.contains('immersive')) return;
     if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
+    wipePointer={x:e.clientX,y:e.clientY};
     holdShown=false;
     if(focusSession) return;
     holdTimer=setTimeout(()=>{
@@ -1138,7 +1264,9 @@
   },true);
   body.addEventListener('pointermove',e=>{
     if(!pointerStart)return;
-    if(Math.hypot(e.clientX-pointerStart.x,e.clientY-pointerStart.y)>18) clearTimeout(holdTimer);
+    const moved=Math.hypot(e.clientX-pointerStart.x,e.clientY-pointerStart.y);
+    if(moved>18) clearTimeout(holdTimer);
+    if(moved>7) wipeCondensation(e.clientX,e.clientY);
   },true);
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
