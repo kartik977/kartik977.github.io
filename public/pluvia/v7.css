@@ -208,3 +208,17 @@ body.immersive .passport-panel,body.immersive .passport-scrim,body.immersive .pa
   .passport-stamp strong{margin-top:25px;font-size:21px}.passport-head{padding:20px 18px 16px}.passport-progress{padding:14px 18px}.passport-complete{margin:0 14px 16px}
 }
 @media(max-width:460px){.passport-grid{grid-template-columns:1fr}.passport-stamp{min-height:142px}}
+
+
+.passport-stamp[data-passport-city="paris"]{background:radial-gradient(circle at 72% 18%,rgba(202,151,94,.13),transparent 38%),#0c141a}
+.passport-stamp[data-passport-city="paris"] .stamp-mark{border-color:rgba(224,181,122,.3);color:#e3c397}
+.passport-stamp[data-passport-city="newyork"]{background:radial-gradient(circle at 72% 18%,rgba(126,155,205,.14),transparent 38%),#09131c}
+.passport-stamp[data-passport-city="newyork"] .stamp-mark{border-color:rgba(145,177,225,.3);color:#b9d0ed}
+.passport-stamp[data-passport-city="seoul"]{background:radial-gradient(circle at 72% 18%,rgba(201,103,160,.13),transparent 38%),#0c131b}
+.passport-stamp[data-passport-city="seoul"] .stamp-mark{border-color:rgba(218,129,179,.3);color:#e1acd0}
+.passport-stamp[data-passport-city="vancouver"]{background:radial-gradient(circle at 72% 18%,rgba(82,162,181,.14),transparent 38%),#08151b}
+.passport-stamp[data-passport-city="vancouver"] .stamp-mark{border-color:rgba(104,185,202,.3);color:#a8d9e2}
+.passport-stamp[data-passport-city="amsterdam"]{background:radial-gradient(circle at 72% 18%,rgba(218,126,70,.13),transparent 38%),#0d1419}
+.passport-stamp[data-passport-city="amsterdam"] .stamp-mark{border-color:rgba(230,147,91,.3);color:#edb383}
+.passport-stamp[data-passport-city="kyoto"]{background:radial-gradient(circle at 72% 18%,rgba(173,95,83,.13),transparent 38%),#0c1419}
+.passport-stamp[data-passport-city="kyoto"] .stamp-mark{border-color:rgba(194,119,106,.3);color:#dca99f}
