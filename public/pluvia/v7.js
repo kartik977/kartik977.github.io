@@ -45,6 +45,28 @@
   };
   const order = Object.keys(cities);
 
+  const citySoul = {
+    tokyo:{accent:'#78caff',accent2:'#e986a6',ambient:'station chime',story:'Neon reflections gather beneath Tokyo Tower.',wave:'sine',gain:.032,notes:[[784,0,.14],[988,.18,.16],[1175,.38,.22]]},
+    london:{accent:'#91b5d2',accent2:'#c9ab7d',ambient:'distant clock bells',story:'Stone, wet streets and the clock tower settle into the same grey-blue hush.',wave:'sine',gain:.038,notes:[[196,0,.48],[247,.62,.42],[196,1.18,.58]]},
+    mumbai:{accent:'#efb46f',accent2:'#e5776d',ambient:'monsoon street horn',story:'Warm city light pools around the Gateway of India.',wave:'triangle',gain:.026,notes:[[294,0,.18],[349,.28,.17]]},
+    seattle:{accent:'#75c2bd',accent2:'#8fb5d2',ambient:'distant waterfront horn',story:'The Space Needle hangs above a cool, softened skyline.',wave:'sine',gain:.032,notes:[[110,0,.9],[92,1.0,.75]]},
+    singapore:{accent:'#ba91df',accent2:'#67d3c5',ambient:'metro glass chime',story:'Marina Bay turns the wet air into violet and teal reflections.',wave:'sine',gain:.028,notes:[[659,0,.13],[831,.18,.13],[988,.36,.2]]},
+    saopaulo:{accent:'#79bf87',accent2:'#e6a15f',ambient:'night traffic pulse',story:'The skyline keeps moving behind a veil of wet city light.',wave:'triangle',gain:.024,notes:[[220,0,.12],[277,.22,.14],[330,.43,.12]]},
+    paris:{accent:'#e3bf88',accent2:'#9ab9d7',ambient:'metro bell',story:'The Eiffel Tower glows softly through the damp Paris air.',wave:'sine',gain:.03,notes:[[523,0,.16],[659,.24,.2]]},
+    newyork:{accent:'#9ebbe8',accent2:'#e7a069',ambient:'distant two-tone siren',story:'Rain light climbs the glass and the Empire State Building holds the horizon.',wave:'sine',gain:.023,notes:[[440,0,.3],[587,.34,.3],[440,.7,.3],[587,1.04,.34]]},
+    seoul:{accent:'#dd91bd',accent2:'#8eafe5',ambient:'metro arrival chime',story:'N Seoul Tower sits above a city washed in pink-blue night light.',wave:'sine',gain:.028,notes:[[698,0,.14],[880,.18,.14],[1047,.38,.22]]},
+    vancouver:{accent:'#72bfd0',accent2:'#7db49b',ambient:'harbour horn',story:'The waterfront skyline fades into cool Pacific mist.',wave:'sine',gain:.03,notes:[[98,0,.95],[123,.95,.55]]},
+    amsterdam:{accent:'#eda36f',accent2:'#80b8d4',ambient:'bicycle bell',story:'Canal lights stretch into long amber lines across the wet night.',wave:'sine',gain:.025,notes:[[1175,0,.09],[1568,.12,.15]]},
+    kyoto:{accent:'#cf8f84',accent2:'#d6b783',ambient:'temple bell',story:'The pagoda stands quietly while the wet city softens around it.',wave:'sine',gain:.04,notes:[[164,0,1.2],[123,1.05,1.0]]}
+  };
+
+  const regionByCity = {
+    tokyo:'Asia',mumbai:'Asia',singapore:'Asia',seoul:'Asia',kyoto:'Asia',
+    london:'Europe',paris:'Europe',amsterdam:'Europe',
+    seattle:'North America',newyork:'North America',vancouver:'North America',
+    saopaulo:'South America'
+  };
+
   const $ = s => document.querySelector(s);
   const body = document.body;
   const img = $('#cityPhoto');
@@ -61,6 +83,20 @@
   const envChoices = [...document.querySelectorAll('[data-env-choice]')];
   const rainCanvas = $('#rainCanvas');
   const ctx = rainCanvas.getContext('2d', {alpha:true});
+
+  const weatherPanel = document.querySelector('.weather');
+  const rainStoryBtn = document.createElement('button');
+  rainStoryBtn.className = 'rain-story-btn';
+  rainStoryBtn.type = 'button';
+  rainStoryBtn.setAttribute('aria-expanded','false');
+  rainStoryBtn.innerHTML = '<span>Tell me about this rain</span><b>↗</b>';
+
+  const rainStory = document.createElement('div');
+  rainStory.className = 'rain-story';
+  rainStory.innerHTML = '<small>PLUVIA / RAIN STORY</small><p id="rainStoryText"></p>';
+  weatherPanel?.append(rainStoryBtn,rainStory);
+  const rainStoryText = rainStory.querySelector('#rainStoryText');
+  let rainStoryVariant = 0;
 
   // PLUVIA 7.1 — Rain Passport
   const passportMeta = {
@@ -119,6 +155,81 @@
   const passportComplete = passportPanel.querySelector('#passportComplete');
   const passportButtonCount = passportBtn.querySelector('#passportButtonCount');
 
+  const achievementSection = document.createElement('div');
+  achievementSection.className = 'achievement-section';
+  achievementSection.innerHTML = '<div class="achievement-head"><div><span class="micro">PASSPORT ACHIEVEMENTS</span><h4>Moments worth chasing.</h4></div><strong id="achievementCount">0 / 5 unlocked</strong></div><div class="achievement-grid" id="achievementGrid"></div>';
+  passportPanel.appendChild(achievementSection);
+  const achievementGrid = achievementSection.querySelector('#achievementGrid');
+  const achievementCount = achievementSection.querySelector('#achievementCount');
+
+  let achievementStats = {nightCities:[],rainCities:[],environments:[],unlocked:[]};
+  try {
+    const saved = JSON.parse(localStorage.getItem('pluvia-v72-achievements') || '{}');
+    achievementStats = {
+      nightCities:Array.isArray(saved.nightCities)?saved.nightCities.filter(id=>cities[id]):[],
+      rainCities:Array.isArray(saved.rainCities)?saved.rainCities.filter(id=>cities[id]):[],
+      environments:Array.isArray(saved.environments)?saved.environments.filter(x=>['cafe','apartment','hotel','train','car','rooftop'].includes(x)):[],
+      unlocked:Array.isArray(saved.unlocked)?saved.unlocked:[]
+    };
+  } catch (_) {}
+
+  const achievementDefs = [
+    {id:'nightowl',icon:'☾',name:'Night Owl',desc:'Experience 5 different cities between midnight and 5 AM local time.',test:()=>achievementStats.nightCities.length>=5},
+    {id:'monsoon',icon:'☂',name:'Monsoon Chaser',desc:'Enter 3 different cities while live rain is being reported.',test:()=>achievementStats.rainCities.length>=3},
+    {id:'world',icon:'◎',name:'Around the World',desc:'Experience rain across Asia, Europe, North America and South America.',test:()=>new Set([...visited].map(id=>regionByCity[id]).filter(Boolean)).size>=4},
+    {id:'windows',icon:'▦',name:'Window Seat',desc:'Experience the rain through all 6 Pluvia environments.',test:()=>achievementStats.environments.length>=6},
+    {id:'allskies',icon:'✦',name:'World of Rain',desc:'Stamp every city currently in the Rain Passport.',test:()=>visited.size===order.length}
+  ];
+  let pendingAchievementToasts = [];
+
+  function saveAchievementStats(){
+    try { localStorage.setItem('pluvia-v72-achievements',JSON.stringify(achievementStats)); } catch (_) {}
+  }
+
+  function renderAchievements(){
+    const unlocked = new Set(achievementStats.unlocked);
+    achievementCount.textContent = unlocked.size + ' / ' + achievementDefs.length + ' unlocked';
+    achievementGrid.innerHTML = achievementDefs.map(a =>
+      '<div class="achievement-card '+(unlocked.has(a.id)?'unlocked':'locked')+'"><span class="achievement-icon">'+a.icon+'</span><div><strong>'+a.name+'</strong><small>'+a.desc+'</small></div><b>'+(unlocked.has(a.id)?'UNLOCKED':'LOCKED')+'</b></div>'
+    ).join('');
+  }
+
+  function evaluateAchievements(notify=false){
+    const unlocked = new Set(achievementStats.unlocked);
+    const newly = [];
+    achievementDefs.forEach(a=>{ if(a.test()&&!unlocked.has(a.id)){ unlocked.add(a.id); newly.push(a); } });
+    achievementStats.unlocked = [...unlocked];
+    saveAchievementStats();
+    renderAchievements();
+    if(notify&&newly.length){
+      if(body.classList.contains('immersive')) pendingAchievementToasts.push(...newly.map(a=>'Achievement unlocked · '+a.name));
+      else newly.forEach((a,i)=>setTimeout(()=>showPassportToast('Achievement unlocked · '+a.name),i*3200));
+    }
+  }
+
+  function localHour(tz){
+    const parts = new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',hour12:false}).formatToParts(new Date());
+    let h=Number(parts.find(p=>p.type==='hour')?.value||0); if(h===24)h=0; return h;
+  }
+
+  function recordExperience(id){
+    const h=localHour(cities[id].tz);
+    if(h>=0&&h<5&&!achievementStats.nightCities.includes(id)) achievementStats.nightCities.push(id);
+    if(!achievementStats.environments.includes(env)) achievementStats.environments.push(env);
+    saveAchievementStats();
+    evaluateAchievements(true);
+  }
+
+  function recordRainExperience(id,currentWeather){
+    if(Number(currentWeather?.rain||0)>0&&!achievementStats.rainCities.includes(id)){
+      achievementStats.rainCities.push(id);
+      saveAchievementStats();
+      evaluateAchievements(true);
+    }
+  }
+
+  evaluateAchievements(false);
+
   function persistPassport(){
     try { localStorage.setItem('pluvia-v71-passport', JSON.stringify([...visited])); } catch (_) {}
   }
@@ -129,6 +240,7 @@
     passportProgressText.textContent = count + ' / ' + order.length + ' skies experienced';
     passportProgressFill.style.width = ((count / order.length) * 100) + '%';
     passportComplete.classList.toggle('show', count === order.length);
+    renderAchievements();
     passportGrid.innerHTML = order.map(id => {
       const c = cities[id];
       const meta = passportMeta[id];
@@ -170,6 +282,7 @@
     persistPassport();
     renderPassport();
     pendingStamp = cities[id].name;
+    evaluateAchievements(true);
   }
 
   passportBtn.addEventListener('click', openPassport);
@@ -213,6 +326,39 @@
   };
   const localTime = tz => new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date());
 
+  function buildRainStory(){
+    const c=cities[active], soul=citySoul[active];
+    const time=localTime(c.tz);
+    const h=localHour(c.tz);
+    const timeMood=h<5?'deep night':h<8?'early morning':h<17?'daylight':h<21?'evening':'late night';
+    const rain=Number(weather?.rain||0);
+    let signal;
+    if(!weather) signal='The live weather signal is quiet for a moment.';
+    else if(rain>=2) signal=rain.toFixed(1)+' mm of rain is moving through the city right now.';
+    else if(rain>0) signal='A light '+rain.toFixed(1)+' mm rain signal is being reported right now.';
+    else signal='The live signal reads '+weatherText(weather.code).toLowerCase()+' right now, while Pluvia keeps the glass wet.';
+    const endings=[
+      soul.story,
+      'From this window, '+c.landmark+' becomes the still point in the '+timeMood+'.',
+      'Stay a little longer—the city feels different when you stop checking the weather and simply watch it.'
+    ];
+    return time+' in '+c.name+'. '+signal+' '+endings[rainStoryVariant%endings.length];
+  }
+
+  function refreshRainStory(){
+    rainStoryText.textContent=buildRainStory();
+  }
+
+  rainStoryBtn.addEventListener('click',()=>{
+    const opening=!rainStory.classList.contains('show');
+    if(opening){ rainStoryVariant++; refreshRainStory(); }
+    else { rainStoryVariant++; refreshRainStory(); }
+    rainStory.classList.add('show');
+    rainStoryBtn.classList.add('active');
+    rainStoryBtn.setAttribute('aria-expanded','true');
+    rainStoryBtn.querySelector('span').textContent='Another rain story';
+  });
+
   function weatherText(code){
     if ([95,96,99].includes(code)) return 'Thunderstorm';
     if ([80,81,82].includes(code)) return 'Rain showers';
@@ -236,6 +382,8 @@
       selectedTemp.textContent=Math.round(weather.temp)+'°';
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
+      if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
+      if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
       return weather;
     }catch(_){
       weather=null;
@@ -246,9 +394,24 @@
     }
   }
 
+  function applyCityTheme(id){
+    const soul=citySoul[id]||citySoul.tokyo;
+    document.documentElement.style.setProperty('--accent',soul.accent);
+    document.documentElement.style.setProperty('--accent2',soul.accent2);
+    body.dataset.city=id;
+    cityGrid.querySelectorAll('[data-city]').forEach(card=>card.classList.toggle('active',card.dataset.city===id));
+    const hint=soundPanel.querySelector(':scope > span');
+    if(hint) hint.textContent=cities[id].name+' · '+soul.ambient+' · hold the music button for the mixer';
+  }
+
   function selectCity(id,{enter=false}={}){
     if(!cities[id]) return;
     active=id;
+    applyCityTheme(id);
+    rainStory.classList.remove('show');
+    rainStoryBtn.classList.remove('active');
+    rainStoryBtn.setAttribute('aria-expanded','false');
+    rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
     const c=cities[id];
     img.classList.add('is-switching');
     const preload=new Image();
@@ -292,6 +455,7 @@
 
   function enterImmersive(){
     body.classList.add('immersive');
+    recordExperience(active);
     soundPanel.classList.remove('open');
     resizeRain();
   }
@@ -304,6 +468,10 @@
       pendingStamp = null;
       const allDone = visited.size === order.length;
       showPassportToast(allDone ? 'World of Rain complete · '+order.length+' / '+order.length+' skies' : name + ' stamped in your Rain Passport');
+    }
+    if(pendingAchievementToasts.length){
+      const messages=[...pendingAchievementToasts]; pendingAchievementToasts=[];
+      messages.forEach((message,i)=>setTimeout(()=>showPassportToast(message),(pendingStamp?3200:900)+i*3200));
     }
   }
 
@@ -338,6 +506,8 @@
   ['pointerup','pointercancel','pointerleave'].forEach(ev=>musicBtn.addEventListener(ev,()=>clearTimeout(musicHold)));
   musicBtn.addEventListener('click',async e=>{
     e.stopPropagation();
+    initSound();
+    try{ if(ac?.state==='suspended') await ac.resume(); }catch(_){}
     if(heldMusic){heldMusic=false;return}
     try{audio.paused?await audio.play():audio.pause()}catch(_){}
   });
@@ -351,28 +521,54 @@
     rain:$('#outRain'), thunder:$('#outThunder'), city:$('#outCity'), music:$('#outMusic')
   };
 
-  let ac=null, rainGain=null, cityGain=null, thunderGain=null, rainSource=null, cityOsc=null;
+  let ac=null, rainGain=null, cityGain=null, thunderGain=null, rainSource=null, cityOsc=null, soundMaster=null, cityMomentTimer=null;
   function initSound(){
     if(ac) return;
     const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
     ac=new AC();
-    const master=ac.createGain(); master.gain.value=.18; master.connect(ac.destination);
+    soundMaster=ac.createGain(); soundMaster.gain.value=.18; soundMaster.connect(ac.destination);
 
     const buffer=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate);
     const arr=buffer.getChannelData(0); for(let i=0;i<arr.length;i++) arr[i]=Math.random()*2-1;
     rainSource=ac.createBufferSource(); rainSource.buffer=buffer; rainSource.loop=true;
     const filter=ac.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=1800;
     rainGain=ac.createGain(); rainGain.gain.value=.10;
-    rainSource.connect(filter).connect(rainGain).connect(master); rainSource.start();
+    rainSource.connect(filter).connect(rainGain).connect(soundMaster); rainSource.start();
 
     cityOsc=ac.createOscillator(); cityOsc.type='sine'; cityOsc.frequency.value=92;
     cityGain=ac.createGain(); cityGain.gain.value=.02;
-    cityOsc.connect(cityGain).connect(master); cityOsc.start();
+    cityOsc.connect(cityGain).connect(soundMaster); cityOsc.start();
 
-    thunderGain=ac.createGain(); thunderGain.gain.value=0; thunderGain.connect(master);
+    thunderGain=ac.createGain(); thunderGain.gain.value=0; thunderGain.connect(soundMaster);
     applyMix();
     scheduleThunder();
+    scheduleCityMoment();
   }
+
+  function playCityMoment(){
+    if(!ac||!soundMaster||!body.classList.contains('immersive')||Number(mix.city.value)<=0) return;
+    const soul=citySoul[active];
+    const level=(Number(mix.city.value)/100)*(soul.gain||.025);
+    soul.notes.forEach(([freq,delay,duration])=>{
+      const osc=ac.createOscillator(), g=ac.createGain();
+      osc.type=soul.wave||'sine';
+      osc.frequency.setValueAtTime(freq,ac.currentTime+delay);
+      g.gain.setValueAtTime(.0001,ac.currentTime+delay);
+      g.gain.exponentialRampToValueAtTime(Math.max(.0002,level),ac.currentTime+delay+.025);
+      g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+delay+duration);
+      osc.connect(g).connect(soundMaster);
+      osc.start(ac.currentTime+delay); osc.stop(ac.currentTime+delay+duration+.05);
+    });
+  }
+
+  function scheduleCityMoment(){
+    clearTimeout(cityMomentTimer);
+    cityMomentTimer=setTimeout(()=>{
+      playCityMoment();
+      scheduleCityMoment();
+    },26000+Math.random()*22000);
+  }
+
   function applyMix(){
     audio.volume=Number(mix.music.value)/100;
     if(rainGain) rainGain.gain.value=(Number(mix.rain.value)/100)*.16;
