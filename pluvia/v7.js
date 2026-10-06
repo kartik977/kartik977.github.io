@@ -313,6 +313,48 @@
       commonsView('La Seine a nuit.jpg','50% 54%','The Seine'),
       commonsView('Arc de Triomphe at night.jpg','50% 50%','Arc de Triomphe'),
       commonsView('Palais du Louvre nuit.JPG','50% 52%','Palais du Louvre')
+    ],
+    seattle:[
+      {src:cities.seattle.image,pos:cities.seattle.pos,label:'Space Needle'},
+      commonsView('Seattle skyline at night from Space Needle.jpg','50% 52%','Downtown Skyline'),
+      commonsView('Seattlenighttimequeenanne.jpg','50% 50%','Kerry Park'),
+      commonsView("Seattle's Space Needle at dusk.jpg",'50% 50%','Space Needle at Dusk')
+    ],
+    singapore:[
+      {src:cities.singapore.image,pos:cities.singapore.pos,label:'Marina Bay Sands'},
+      commonsView('Gardens by the Bay at night, Singapore, 20240205 1900 5942.jpg','50% 52%','Gardens by the Bay'),
+      commonsView('Merlion & Marina Bay Sands, Singapore at Night.jpg','50% 50%','Merlion & Marina Bay'),
+      commonsView('Singapore skyline viewed from Gardens by the Bay East - 20120426.jpg','50% 54%','Singapore Skyline')
+    ],
+    saopaulo:[
+      {src:cities.saopaulo.image,pos:cities.saopaulo.pos,label:'São Paulo Skyline'},
+      commonsView('Paulista Avenue at night, São Paulo, Brazil.jpg','50% 52%','Paulista Avenue'),
+      commonsView('Skyline of Downtown São Paulo, Brazil at night (2021).jpg','50% 52%','Downtown São Paulo'),
+      commonsView('Octavio Frias de Oliveira Bridge.jpg','50% 50%','Ponte Estaiada')
+    ],
+    seoul:[
+      {src:cities.seoul.image,pos:cities.seoul.pos,label:'N Seoul Tower'},
+      commonsView('Seoul city skyline at night from Namsan Mountain (49175035266).jpg','50% 52%','Namsan Skyline'),
+      commonsView('Dongdaemun Design Plaza - DDP2369.jpg','50% 50%','Dongdaemun Design Plaza'),
+      commonsView('Banpo Bridge Moonlight Rainbow Fountain at night - 2023-08-14.jpg','50% 52%','Banpo Bridge')
+    ],
+    vancouver:[
+      {src:cities.vancouver.image,pos:cities.vancouver.pos,label:'Vancouver Skyline'},
+      commonsView('Vancouver skyline stanley park.jpg','50% 52%','Stanley Park Skyline'),
+      commonsView('Burrard Street at Night - Vancouver (2650812773).jpg','50% 50%','Burrard Street'),
+      commonsView('Canada Place, Container Port, Vancouver 1.jpg','50% 52%','Canada Place')
+    ],
+    amsterdam:[
+      {src:cities.amsterdam.image,pos:cities.amsterdam.pos,label:'Amsterdam Canals'},
+      commonsView('Magere Brug at night.jpg','50% 52%','Magere Brug'),
+      commonsView('Damrak night.jpg','50% 50%','Damrak'),
+      commonsView('Amsterdam Canal at Night.JPG','50% 52%','Canal at Night')
+    ],
+    kyoto:[
+      {src:cities.kyoto.image,pos:cities.kyoto.pos,label:'Tō-ji Pagoda'},
+      commonsView('Kyoto Gion At Night (135528933).jpeg','50% 52%','Gion'),
+      commonsView('Yasaka Shrine Kyoto.png','50% 50%','Yasaka Shrine'),
+      commonsView('Kiyomizu-dera autumn night.jpg','50% 52%','Kiyomizu-dera')
     ]
   };
   Object.keys(cities).forEach(id=>{
