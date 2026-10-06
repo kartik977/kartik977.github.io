@@ -1779,19 +1779,70 @@
     return 'Wet sky';
   }
 
+
+  // PLUVIA 8.2 — Weather-Reactive Atmosphere
+  let weatherAtmosphere={
+    kind:'drizzle',density:.52,speed:1,alpha:1,lean:5,windX:1.1,mist:.22,cloud:.28,wetness:.52
+  };
+
+  function weatherProfile(w){
+    if(!w) return {kind:'drizzle',density:.52,speed:1,alpha:1,mist:.22,cloud:.28,wetness:.52};
+
+    const code=Number(w.code);
+    const rain=Math.max(0,Number(w.rain)||0);
+    const wind=Math.max(0,Number(w.wind)||0);
+    let p;
+
+    if([95,96,99].includes(code)){
+      p={kind:'storm',density:1,speed:1.38,alpha:1.22,mist:.32,cloud:.92,wetness:.9};
+    }else if([80,81,82].includes(code)){
+      p={kind:'showers',density:.88,speed:1.22,alpha:1.12,mist:.29,cloud:.72,wetness:.82};
+    }else if([61,63,65].includes(code)){
+      p={kind:'rain',density:.76,speed:1.12,alpha:1.06,mist:.27,cloud:.62,wetness:.76};
+    }else if([51,53,55,56,57].includes(code)){
+      p={kind:'drizzle',density:.5,speed:.88,alpha:.88,mist:.22,cloud:.48,wetness:.58};
+    }else if([71,73,75,77,85,86].includes(code)){
+      p={kind:'snow',density:.38,speed:.68,alpha:.68,mist:.28,cloud:.7,wetness:.46};
+    }else if([1,2,3].includes(code)){
+      p={kind:'cloudy',density:.32,speed:.78,alpha:.7,mist:.18,cloud:.5,wetness:.42};
+    }else{
+      p={kind:'clear',density:.22,speed:.72,alpha:.62,mist:.12,cloud:.15,wetness:.34};
+    }
+
+    const rainBoost=Math.min(.2,rain*.025);
+    p.density=Math.min(1,p.density+rainBoost);
+    p.speed=Math.min(1.52,p.speed+Math.min(.16,rain*.012));
+    p.wetness=Math.min(.94,p.wetness+Math.min(.12,rain*.02));
+
+    const direction=Number.isFinite(Number(w.direction))?Number(w.direction):105;
+    const radians=direction*Math.PI/180;
+    const windForce=Math.min(1,wind/42);
+    p.windX=(-Math.sin(radians))*(.6+windForce*4.4);
+    p.lean=(-Math.sin(radians))*(5+windForce*21);
+    return p;
+  }
+
+  function applyWeatherAtmosphere(w){
+    weatherAtmosphere=weatherProfile(w);
+    body.dataset.weather=weatherAtmosphere.kind;
+    document.documentElement.style.setProperty('--weather-mist-opacity',weatherAtmosphere.mist.toFixed(2));
+    document.documentElement.style.setProperty('--weather-cloud-opacity',weatherAtmosphere.cloud.toFixed(2));
+    document.documentElement.style.setProperty('--glass-rain-opacity',weatherAtmosphere.wetness.toFixed(2));
+  }
+
   async function fetchWeather(id){
     const c=cities[id];
     selectedCondition.textContent='Reading the sky…';
     try{
-      const url='https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lon+'&current=temperature_2m,precipitation,rain,weather_code,wind_speed_10m&timezone=auto';
+      const url='https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lon+'&current=temperature_2m,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m&timezone=auto';
       const res=await fetch(url,{cache:'no-store'});
       const data=await res.json();
       const x=data.current||{};
-      weather={temp:x.temperature_2m,rain:x.rain??x.precipitation??0,wind:x.wind_speed_10m??0,code:x.weather_code};
+      weather={temp:x.temperature_2m,rain:x.rain??x.precipitation??0,wind:x.wind_speed_10m??0,direction:x.wind_direction_10m??105,code:x.weather_code};
       selectedTemp.textContent=Math.round(weather.temp)+'°';
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
-      document.documentElement.style.setProperty('--glass-rain-opacity',String(Math.min(.9,.42+Number(weather.rain||0)*.08)));
+      if(active===id) applyWeatherAtmosphere(weather);
       if(active===id&&body.classList.contains('immersive')&&env==='rooftop'&&[95,96,99].includes(Number(weather.code))) scheduleEnvironmentBehavior(false);
       if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
       if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
@@ -1840,6 +1891,7 @@
       rainStoryBtn.setAttribute('aria-expanded','false');
       rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
       weather=null;
+      applyWeatherAtmosphere(null);
 
       currentViewIndex=entryViewIndex;
       currentView=entryView;
@@ -1890,6 +1942,7 @@
       rainStoryBtn.setAttribute('aria-expanded','false');
       rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
       weather=null;
+      applyWeatherAtmosphere(null);
       selectedCity.textContent=c.name;
       selectedTime.textContent=localTime(c.tz)+' local';
       body.dataset.phase=phaseFor(c.tz);
@@ -2387,13 +2440,28 @@
     if(document.hidden||ts-last<33)return;last=ts;
     ctx.clearRect(0,0,rw,rh);
     const immersive=body.classList.contains('immersive');
-    const boost=immersive?(env==='rooftop'?1.3:env==='car'?1.06:1):0.65;
-    const windPush=immersive&&env==='rooftop'?1.72:1.15;
-    for(const d of drops){
-      d.y+=d.v*boost;d.x+=windPush*boost;
-      if(d.y>rh+70){d.y=-80-Math.random()*120;d.x=Math.random()*rw}
-      ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x+5,d.y+d.l);
-      ctx.strokeStyle='rgba(205,232,246,'+(d.a*boost)+')';ctx.lineWidth=d.w;ctx.stroke();
+    const envBoost=immersive?(env==='rooftop'?1.22:env==='car'?1.04:1):.68;
+    const profile=weatherAtmosphere;
+    const count=Math.max(14,Math.min(drops.length,Math.round(drops.length*profile.density)));
+    const speed=envBoost*profile.speed;
+    const wind=(profile.windX+(immersive&&env==='rooftop'?profile.windX*.32:0))*envBoost;
+    const lean=profile.lean+(immersive&&env==='rooftop'?profile.lean*.22:0);
+
+    for(let i=0;i<count;i++){
+      const d=drops[i];
+      d.y+=d.v*speed;
+      d.x+=wind;
+      if(d.y>rh+90||d.x>rw+120||d.x<-120){
+        d.y=-80-Math.random()*120;
+        d.x=Math.random()*rw;
+      }
+      ctx.beginPath();
+      ctx.moveTo(d.x,d.y);
+      ctx.lineTo(d.x+lean,d.y+d.l*(.88+profile.speed*.12));
+      const opacity=Math.min(.48,d.a*envBoost*profile.alpha);
+      ctx.strokeStyle='rgba(205,232,246,'+opacity+')';
+      ctx.lineWidth=d.w*(profile.kind==='storm'?1.12:1);
+      ctx.stroke();
     }
   }
   window.addEventListener('resize',resizeRain,{passive:true});
