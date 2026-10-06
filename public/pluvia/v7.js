@@ -1831,7 +1831,31 @@
     };
 
     preload.onload=commit;
-    preload.onerror=commit;
+    preload.onerror=()=>{
+      if(seq!==transitionSeq)return;
+      const fallback=cityViews[id][0];
+      currentViewIndex=0;
+      currentView=fallback;
+      const layer=photoLayers[activePhotoLayer];
+      layer.src=fallback.src;
+      layer.style.objectPosition=fallback.pos||c.pos;
+      layer.dataset.viewLabel=fallback.label||c.landmark;
+      layer.classList.add('active-view');
+      active=id;
+      applyCityTheme(id);
+      rainStory.classList.remove('show');
+      rainStoryBtn.classList.remove('active');
+      rainStoryBtn.setAttribute('aria-expanded','false');
+      rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
+      weather=null;
+      selectedCity.textContent=c.name;
+      selectedTime.textContent=localTime(c.tz)+' local';
+      body.dataset.phase=phaseFor(c.tz);
+      chooseTrack();
+      fetchWeather(id);
+      if(enter){enterImmersive();earnStamp(id);}
+      if(cinematic)setTimeout(()=>revealPassage(seq),260);else transitioning=false;
+    };
     preload.src=entryView.src;
   }
 
