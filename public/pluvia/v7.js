@@ -43,6 +43,240 @@
       ['Rain','Hata Motohiro','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/85/ce/64/85ce6424-0f8d-b1eb-3524-c21e352f9c7d/mzaf_17028835718644657456.plus.aac.ep.m4a']
     ]}
   };
+
+  // PLUVIA 7.9 — City Playlists (on-demand official store previews)
+  const originalSongCounts = Object.fromEntries(Object.entries(cities).map(([id,city])=>[id,city.songs.length]));
+  const citySongExtras = {
+  "tokyo": [
+    [
+      "Kataomoi",
+      "Aimer"
+    ],
+    [
+      "First Love",
+      "Hikaru Utada"
+    ],
+    [
+      "Marigold",
+      "Aimyon"
+    ],
+    [
+      "Nandemonaiya",
+      "RADWIMPS"
+    ]
+  ],
+  "london": [
+    [
+      "Somewhere Only We Know",
+      "Keane"
+    ],
+    [
+      "Yellow",
+      "Coldplay"
+    ],
+    [
+      "The A Team",
+      "Ed Sheeran"
+    ],
+    [
+      "Chasing Cars",
+      "Snow Patrol"
+    ]
+  ],
+  "mumbai": [
+    [
+      "Kabhi Jo Baadal Barse",
+      "Arijit Singh"
+    ],
+    [
+      "Baarish",
+      "Ash King"
+    ],
+    [
+      "Baarishein",
+      "Anuv Jain"
+    ],
+    [
+      "Bheegi Bheegi",
+      "James"
+    ]
+  ],
+  "seattle": [
+    [
+      "Black",
+      "Pearl Jam"
+    ],
+    [
+      "Come As You Are",
+      "Nirvana"
+    ],
+    [
+      "Such Great Heights",
+      "The Postal Service"
+    ],
+    [
+      "The District Sleeps Alone Tonight",
+      "The Postal Service"
+    ]
+  ],
+  "singapore": [
+    [
+      "遇見",
+      "Stefanie Sun"
+    ],
+    [
+      "天黑黑",
+      "Stefanie Sun"
+    ],
+    [
+      "小幸運",
+      "Hebe Tien"
+    ],
+    [
+      "雨天",
+      "Stefanie Sun"
+    ]
+  ],
+  "saopaulo": [
+    [
+      "Chega de Saudade",
+      "João Gilberto"
+    ],
+    [
+      "Trem das Onze",
+      "Adoniran Barbosa"
+    ],
+    [
+      "Ainda Bem",
+      "Marisa Monte"
+    ],
+    [
+      "Velha Infância",
+      "Tribalistas"
+    ]
+  ],
+  "paris": [
+    [
+      "La vie en rose",
+      "Édith Piaf"
+    ],
+    [
+      "Sous le ciel de Paris",
+      "Édith Piaf"
+    ],
+    [
+      "La Seine",
+      "Vanessa Paradis"
+    ],
+    [
+      "Le vent nous portera",
+      "Noir Désir"
+    ],
+    [
+      "Je te laisserai des mots",
+      "Patrick Watson"
+    ]
+  ],
+  "newyork": [
+    [
+      "New York State of Mind",
+      "Billy Joel"
+    ],
+    [
+      "Empire State of Mind",
+      "JAY-Z"
+    ],
+    [
+      "Autumn in New York",
+      "Billie Holiday"
+    ],
+    [
+      "New York, I Love You but You're Bringing Me Down",
+      "LCD Soundsystem"
+    ]
+  ],
+  "seoul": [
+    [
+      "Rain",
+      "TAEYEON"
+    ],
+    [
+      "Through the Night",
+      "IU"
+    ],
+    [
+      "Love Poem",
+      "IU"
+    ],
+    [
+      "Spring Day",
+      "BTS"
+    ],
+    [
+      "Stay With Me",
+      "CHANYEOL & PUNCH"
+    ]
+  ],
+  "vancouver": [
+    [
+      "River",
+      "Joni Mitchell"
+    ],
+    [
+      "Angel",
+      "Sarah McLachlan"
+    ],
+    [
+      "Hallelujah",
+      "Leonard Cohen"
+    ],
+    [
+      "Home",
+      "Michael Bublé"
+    ]
+  ],
+  "amsterdam": [
+    [
+      "Zoutelande",
+      "BLØF"
+    ],
+    [
+      "Het Is Een Nacht",
+      "Guus Meeuwis"
+    ],
+    [
+      "Als Het Avond Is",
+      "Suzan & Freek"
+    ],
+    [
+      "Dat Ik Je Mis",
+      "Maaike Ouboter"
+    ]
+  ],
+  "kyoto": [
+    [
+      "春よ、来い",
+      "松任谷由実"
+    ],
+    [
+      "Lemon",
+      "Kenshi Yonezu"
+    ],
+    [
+      "One More Time, One More Chance",
+      "Masayoshi Yamazaki"
+    ],
+    [
+      "打上花火",
+      "DAOKO"
+    ]
+  ]
+};
+  const cityMusicMarket = {"tokyo":"JP","london":"GB","mumbai":"IN","seattle":"US","singapore":"SG","saopaulo":"BR","paris":"FR","newyork":"US","seoul":"KR","vancouver":"CA","amsterdam":"NL","kyoto":"JP"};
+  Object.keys(citySongExtras).forEach(id=>{
+    cities[id].songs.push(...citySongExtras[id].map(([title,artist])=>[title,artist,null]));
+  });
+
   const order = Object.keys(cities);
 
   const citySoul = {
@@ -796,6 +1030,7 @@
     body.classList.remove('focus-active','focus-controls-visible');
     focusHud.classList.remove('active');
     focusHint.classList.remove('show');
+    ++musicRequestId;
     audio.pause();
     audio.volume=Number(mix.music.value)/100;
     focusMainBtn.querySelector('.focus-pill-state').textContent='ambient timer';
@@ -823,7 +1058,7 @@
     focusBaseMusicVolume=Number(mix.music.value)/100;
     focusMusicWasPlaying=!audio.paused;
     audio.volume=focusBaseMusicVolume;
-    audio.play().catch(()=>{});
+    void playSelectedTrack();
 
     focusSession={
       key:modeKey,
@@ -853,7 +1088,6 @@
     try{
       initSound();
       if(ac?.state==='suspended') ac.resume().catch(()=>{});
-      audio.play().catch(()=>{});
     }catch(_){}
 
     if(body.classList.contains('immersive')){
@@ -875,7 +1109,7 @@
 
   focusMusicToggle.addEventListener('click',e=>{
     e.stopPropagation();
-    if(audio.paused) audio.play().catch(()=>{});
+    if(audio.paused)void playSelectedTrack();
     else audio.pause();
     updateFocusHud();
     showFocusControls();
@@ -1515,24 +1749,193 @@
   audio.preload='none';
   let trackIndex=-1;
   let currentTrack=null;
+  let musicCity=null;
+  let musicRequestId=0;
+  let musicSearchId=0;
+  const musicRotation=Object.create(null);
+  const missingClips=new Set();
+  const previewLookups=new Map();
 
-  function chooseTrack(){
-    const list=cities[active].songs;
-    let next=Math.floor(Math.random()*list.length);
-    if(list.length>1&&next===trackIndex) next=(next+1)%list.length;
-    trackIndex=next; currentTrack=list[next];
-    const wasPlaying=!audio.paused && !!audio.src;
-    audio.pause(); audio.src=currentTrack[2]; audio.currentTime=0;
-    if(wasPlaying) audio.play().catch(()=>{});
-    syncMusic();
+  const nowPlaying=document.createElement('div');
+  nowPlaying.className='city-playlist';
+  nowPlaying.innerHTML=
+    '<div class="city-playlist-head"><span>NOW PLAYING / CITY RADIO</span><span id="playlistCount">1 / 6</span></div>'+
+    '<strong id="playlistTitle">Choose a city</strong>'+
+    '<span class="playlist-artist" id="playlistArtist">A city-specific soundtrack</span>'+
+    '<div class="city-playlist-actions"><button id="nextCitySong" type="button">Next song →</button>'+
+    '<a id="appleTrackLink" href="https://music.apple.com/" target="_blank" rel="noopener noreferrer">Listen on Apple Music ↗</a></div>'+
+    '<small id="playlistNote">Apple Music previews · full songs require a music service</small>';
+  soundPanel.insertBefore(nowPlaying,soundPanel.querySelector('.mix-row'));
+  const playlistCount=nowPlaying.querySelector('#playlistCount');
+  const playlistTitle=nowPlaying.querySelector('#playlistTitle');
+  const playlistArtist=nowPlaying.querySelector('#playlistArtist');
+  const playlistNote=nowPlaying.querySelector('#playlistNote');
+  const appleTrackLink=nowPlaying.querySelector('#appleTrackLink');
+  const nextCitySong=nowPlaying.querySelector('#nextCitySong');
+
+  const normalizeTrackText=s=>String(s||'').normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+
+  function appleSearchUrl(track,id=active){
+    const region=(cityMusicMarket[id]||'US').toLowerCase();
+    return 'https://music.apple.com/'+region+'/search?term='+encodeURIComponent(track[0]+' '+track[1]);
   }
+
+  function updatePlaylist(){
+    if(!currentTrack)return;
+    playlistTitle.textContent=currentTrack[0];
+    playlistArtist.textContent=currentTrack[1]+' · '+cities[active].name;
+    playlistCount.textContent=(trackIndex+1)+' / '+cities[active].songs.length;
+    appleTrackLink.href=currentTrack[4]||appleSearchUrl(currentTrack);
+    playlistNote.textContent=currentTrack[2]?'Apple Music preview · tap Next to explore':'Finding this city’s music preview…';
+  }
+
+  function shuffleIndices(id){
+    const songList=cities[id].songs;
+    const available=songList.map((_,i)=>i).filter(i=>!missingClips.has(id+':'+i));
+    for(let i=available.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [available[i],available[j]]=[available[j],available[i]];
+    }
+    if(available.length>1&&available[0]===trackIndex&&musicCity===id){
+      [available[0],available[1]]=[available[1],available[0]];
+    }
+    return available;
+  }
+
+  function chooseTrack(autoPlay=false,failedAttempts=0){
+    const isNewCity=active!==musicCity;
+    if(isNewCity){musicCity=active;musicRotation[active]=[];}
+    const list=cities[active].songs;
+    let index;
+    if(isNewCity){
+      index=Math.floor(Math.random()*Math.max(1,originalSongCounts[active]));
+      musicRotation[active]=shuffleIndices(active).filter(i=>i!==index);
+    }else{
+      if(!musicRotation[active]?.length)musicRotation[active]=shuffleIndices(active);
+      index=musicRotation[active].shift();
+    }
+    if(index==null)return;
+    const wasPlaying=!audio.paused&&!!audio.currentSrc;
+    ++musicRequestId;
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    trackIndex=index;
+    currentTrack=list[index];
+    updatePlaylist();
+    syncMusic();
+    if(autoPlay||wasPlaying)void playSelectedTrack(failedAttempts);
+  }
+
+  function searchApplePreviews(term,country){
+    return new Promise(resolve=>{
+      const callback='pluviaMusicLookup'+(++musicSearchId);
+      const script=document.createElement('script');
+      let finished=false;
+      let timer;
+      const finish=value=>{
+        if(finished)return;
+        finished=true;
+        clearTimeout(timer);
+        script.remove();
+        try{delete window[callback]}catch(_){window[callback]=undefined}
+        resolve(value);
+      };
+      window[callback]=result=>finish(Array.isArray(result?.results)?result.results:[]);
+      script.onerror=()=>finish([]);
+      const qs='term='+encodeURIComponent(term)+'&media=music&entity=musicTrack&limit=15&country='+
+        encodeURIComponent(country)+'&explicit=No&callback='+callback;
+      script.src='https://itunes.apple.com/search?'+qs;
+      timer=setTimeout(()=>finish([]),8500);
+      document.head.appendChild(script);
+    });
+  }
+
+  function pickAppleResult(results,track){
+    const title=normalizeTrackText(track[0]),artist=normalizeTrackText(track[1]);
+    let best=null,high=0;
+    for(const candidate of results){
+      if(!candidate.previewUrl||!/^https:\/\//.test(candidate.previewUrl))continue;
+      const t=normalizeTrackText(candidate.trackName);
+      const a=normalizeTrackText(candidate.artistName);
+      const titleMatch=t===title?5:t.includes(title)&&title.length>=3?3:title.includes(t)&&t.length>=4?2:0;
+      const artistMatch=a===artist?5:a.includes(artist)&&artist.length>=3?4:artist.includes(a)&&a.length>=4?2:0;
+      const score=titleMatch+artistMatch;
+      if(titleMatch&&artistMatch&&score>high){best=candidate;high=score;}
+    }
+    return best;
+  }
+
+  function resolveTrackPreview(track,id){
+    if(track[2])return Promise.resolve(track[2]);
+    const key=id+'|'+track[0]+'|'+track[1];
+    if(previewLookups.has(key))return previewLookups.get(key);
+    const lookup=(async()=>{
+      const market=cityMusicMarket[id]||'US';
+      const term=track[0]+' '+track[1];
+      const first=pickAppleResult(await searchApplePreviews(term,market),track);
+      const best=first||(market==='US'?null:pickAppleResult(await searchApplePreviews(term,'US'),track));
+      if(best){
+        track[2]=best.previewUrl;
+        track[4]=best.trackViewUrl||appleSearchUrl(track,id);
+        return track[2];
+      }
+      return null;
+    })();
+    previewLookups.set(key,lookup);
+    return lookup;
+  }
+
+  async function playSelectedTrack(failedAttempts=0){
+    if(!currentTrack)return;
+    const token=++musicRequestId;
+    const city=active,track=currentTrack;
+    const fail=()=>{
+      if(token!==musicRequestId||city!==active)return;
+      missingClips.add(city+':'+trackIndex);
+      if(failedAttempts<Math.min(4,cities[city].songs.length-1)){
+        chooseTrack(true,failedAttempts+1);
+      }else{
+        playlistNote.textContent='Previews unavailable right now. Listen on Apple Music ↗';
+        showMemoryToast('City music preview unavailable');
+      }
+    };
+    if(!track[2])playlistNote.textContent='Finding a preview…';
+    const url=await resolveTrackPreview(track,city);
+    if(token!==musicRequestId||city!==active||track!==currentTrack)return;
+    if(!url){fail();return}
+    audio.src=url;
+    playlistNote.textContent='Apple Music preview · short clip';
+    appleTrackLink.href=track[4]||appleSearchUrl(track,city);
+    try{await audio.play();}
+    catch(_){
+      if(token===musicRequestId)playlistNote.textContent='Tap the music icon to resume preview';
+    }
+  }
+
   function syncMusic(){
     musicBtn.classList.toggle('playing',!audio.paused);
     musicBtn.setAttribute('aria-label',audio.paused?'Play city music':'Pause city music');
+    if(!audio.paused)playlistNote.textContent='Apple Music preview · short clip';
+    if(typeof updateFocusHud==='function'&&body.classList.contains('focus-active'))updateFocusHud();
   }
   audio.addEventListener('play',syncMusic);
   audio.addEventListener('pause',syncMusic);
-  audio.addEventListener('ended',()=>{chooseTrack();audio.play().catch(()=>{})});
+  audio.addEventListener('ended',()=>chooseTrack(true));
+  audio.addEventListener('error',()=>{
+    if(!currentTrack||!audio.getAttribute('src'))return;
+    const current=audio.getAttribute('src');
+    if(current===currentTrack[2]){
+      missingClips.add(active+':'+trackIndex);
+      playlistNote.textContent='This preview could not load. Tap Next song.';
+    }
+  });
+
+  nextCitySong.addEventListener('click',e=>{
+    e.stopPropagation();
+    chooseTrack(true);
+  });
 
   let musicHold=null, heldMusic=false;
   musicBtn.addEventListener('pointerdown',e=>{
@@ -1545,7 +1948,7 @@
     initSound();
     try{ if(ac?.state==='suspended') await ac.resume(); }catch(_){}
     if(heldMusic){heldMusic=false;return}
-    try{audio.paused?await audio.play():audio.pause()}catch(_){}
+    if(audio.paused)void playSelectedTrack(); else audio.pause();
   });
 
   soundPanel.addEventListener('click',e=>e.stopPropagation());
@@ -1606,7 +2009,10 @@
   }
 
   function applyMix(){
-    audio.volume=Number(mix.music.value)/100;
+    if(body.classList.contains('focus-active')){
+      focusBaseMusicVolume=Number(mix.music.value)/100;
+      applyFocusFade();
+    }else audio.volume=Number(mix.music.value)/100;
     if(rainGain) rainGain.gain.value=(Number(mix.rain.value)/100)*.16;
     if(cityGain) cityGain.gain.value=(Number(mix.city.value)/100)*.045;
     Object.keys(mix).forEach(k=>outs[k].value=mix[k].value+'%');
