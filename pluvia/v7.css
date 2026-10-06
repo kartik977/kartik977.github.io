@@ -1227,3 +1227,81 @@ body.focus-active .glass-mist{
   .city-tone,.city-tone::after,.glass-mist{transition:none!important}
   body.weather-lightning .city-tone::before{animation:none!important;opacity:.16}
 }
+
+
+/* PLUVIA 8.3 — Atmosphere Chooser */
+.atmosphere-main-pill .atmosphere-pill-state{
+  font:700 8px/1 "Manrope",sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--accent) 64%,#7892a0)
+}
+
+.atmosphere-picker{
+  margin-top:15px;padding:13px;
+  border:1px solid color-mix(in srgb,var(--accent) 20%,rgba(225,242,250,.08));
+  border-radius:15px;
+  background:
+    radial-gradient(circle at 92% 0%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 48%),
+    rgba(255,255,255,.016)
+}
+.atmosphere-picker-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:10px
+}
+.atmosphere-picker-head span{
+  color:color-mix(in srgb,var(--accent) 65%,#8da4af);
+  font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.15em;text-transform:uppercase
+}
+.atmosphere-picker-head small{
+  color:#738b97;font:500 7px/1.25 "Manrope",sans-serif
+}
+.atmosphere-picker-options{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:5px
+}
+.atmosphere-picker-options button{
+  min-height:36px;padding:0 7px;border-radius:10px;
+  border:1px solid rgba(225,242,250,.075);
+  background:rgba(255,255,255,.018);color:#8fa5b0;
+  cursor:pointer;
+  font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.05em
+}
+.atmosphere-picker-options button:hover{
+  border-color:color-mix(in srgb,var(--accent) 30%,rgba(255,255,255,.08));
+  color:#cbdbe2
+}
+.atmosphere-picker-options button.active{
+  color:#06131a;
+  background:color-mix(in srgb,var(--accent) 72%,#edf7fb);
+  border-color:color-mix(in srgb,var(--accent) 60%,white);
+  box-shadow:0 5px 18px color-mix(in srgb,var(--accent) 10%,transparent)
+}
+
+/* Manual atmosphere character */
+body[data-atmosphere-mode="snow"] .city-tone::after{
+  background:
+    linear-gradient(180deg,rgba(225,237,244,.24),rgba(181,202,214,.09) 44%,transparent 76%),
+    radial-gradient(ellipse at 50% 8%,rgba(239,247,251,.25),transparent 58%)
+}
+body[data-atmosphere-mode="snow"] .glass-mist{
+  filter:saturate(.35) brightness(1.08)
+}
+body[data-atmosphere-mode="snow"] .living-glass-layer{
+  opacity:.62
+}
+body[data-atmosphere-mode="storm"] .city-tone::after{
+  background:
+    linear-gradient(180deg,rgba(105,130,145,.31),rgba(33,47,56,.18) 40%,transparent 74%),
+    radial-gradient(ellipse at 48% 0%,rgba(173,204,222,.22),transparent 48%)
+}
+body[data-atmosphere-mode="drizzle"] .glass-mist{filter:saturate(.72)}
+body[data-atmosphere-mode="rain"] .glass-mist{filter:saturate(.62)}
+
+@media(max-width:600px){
+  .atmosphere-picker-options{grid-template-columns:repeat(3,1fr)}
+  .atmosphere-picker-head{align-items:flex-start;flex-direction:column;gap:5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .atmosphere-picker{scroll-behavior:auto}
+}
