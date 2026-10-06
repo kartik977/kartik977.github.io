@@ -443,6 +443,215 @@
   function persistMemories(){
     try { localStorage.setItem('pluvia-v74-memories',JSON.stringify(memories.slice(0,24))); } catch (_) {}
     updateMemoryCount();
+
+
+  // PLUVIA 7.5 — Focus / Sleep Mode
+  const focusModes = {
+    focus15:{label:'15 minute focus',minutes:15,fadeSeconds:60,kicker:'SHORT FOCUS'},
+    focus30:{label:'30 minute focus',minutes:30,fadeSeconds:60,kicker:'DEEPER FOCUS'},
+    focus60:{label:'1 hour focus',minutes:60,fadeSeconds:90,kicker:'LONG FOCUS'},
+    sleep:{label:'Sleep mode',minutes:90,fadeSeconds:600,kicker:'SLEEP / 90 MIN'}
+  };
+
+  let focusSession=null;
+  let focusTimer=null;
+  let focusControlsTimer=null;
+  let pendingFocusStart=null;
+  let focusBaseMusicVolume=.72;
+  let focusMusicWasPlaying=false;
+
+  const focusMainBtn=document.createElement('button');
+  focusMainBtn.className='pill focus-main-pill';
+  focusMainBtn.type='button';
+  focusMainBtn.innerHTML='<span>Focus / Sleep</span><span class="focus-pill-state">ambient timer</span>';
+  document.querySelector('.actions')?.appendChild(focusMainBtn);
+
+  const focusImmersiveBtn=document.createElement('button');
+  focusImmersiveBtn.id='focusImmersiveBtn';
+  focusImmersiveBtn.className='focus-immersive-btn';
+  focusImmersiveBtn.type='button';
+  focusImmersiveBtn.innerHTML='<span>◷</span><b>Focus</b>';
+  document.body.appendChild(focusImmersiveBtn);
+
+  const focusScrim=document.createElement('div');
+  focusScrim.className='focus-scrim';
+
+  const focusPanel=document.createElement('section');
+  focusPanel.className='focus-panel';
+  focusPanel.setAttribute('role','dialog');
+  focusPanel.setAttribute('aria-modal','true');
+  focusPanel.setAttribute('aria-label','Focus and Sleep Mode');
+  focusPanel.innerHTML=
+    '<div class="focus-panel-head"><div><span class="micro">PLUVIA / FOCUS & SLEEP</span><h3>Stay with the rain.</h3><p>Pluvia will hide the interface and leave you with the city, music and rain. Tap the scene anytime to reveal controls.</p></div><button class="focus-close" type="button" aria-label="Close focus menu">×</button></div>'+
+    '<div class="focus-mode-grid">'+
+      '<button class="focus-mode-card" type="button" data-focus-mode="focus15"><small>SHORT</small><strong>15 min</strong><span>Settle in</span></button>'+
+      '<button class="focus-mode-card" type="button" data-focus-mode="focus30"><small>FOCUS</small><strong>30 min</strong><span>Quiet work</span></button>'+
+      '<button class="focus-mode-card" type="button" data-focus-mode="focus60"><small>DEEP</small><strong>1 hour</strong><span>Long session</span></button>'+
+      '<button class="focus-mode-card sleep" type="button" data-focus-mode="sleep"><small>SLEEP</small><strong>90 min</strong><span>10 min music fade</span></button>'+
+    '</div>'+
+    '<div class="focus-panel-note"><span>☂</span><p>Rain and city ambience stay subtle. Music fades gently near the end instead of stopping abruptly.</p></div>';
+
+  const focusHud=document.createElement('div');
+  focusHud.className='focus-hud';
+  focusHud.innerHTML=
+    '<div class="focus-hud-copy"><small id="focusHudKicker">FOCUS</small><strong id="focusHudTime">15:00</strong><span id="focusHudCity">Tokyo · Café Window</span></div>'+
+    '<div class="focus-hud-actions"><button type="button" id="focusMusicToggle">Pause music</button><button type="button" id="focusEndBtn">End session</button></div>';
+
+  const focusHint=document.createElement('div');
+  focusHint.className='focus-hint';
+  focusHint.textContent='Tap the scene to reveal focus controls';
+
+  document.body.append(focusScrim,focusPanel,focusHud,focusHint);
+
+  const focusHudKicker=focusHud.querySelector('#focusHudKicker');
+  const focusHudTime=focusHud.querySelector('#focusHudTime');
+  const focusHudCity=focusHud.querySelector('#focusHudCity');
+  const focusMusicToggle=focusHud.querySelector('#focusMusicToggle');
+  const focusEndBtn=focusHud.querySelector('#focusEndBtn');
+
+  function formatFocusTime(seconds){
+    const s=Math.max(0,Math.ceil(seconds));
+    const m=Math.floor(s/60),r=s%60;
+    return String(m).padStart(2,'0')+':'+String(r).padStart(2,'0');
+  }
+
+  function openFocusPanel(){
+    focusScrim.classList.add('open');
+    focusPanel.classList.add('open');
+    if(!body.classList.contains('immersive')) body.style.overflow='hidden';
+  }
+
+  function closeFocusPanel(){
+    focusScrim.classList.remove('open');
+    focusPanel.classList.remove('open');
+    if(!body.classList.contains('immersive')&&!body.classList.contains('memory-open')) body.style.overflow='';
+  }
+
+  function showFocusControls(duration=4800){
+    if(!focusSession) return;
+    body.classList.add('focus-controls-visible');
+    clearTimeout(focusControlsTimer);
+    focusControlsTimer=setTimeout(()=>body.classList.remove('focus-controls-visible'),duration);
+  }
+
+  function updateFocusHud(){
+    if(!focusSession) return;
+    const remaining=Math.max(0,(focusSession.endsAt-Date.now())/1000);
+    focusHudTime.textContent=formatFocusTime(remaining);
+    focusHudKicker.textContent=focusSession.mode.kicker;
+    focusHudCity.textContent=cities[active].name+' · '+(environmentLabels[env]||env);
+    focusMusicToggle.textContent=audio.paused?'Play music':'Pause music';
+  }
+
+  function applyFocusFade(){
+    if(!focusSession) return;
+    const remaining=Math.max(0,(focusSession.endsAt-Date.now())/1000);
+    const fade=focusSession.mode.fadeSeconds;
+    if(remaining<=fade){
+      const factor=Math.max(0,Math.min(1,remaining/fade));
+      audio.volume=focusBaseMusicVolume*factor;
+    }else{
+      audio.volume=focusBaseMusicVolume;
+    }
+  }
+
+  function finishFocusSession({manual=false}={}){
+    if(!focusSession) return;
+    clearInterval(focusTimer);
+    clearTimeout(focusControlsTimer);
+    const label=focusSession.mode.label;
+    focusSession=null;
+    body.classList.remove('focus-active','focus-controls-visible');
+    focusHud.classList.remove('active');
+    focusHint.classList.remove('show');
+    audio.pause();
+    audio.volume=Number(mix.music.value)/100;
+    focusMainBtn.querySelector('.focus-pill-state').textContent='ambient timer';
+    if(!manual) showMemoryToast(label+' complete · rain continues');
+  }
+
+  function focusTick(){
+    if(!focusSession) return;
+    const remaining=(focusSession.endsAt-Date.now())/1000;
+    applyFocusFade();
+    updateFocusHud();
+    if(remaining<=0) finishFocusSession({manual:false});
+  }
+
+  function activateFocus(modeKey){
+    const mode=focusModes[modeKey];
+    if(!mode) return;
+    if(focusSession) finishFocusSession({manual:true});
+
+    try{
+      initSound();
+      if(ac?.state==='suspended') ac.resume().catch(()=>{});
+    }catch(_){}
+
+    focusBaseMusicVolume=Number(mix.music.value)/100;
+    focusMusicWasPlaying=!audio.paused;
+    audio.volume=focusBaseMusicVolume;
+    audio.play().catch(()=>{});
+
+    focusSession={
+      key:modeKey,
+      mode,
+      startedAt:Date.now(),
+      endsAt:Date.now()+mode.minutes*60*1000
+    };
+
+    body.classList.add('focus-active','focus-controls-visible');
+    focusHud.classList.add('active');
+    focusHint.classList.add('show');
+    focusMainBtn.querySelector('.focus-pill-state').textContent=mode.minutes+' min active';
+
+    clearInterval(focusTimer);
+    focusTimer=setInterval(focusTick,1000);
+    updateFocusHud();
+    clearTimeout(focusControlsTimer);
+    focusControlsTimer=setTimeout(()=>{
+      body.classList.remove('focus-controls-visible');
+      focusHint.classList.remove('show');
+    },5200);
+  }
+
+  function startFocus(modeKey){
+    closeFocusPanel();
+    try{
+      initSound();
+      if(ac?.state==='suspended') ac.resume().catch(()=>{});
+      audio.play().catch(()=>{});
+    }catch(_){}
+
+    if(body.classList.contains('immersive')){
+      activateFocus(modeKey);
+    }else{
+      pendingFocusStart=modeKey;
+      selectCity(active,{enter:true});
+    }
+  }
+
+  focusMainBtn.addEventListener('click',openFocusPanel);
+  focusImmersiveBtn.addEventListener('click',e=>{e.stopPropagation();openFocusPanel();});
+  focusPanel.querySelector('.focus-close').addEventListener('click',closeFocusPanel);
+  focusScrim.addEventListener('click',closeFocusPanel);
+  focusPanel.addEventListener('click',e=>{
+    const card=e.target.closest('[data-focus-mode]');
+    if(card) startFocus(card.dataset.focusMode);
+  });
+
+  focusMusicToggle.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(audio.paused) audio.play().catch(()=>{});
+    else audio.pause();
+    updateFocusHud();
+    showFocusControls();
+  });
+
+  focusEndBtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    finishFocusSession({manual:true});
+  });
   }
 
   function cityLocalDate(tz,date=new Date()){
@@ -769,10 +978,16 @@
   function enterImmersive(){
     body.classList.add('immersive');
     recordExperience(active);
+    if(pendingFocusStart){
+      const modeKey=pendingFocusStart;
+      pendingFocusStart=null;
+      setTimeout(()=>activateFocus(modeKey),760);
+    }
     soundPanel.classList.remove('open');
     resizeRain();
   }
   function exitImmersive(){
+    if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive');
     soundPanel.classList.remove('open');
     body.style.overflow = '';
@@ -907,9 +1122,10 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
+    if(focusSession) return;
     holdTimer=setTimeout(()=>{
       holdShown=true;
       const c=cities[active];
@@ -927,7 +1143,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -935,12 +1151,17 @@
       const next=dx<0?order[(i+1)%order.length]:order[(i-1+order.length)%order.length];
       selectCity(next,{enter:true});
     }else if(dist<14&&!holdShown){
-      exitImmersive();
+      if(focusSession) showFocusControls();
+      else exitImmersive();
     }
     pointerStart=null;
   },true);
 
   window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&focusPanel.classList.contains('open')){
+      closeFocusPanel();
+      return;
+    }
     if(e.key==='Escape'&&(memoryPreview.classList.contains('open')||memoryGallery.classList.contains('open'))){
       if(memoryPreview.classList.contains('open')) closeMemoryPreview();
       else closeAllMemoryLayers();
@@ -959,7 +1180,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
