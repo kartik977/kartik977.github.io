@@ -1155,3 +1155,75 @@ body.env-rooftop-lightning .city-photo{transition-duration:.45s,.25s}
 @media(prefers-reduced-motion:reduce){
   .city-photo{transition:none!important}
 }
+
+
+/* PLUVIA 8.2 — Weather-Reactive Atmosphere */
+:root{
+  --weather-mist-opacity:.22;
+  --weather-cloud-opacity:.28;
+  --weather-tone-opacity:.94;
+}
+
+.city-tone{
+  opacity:var(--weather-tone-opacity);
+  transition:opacity .8s ease;
+}
+.city-tone::after{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(188,207,218,.18),rgba(87,108,120,.06) 34%,transparent 68%),
+    radial-gradient(ellipse at 52% 0%,rgba(201,218,228,.17),transparent 54%);
+  opacity:var(--weather-cloud-opacity);
+  transition:opacity .8s ease;
+}
+body.immersive .glass-mist{
+  opacity:var(--weather-mist-opacity);
+  transition:opacity .8s ease;
+}
+
+body[data-weather="clear"] .city-tone::after{filter:saturate(.65)}
+body[data-weather="cloudy"] .city-tone::after{filter:saturate(.72)}
+body[data-weather="drizzle"] .city-tone::after,
+body[data-weather="rain"] .city-tone::after,
+body[data-weather="showers"] .city-tone::after{filter:saturate(.62)}
+body[data-weather="storm"] .city-tone::after{
+  background:
+    linear-gradient(180deg,rgba(126,150,164,.28),rgba(38,52,61,.16) 38%,transparent 72%),
+    radial-gradient(ellipse at 48% 0%,rgba(177,205,221,.2),transparent 48%);
+}
+body[data-weather="snow"] .city-tone::after{
+  background:
+    linear-gradient(180deg,rgba(224,235,241,.2),rgba(191,208,217,.08) 42%,transparent 72%),
+    radial-gradient(ellipse at 50% 10%,rgba(232,241,246,.2),transparent 55%);
+}
+body[data-weather="snow"] .glass-mist{filter:saturate(.45)}
+body[data-weather="clear"] .glass-mist{filter:saturate(.82)}
+
+body.weather-lightning .city-tone::before{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 68% 6%,rgba(240,249,255,.82),rgba(196,226,244,.22) 28%,transparent 58%);
+  animation:weatherLightningFlash .52s ease-out both;
+}
+@keyframes weatherLightningFlash{
+  0%{opacity:0}
+  9%{opacity:.92}
+  18%{opacity:.2}
+  31%{opacity:.7}
+  49%{opacity:.08}
+  100%{opacity:0}
+}
+
+body.focus-active .city-tone::after,
+body.focus-active .glass-mist{
+  transition-duration:1.4s;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .city-tone,.city-tone::after,.glass-mist{transition:none!important}
+  body.weather-lightning .city-tone::before{animation:none!important;opacity:.16}
+}
