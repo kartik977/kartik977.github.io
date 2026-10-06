@@ -804,7 +804,7 @@ body[data-env="rooftop"] .living-glass-layer{opacity:.62}
 
 .living-glass-drop{
   position:absolute;left:0;top:0;
-  width:var(--gs);height:calc(var(--gs) * 1.22);
+  width:var(--gs);height:var(--gsh);
   border-radius:58% 46% 62% 52%;
   opacity:0;
   background:
@@ -843,14 +843,14 @@ body.immersive .living-glass-drop{
   }
   8%{opacity:.34}
   23%{
-    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .18)),16vh,0) scale(.92)
+    transform:translate3d(calc(var(--gx) + var(--gdrift1)),16vh,0) scale(.92)
   }
-  24%{transform:translate3d(calc(var(--gx) + (var(--gdrift) * .18)),16.5vh,0) scale(.98,1.12)}
+  24%{transform:translate3d(calc(var(--gx) + var(--gdrift1)),16.5vh,0) scale(.98,1.12)}
   48%{
-    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .46)),49vh,0) scale(.96,1.06)
+    transform:translate3d(calc(var(--gx) + var(--gdrift2)),49vh,0) scale(.96,1.06)
   }
   72%{
-    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .74)),82vh,0) scale(1.02,1.15)
+    transform:translate3d(calc(var(--gx) + var(--gdrift3)),82vh,0) scale(1.02,1.15)
   }
   92%{opacity:var(--glass-rain-opacity)}
   100%{
