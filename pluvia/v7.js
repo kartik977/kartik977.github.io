@@ -952,7 +952,7 @@
   }
 
   function earnStamp(id){
-    if (!cities[id] || visited.has(id)) return;
+    if (!cities[id] || !order.includes(id) || visited.has(id)) return;
     visited.add(id);
     persistPassport();
     renderPassport();
@@ -994,6 +994,334 @@
     const c = cities[id];
     return '<button class="city-card" data-city="'+id+'"><strong>'+c.name+'</strong><span>'+c.landmark+'</span><small>'+c.country+' · enter rain</small></button>';
   }).join('');
+
+
+  // PLUVIA 9.0 — Live Rain World
+  const liveRainPlaces = [
+    ['reykjavik','Reykjavík','Iceland',64.1466,-21.9426,'Atlantic/Reykjavik','Europe'],
+    ['dublin','Dublin','Ireland',53.3498,-6.2603,'Europe/Dublin','Europe'],
+    ['glasgow','Glasgow','United Kingdom',55.8642,-4.2518,'Europe/London','Europe'],
+    ['brussels','Brussels','Belgium',50.8503,4.3517,'Europe/Brussels','Europe'],
+    ['berlin','Berlin','Germany',52.52,13.405,'Europe/Berlin','Europe'],
+    ['copenhagen','Copenhagen','Denmark',55.6761,12.5683,'Europe/Copenhagen','Europe'],
+    ['oslo','Oslo','Norway',59.9139,10.7522,'Europe/Oslo','Europe'],
+    ['stockholm','Stockholm','Sweden',59.3293,18.0686,'Europe/Stockholm','Europe'],
+    ['helsinki','Helsinki','Finland',60.1699,24.9384,'Europe/Helsinki','Europe'],
+    ['warsaw','Warsaw','Poland',52.2297,21.0122,'Europe/Warsaw','Europe'],
+    ['prague','Prague','Czechia',50.0755,14.4378,'Europe/Prague','Europe'],
+    ['vienna','Vienna','Austria',48.2082,16.3738,'Europe/Vienna','Europe'],
+    ['zurich','Zürich','Switzerland',47.3769,8.5417,'Europe/Zurich','Europe'],
+    ['milan','Milan','Italy',45.4642,9.19,'Europe/Rome','Europe'],
+    ['rome','Rome','Italy',41.9028,12.4964,'Europe/Rome','Europe'],
+    ['madrid','Madrid','Spain',40.4168,-3.7038,'Europe/Madrid','Europe'],
+    ['barcelona','Barcelona','Spain',41.3874,2.1686,'Europe/Madrid','Europe'],
+    ['lisbon','Lisbon','Portugal',38.7223,-9.1393,'Europe/Lisbon','Europe'],
+    ['istanbul','Istanbul','Türkiye',41.0082,28.9784,'Europe/Istanbul','Europe'],
+    ['athens','Athens','Greece',37.9838,23.7275,'Europe/Athens','Europe'],
+    ['casablanca','Casablanca','Morocco',33.5731,-7.5898,'Africa/Casablanca','Africa'],
+    ['lagos','Lagos','Nigeria',6.5244,3.3792,'Africa/Lagos','Africa'],
+    ['nairobi','Nairobi','Kenya',-1.2921,36.8219,'Africa/Nairobi','Africa'],
+    ['cape-town','Cape Town','South Africa',-33.9249,18.4241,'Africa/Johannesburg','Africa'],
+    ['johannesburg','Johannesburg','South Africa',-26.2041,28.0473,'Africa/Johannesburg','Africa'],
+    ['cairo','Cairo','Egypt',30.0444,31.2357,'Africa/Cairo','Africa'],
+    ['dubai','Dubai','United Arab Emirates',25.2048,55.2708,'Asia/Dubai','Asia'],
+    ['delhi','Delhi','India',28.6139,77.209,'Asia/Kolkata','Asia'],
+    ['bengaluru','Bengaluru','India',12.9716,77.5946,'Asia/Kolkata','Asia'],
+    ['kolkata','Kolkata','India',22.5726,88.3639,'Asia/Kolkata','Asia'],
+    ['bangkok','Bangkok','Thailand',13.7563,100.5018,'Asia/Bangkok','Asia'],
+    ['kuala-lumpur','Kuala Lumpur','Malaysia',3.139,101.6869,'Asia/Kuala_Lumpur','Asia'],
+    ['jakarta','Jakarta','Indonesia',-6.2088,106.8456,'Asia/Jakarta','Asia'],
+    ['manila','Manila','Philippines',14.5995,120.9842,'Asia/Manila','Asia'],
+    ['ho-chi-minh','Ho Chi Minh City','Vietnam',10.8231,106.6297,'Asia/Ho_Chi_Minh','Asia'],
+    ['hong-kong','Hong Kong','Hong Kong',22.3193,114.1694,'Asia/Hong_Kong','Asia'],
+    ['taipei','Taipei','Taiwan',25.033,121.5654,'Asia/Taipei','Asia'],
+    ['osaka','Osaka','Japan',34.6937,135.5023,'Asia/Tokyo','Asia'],
+    ['auckland','Auckland','New Zealand',-36.8509,174.7645,'Pacific/Auckland','Oceania'],
+    ['sydney','Sydney','Australia',-33.8688,151.2093,'Australia/Sydney','Oceania'],
+    ['melbourne','Melbourne','Australia',-37.8136,144.9631,'Australia/Melbourne','Oceania'],
+    ['san-francisco','San Francisco','United States',37.7749,-122.4194,'America/Los_Angeles','North America'],
+    ['los-angeles','Los Angeles','United States',34.0522,-118.2437,'America/Los_Angeles','North America'],
+    ['denver','Denver','United States',39.7392,-104.9903,'America/Denver','North America'],
+    ['chicago','Chicago','United States',41.8781,-87.6298,'America/Chicago','North America'],
+    ['toronto','Toronto','Canada',43.6532,-79.3832,'America/Toronto','North America'],
+    ['montreal','Montréal','Canada',45.5017,-73.5673,'America/Toronto','North America'],
+    ['washington','Washington, D.C.','United States',38.9072,-77.0369,'America/New_York','North America'],
+    ['miami','Miami','United States',25.7617,-80.1918,'America/New_York','North America'],
+    ['mexico-city','Mexico City','Mexico',19.4326,-99.1332,'America/Mexico_City','North America'],
+    ['panama-city','Panama City','Panama',8.9824,-79.5199,'America/Panama','North America'],
+    ['bogota','Bogotá','Colombia',4.711,-74.0721,'America/Bogota','South America'],
+    ['lima','Lima','Peru',-12.0464,-77.0428,'America/Lima','South America'],
+    ['rio','Rio de Janeiro','Brazil',-22.9068,-43.1729,'America/Sao_Paulo','South America'],
+    ['buenos-aires','Buenos Aires','Argentina',-34.6037,-58.3816,'America/Argentina/Buenos_Aires','South America'],
+    ['santiago','Santiago','Chile',-33.4489,-70.6693,'America/Santiago','South America']
+  ].map(([id,name,country,lat,lon,tz,region])=>({id,name,country,lat,lon,tz,region}));
+
+  const curatedLiveIds={
+    london:'london',mumbai:'mumbai',seattle:'seattle',singapore:'singapore',
+    'sao-paulo':'saopaulo',paris:'paris','new-york':'newyork',seoul:'seoul',
+    vancouver:'vancouver',amsterdam:'amsterdam',kyoto:'kyoto',tokyo:'tokyo'
+  };
+
+  // Add the existing twelve to the world scan without duplicating the UI catalogue.
+  const liveRainScanPlaces=[
+    ...liveRainPlaces,
+    ...order.map(id=>{
+      const c=cities[id];
+      return {id:'curated-'+id,name:c.name,country:c.country,lat:c.lat,lon:c.lon,tz:c.tz,region:regionByCity[id]||'World',curatedId:id};
+    })
+  ];
+
+  const liveRainSection=document.createElement('section');
+  liveRainSection.className='section live-rain-section';
+  liveRainSection.id='live-rain-world';
+  liveRainSection.innerHTML=
+    '<div class="section-head live-rain-head"><div><span class="micro">LIVE / WORLD RAIN SIGNAL</span><h2>It’s raining right now.</h2></div>'+
+    '<p>Pluvia scans major cities around the world and lights up places reporting rain now. Pick a signal and watch the real weather through Pluvia.</p></div>'+
+    '<div class="live-rain-shell">'+
+      '<div class="live-rain-map-wrap">'+
+        '<div class="live-rain-map" id="liveRainMap" aria-label="World map of cities currently reporting rain">'+
+          '<img class="live-rain-worldmap" alt="" aria-hidden="true" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/BlankMap-World.svg?width=1600">'+
+          '<div class="live-rain-grid" aria-hidden="true"></div>'+
+          '<div class="live-rain-markers" id="liveRainMarkers"></div>'+
+          '<div class="live-rain-map-empty" id="liveRainMapEmpty">Scanning the world for rain…</div>'+
+        '</div>'+
+        '<div class="live-rain-map-foot"><span id="liveRainStatus">Connecting to live weather…</span>'+
+          '<button type="button" id="refreshLiveRain">Refresh signal ↻</button></div>'+
+      '</div>'+
+      '<div class="live-rain-feed"><div class="live-rain-feed-head"><span>RAINING NOW</span><b id="liveRainCount">—</b></div>'+
+        '<div class="live-rain-list" id="liveRainList"><div class="live-rain-loading">Finding rain around the world…</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="live-rain-source">Live weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · City imagery: Wikimedia Commons · signals refresh automatically.</div>';
+
+  document.querySelector('#cities')?.insertAdjacentElement('afterend',liveRainSection);
+
+  const liveRainMap=$('#liveRainMap');
+  const liveRainMarkers=$('#liveRainMarkers');
+  const liveRainMapEmpty=$('#liveRainMapEmpty');
+  const liveRainList=$('#liveRainList');
+  const liveRainStatus=$('#liveRainStatus');
+  const liveRainCount=$('#liveRainCount');
+  const refreshLiveRain=$('#refreshLiveRain');
+  let liveRainResults=[];
+  let liveRainRefreshing=false;
+  let liveRainLastUpdated=0;
+  const liveImageCache=new Map();
+
+  const rainyCodes=new Set([51,53,55,56,57,61,63,65,80,81,82,95,96,99]);
+
+  function rainSignal(entry,current){
+    const rain=Math.max(0,Number(current?.rain)||0);
+    const precipitation=Math.max(0,Number(current?.precipitation)||0);
+    const code=Number(current?.weather_code);
+    if(!(rain>.01||precipitation>.01||rainyCodes.has(code)))return null;
+    const score=rain*12+precipitation*4+([95,96,99].includes(code)?24:0)+([80,81,82].includes(code)?5:0);
+    const level=[95,96,99].includes(code)||rain>=4?'storm':rain>=1.5?'heavy':rain>=.35?'steady':'light';
+    return {...entry,current:{...current},rain,precipitation,code,score,level};
+  }
+
+  function mapPoint(place){
+    return {
+      x:Math.max(1.5,Math.min(98.5,((place.lon+180)/360)*100)),
+      y:Math.max(3,Math.min(97,((90-place.lat)/180)*100))
+    };
+  }
+
+  function liveRainCondition(result){
+    if([95,96,99].includes(result.code))return 'Thunderstorm';
+    if([80,81,82].includes(result.code))return 'Rain showers';
+    if([51,53,55,56,57].includes(result.code))return 'Drizzle';
+    return result.rain>=1.5?'Heavy rain':'Rain';
+  }
+
+  function renderLiveRainWorld(){
+    const top=liveRainResults.slice(0,12);
+    liveRainCount.textContent=String(liveRainResults.length);
+    liveRainMapEmpty.hidden=liveRainResults.length>0;
+
+    liveRainMarkers.replaceChildren();
+    liveRainResults.forEach((r,index)=>{
+      const p=mapPoint(r);
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='live-rain-marker '+r.level;
+      button.style.left=p.x+'%';
+      button.style.top=p.y+'%';
+      button.style.setProperty('--rain-rank',String(Math.min(1,.25+r.score/35)));
+      button.dataset.liveRainId=r.id;
+      button.title=r.name+' · '+liveRainCondition(r)+' · '+r.rain.toFixed(1)+' mm';
+      button.setAttribute('aria-label','Watch live rain in '+r.name+', '+r.country);
+      button.innerHTML='<i></i><span>'+r.name+'</span>';
+      if(index>25)button.classList.add('minor');
+      liveRainMarkers.appendChild(button);
+    });
+
+    if(!top.length){
+      liveRainList.innerHTML='<div class="live-rain-loading">No rain signal was found in the scanned cities on this refresh. Try again shortly.</div>';
+      return;
+    }
+
+    liveRainList.innerHTML=top.map((r,index)=>
+      '<button class="live-rain-card" type="button" data-live-rain-id="'+r.id+'">'+
+        '<span class="live-rain-rank">'+String(index+1).padStart(2,'0')+'</span>'+
+        '<span class="live-rain-card-main"><strong>'+r.name+'</strong><small>'+r.country+' · '+liveRainCondition(r)+'</small></span>'+
+        '<span class="live-rain-card-weather"><b>'+r.rain.toFixed(1)+' mm</b><small>'+Math.round(Number(r.current.wind_speed_10m)||0)+' km/h</small></span>'+
+        '<span class="live-rain-watch">WATCH ↗</span>'+
+      '</button>'
+    ).join('');
+  }
+
+  async function fetchLiveRainChunk(chunk){
+    const latitude=chunk.map(x=>x.lat).join(',');
+    const longitude=chunk.map(x=>x.lon).join(',');
+    const current='temperature_2m,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m';
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(latitude)+'&longitude='+encodeURIComponent(longitude)+'&current='+current;
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok)throw new Error('Live rain signal unavailable');
+    const data=await res.json();
+    const rows=Array.isArray(data)?data:[data];
+    return chunk.map((place,index)=>rainSignal(place,rows[index]?.current||{})).filter(Boolean);
+  }
+
+  async function refreshLiveRainWorld(){
+    if(liveRainRefreshing)return;
+    liveRainRefreshing=true;
+    refreshLiveRain.disabled=true;
+    liveRainStatus.textContent='Scanning '+liveRainScanPlaces.length+' world cities…';
+    liveRainMap.classList.add('refreshing');
+    try{
+      const chunks=[];
+      for(let i=0;i<liveRainScanPlaces.length;i+=34)chunks.push(liveRainScanPlaces.slice(i,i+34));
+      const groups=await Promise.all(chunks.map(fetchLiveRainChunk));
+      const seen=new Set();
+      liveRainResults=groups.flat()
+        .sort((a,b)=>b.score-a.score)
+        .filter(r=>{
+          const key=r.name.toLowerCase()+'|'+r.country.toLowerCase();
+          if(seen.has(key))return false;
+          seen.add(key);return true;
+        });
+      liveRainLastUpdated=Date.now();
+      renderLiveRainWorld();
+      liveRainStatus.textContent=liveRainResults.length+' raining now · updated '+new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit'}).format(new Date());
+    }catch(_){
+      liveRainStatus.textContent=liveRainResults.length?'Live refresh failed · showing last signal':'Live rain signal unavailable · try refresh';
+      if(!liveRainResults.length)liveRainMapEmpty.textContent='Could not reach the live rain signal.';
+    }finally{
+      liveRainRefreshing=false;
+      refreshLiveRain.disabled=false;
+      liveRainMap.classList.remove('refreshing');
+    }
+  }
+
+  async function resolveLiveCityImage(place){
+    if(place.curatedId)return {src:cities[place.curatedId].image,pos:cities[place.curatedId].pos,label:cities[place.curatedId].landmark};
+    if(liveImageCache.has(place.id))return liveImageCache.get(place.id);
+
+    const storageKey='pluvia-live-image-'+place.id;
+    try{
+      const saved=JSON.parse(sessionStorage.getItem(storageKey)||'null');
+      if(saved?.src){liveImageCache.set(place.id,saved);return saved;}
+    }catch(_){}
+
+    const search=async term=>{
+      const api='https://commons.wikimedia.org/w/api.php?origin=*&action=query&format=json&generator=search&gsrnamespace=6&gsrlimit=12&gsrsearch='+
+        encodeURIComponent(term)+'&prop=imageinfo&iiprop=url%7Cmime%7Csize&iiurlwidth=1600';
+      const res=await fetch(api,{mode:'cors',cache:'force-cache'});
+      if(!res.ok)return [];
+      const data=await res.json();
+      return Object.values(data?.query?.pages||{}).map(page=>{
+        const info=page?.imageinfo?.[0];
+        return info?{title:page.title,src:info.thumburl||info.url,mime:info.mime,width:info.thumbwidth||info.width,height:info.thumbheight||info.height}:null;
+      }).filter(Boolean);
+    };
+
+    try{
+      let options=await search(place.name+' '+place.country+' skyline city');
+      if(!options.length)options=await search(place.name+' '+place.country);
+      const landscape=options.filter(x=>/^image\/(jpeg|png|webp)/.test(x.mime||'')&&Number(x.width)>900&&Number(x.width)>Number(x.height)*1.12);
+      const pick=landscape[0]||options.find(x=>/^image\/(jpeg|png|webp)/.test(x.mime||''))||null;
+      if(!pick)return null;
+      const view={src:pick.src,pos:'50% 50%',label:place.name+' live view'};
+      liveImageCache.set(place.id,view);
+      try{sessionStorage.setItem(storageKey,JSON.stringify(view));}catch(_){}
+      return view;
+    }catch(_){return null}
+  }
+
+  function liveRainAnchor(place){
+    if(place.region==='Europe')return 'london';
+    if(place.region==='North America')return place.lon<-100?'seattle':'newyork';
+    if(place.region==='South America')return 'saopaulo';
+    if(place.region==='Asia'){
+      if(place.lon<85)return 'mumbai';
+      if(place.lon<112)return 'singapore';
+      return place.lat>28?'tokyo':'singapore';
+    }
+    if(place.region==='Oceania')return 'vancouver';
+    return 'london';
+  }
+
+  async function enterLiveRain(placeId){
+    const result=liveRainResults.find(x=>x.id===placeId);
+    if(!result)return;
+    liveRainStatus.textContent='Opening '+result.name+' rain…';
+
+    if(result.curatedId){
+      atmosphereMode='live';
+      localStorage.setItem('pluvia-v83-atmosphere','live');
+      refreshAtmosphereMode();
+      selectCity(result.curatedId,{enter:true});
+      return;
+    }
+
+    const view=await resolveLiveCityImage(result);
+    const anchorId=liveRainAnchor(result);
+    const anchorCity=cities[anchorId];
+    const anchorSoul=citySoul[anchorId]||citySoul.tokyo;
+    const dynamicId='live-'+result.id;
+
+    cities[dynamicId]={
+      name:result.name,country:result.country,landmark:'Live city view',
+      lat:result.lat,lon:result.lon,tz:result.tz,pos:view?.pos||'50% 50%',
+      image:view?.src||'',songs:(anchorCity.songs||[]).map(track=>[...track]),liveRain:true
+    };
+    cityViews[dynamicId]=view?[view]:[{src:'',pos:'50% 50%',label:result.name+' · live rain'}];
+    citySoul[dynamicId]={
+      ...anchorSoul,
+      ambient:'live world rain',
+      story:'Live rain is moving through '+result.name+' right now.'
+    };
+    regionByCity[dynamicId]=result.region;
+    originalSongCounts[dynamicId]=cities[dynamicId].songs.length;
+    cityMusicMarket[dynamicId]=cityMusicMarket[anchorId]||'US';
+
+    atmosphereMode='live';
+    localStorage.setItem('pluvia-v83-atmosphere','live');
+    refreshAtmosphereMode();
+
+    if(view?.src){
+      selectCity(dynamicId,{enter:true});
+    }else{
+      // Never show another city's photograph as if it belonged here.
+      const layer=photoLayers[activePhotoLayer];
+      layer.removeAttribute('src');
+      layer.style.background='linear-gradient(145deg,#07141b,#142a34 52%,#071018)';
+      selectCity(dynamicId,{enter:true});
+    }
+  }
+
+  liveRainSection.addEventListener('click',e=>{
+    const target=e.target.closest('[data-live-rain-id]');
+    if(target)void enterLiveRain(target.dataset.liveRainId);
+  });
+  refreshLiveRain.addEventListener('click',refreshLiveRainWorld);
+
+  setInterval(()=>{
+    if(document.hidden)return;
+    if(Date.now()-liveRainLastUpdated>4.5*60*1000)void refreshLiveRainWorld();
+  },60000);
+  void refreshLiveRainWorld();
 
   const phaseFor = tz => {
     const parts = new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',hour12:false}).formatToParts(new Date());
@@ -1736,7 +2064,7 @@
   updateMemoryCount();
 
   function buildRainStory(){
-    const c=cities[active], soul=citySoul[active];
+    const c=cities[active], soul=citySoul[active]||citySoul.tokyo;
     const time=localTime(c.tz);
     const h=localHour(c.tz);
     const timeMood=h<5?'deep night':h<8?'early morning':h<17?'daylight':h<21?'evening':'late night';
@@ -1991,6 +2319,8 @@
         transitioning=false;
       }
     };
+
+    if(!entryView?.src){commit();return;}
 
     preload.onload=commit;
     preload.onerror=()=>{
@@ -2381,7 +2711,7 @@
 
   function playCityMoment(){
     if(!ac||!soundMaster||!body.classList.contains('immersive')||Number(mix.city.value)<=0) return;
-    const soul=citySoul[active];
+    const soul=citySoul[active]||citySoul.tokyo;
     const level=(Number(mix.city.value)/100)*(soul.gain||.025);
     soul.notes.forEach(([freq,delay,duration])=>{
       const osc=ac.createOscillator(), g=ac.createGain();
