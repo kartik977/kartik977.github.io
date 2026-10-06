@@ -991,9 +991,44 @@
     ctx.drawImage(image,dx,dy,dw,dh);
   }
 
-  async function loadExportImage(url){
+  async function resolveWikimediaExportUrl(url){
     try{
-      const res=await fetch(url,{mode:'cors',cache:'force-cache'});
+      const parsed=new URL(url,location.href);
+      if(parsed.hostname!=='commons.wikimedia.org'||!parsed.pathname.includes('/Special:Redirect/file/')) return url;
+      const marker='/Special:Redirect/file/';
+      const filename=decodeURIComponent(parsed.pathname.slice(parsed.pathname.indexOf(marker)+marker.length));
+      if(!filename) return url;
+      const api='https://commons.wikimedia.org/w/api.php?origin=*&action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=1400&titles='+encodeURIComponent('File:'+filename);
+      const res=await fetch(api,{mode:'cors',cache:'force-cache'});
+      if(!res.ok) return url;
+      const data=await res.json();
+      const page=Object.values(data?.query?.pages||{})[0];
+      return page?.imageinfo?.[0]?.thumburl||page?.imageinfo?.[0]?.url||url;
+    }catch(_){
+      return url;
+    }
+  }
+
+  async function loadImageElement(url){
+    return await new Promise((resolve,reject)=>{
+      const im=new Image();
+      im.crossOrigin='anonymous';
+      im.onload=()=>resolve(im);
+      im.onerror=reject;
+      im.src=url;
+    });
+  }
+
+  async function loadExportImage(url){
+    const resolved=await resolveWikimediaExportUrl(url);
+
+    try{
+      const image=await loadImageElement(resolved);
+      return {image,objectUrl:null};
+    }catch(_){}
+
+    try{
+      const res=await fetch(resolved,{mode:'cors',cache:'force-cache'});
       if(!res.ok) throw new Error('image fetch failed');
       const blob=await res.blob();
       const objectUrl=URL.createObjectURL(blob);
@@ -1060,10 +1095,10 @@
     }
 
     const shade=c.createLinearGradient(0,0,0,H);
-    shade.addColorStop(0,'rgba(2,7,10,.18)');
-    shade.addColorStop(.34,'rgba(2,7,10,.26)');
-    shade.addColorStop(.66,'rgba(2,7,10,.62)');
-    shade.addColorStop(1,'rgba(1,5,8,.97)');
+    shade.addColorStop(0,'rgba(2,7,10,.10)');
+    shade.addColorStop(.34,'rgba(2,7,10,.17)');
+    shade.addColorStop(.66,'rgba(2,7,10,.50)');
+    shade.addColorStop(1,'rgba(1,5,8,.94)');
     c.fillStyle=shade;c.fillRect(0,0,W,H);
 
     const glow=c.createRadialGradient(W*.76,H*.14,0,W*.76,H*.14,W*.58);
