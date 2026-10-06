@@ -1752,6 +1752,7 @@
   let musicCity=null;
   let musicRequestId=0;
   let musicSearchId=0;
+  let streamErrorCount=0;
   const musicRotation=Object.create(null);
   const missingClips=new Set();
   const previewLookups=new Map();
@@ -1857,6 +1858,10 @@
     let best=null,high=0;
     for(const candidate of results){
       if(!candidate.previewUrl||!/^https:\/\//.test(candidate.previewUrl))continue;
+      try{
+        const host=new URL(candidate.previewUrl).hostname;
+        if(!(host.endsWith('.itunes.apple.com')||host.endsWith('.mzstatic.com')))continue;
+      }catch(_){continue}
       const t=normalizeTrackText(candidate.trackName);
       const a=normalizeTrackText(candidate.artistName);
       const titleMatch=t===title?5:t.includes(title)&&title.length>=3?3:title.includes(t)&&t.length>=4?2:0;
@@ -1894,13 +1899,24 @@
     const fail=()=>{
       if(token!==musicRequestId||city!==active)return;
       missingClips.add(city+':'+trackIndex);
-      if(failedAttempts<Math.min(4,cities[city].songs.length-1)){
+      if(failedAttempts===1){
+        const fallback=Array.from({length:originalSongCounts[city]},(_,i)=>i)
+          .find(i=>!missingClips.has(city+':'+i));
+        if(fallback!==undefined){
+          musicRotation[city]=[fallback,...(musicRotation[city]||[]).filter(i=>i!==fallback)];
+        }
+      }
+      if(failedAttempts<3){
         chooseTrack(true,failedAttempts+1);
       }else{
         playlistNote.textContent='Previews unavailable right now. Listen on Apple Music ↗';
         showMemoryToast('City music preview unavailable');
       }
     };
+    if(audio.paused&&audio.currentSrc&&track[2]&&audio.currentSrc===track[2]){
+      try{await audio.play()}catch(_){playlistNote.textContent='Tap the music icon to resume preview';}
+      return;
+    }
     if(!track[2])playlistNote.textContent='Finding a preview…';
     const url=await resolveTrackPreview(track,city);
     if(token!==musicRequestId||city!==active||track!==currentTrack)return;
@@ -1920,7 +1936,7 @@
     if(!audio.paused)playlistNote.textContent='Apple Music preview · short clip';
     if(typeof updateFocusHud==='function'&&body.classList.contains('focus-active'))updateFocusHud();
   }
-  audio.addEventListener('play',syncMusic);
+  audio.addEventListener('play',()=>{streamErrorCount=0;syncMusic()});
   audio.addEventListener('pause',syncMusic);
   audio.addEventListener('ended',()=>chooseTrack(true));
   audio.addEventListener('error',()=>{
@@ -1928,7 +1944,15 @@
     const current=audio.getAttribute('src');
     if(current===currentTrack[2]){
       missingClips.add(active+':'+trackIndex);
-      playlistNote.textContent='This preview could not load. Tap Next song.';
+      streamErrorCount++;
+      if(streamErrorCount<=2){
+        const fallback=Array.from({length:originalSongCounts[active]},(_,i)=>i)
+          .find(i=>!missingClips.has(active+':'+i));
+        if(fallback!==undefined)musicRotation[active]=[fallback,...(musicRotation[active]||[]).filter(i=>i!==fallback)];
+        chooseTrack(true,streamErrorCount);
+      }else{
+        playlistNote.textContent='This preview could not load. Tap Next song.';
+      }
     }
   });
 
