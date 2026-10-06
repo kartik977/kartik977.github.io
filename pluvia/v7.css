@@ -1050,3 +1050,64 @@ body.focus-active[data-env="train"] .city-photo{animation-duration:25s}
   .memory-preview-actions{display:grid;grid-template-columns:1fr 1fr}
   .memory-action{width:100%;justify-content:center}
 }
+
+
+/* PLUVIA 7.9 — City Music Playlists */
+.sound-panel{
+  max-height:calc(100svh - 104px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+.city-playlist{
+  margin-top:17px;
+  padding:14px 13px 12px;
+  border:1px solid color-mix(in srgb,var(--accent) 22%,rgba(225,242,250,.09));
+  border-radius:15px;
+  background:
+    radial-gradient(circle at 93% 5%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 55%),
+    rgba(255,255,255,.018);
+}
+.city-playlist-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  margin-bottom:11px;
+  color:color-mix(in srgb,var(--accent) 64%,#879faa);
+  font:700 7px/1.2 "Manrope",sans-serif;
+  letter-spacing:.13em;text-transform:uppercase;
+}
+#playlistCount{color:#819aa6}
+#playlistTitle{
+  display:block;color:#e2f0f6;
+  font:600 19px/1.2 "Playfair Display",serif;
+  letter-spacing:-.018em;
+  overflow-wrap:anywhere;
+}
+.playlist-artist{
+  display:block;margin-top:5px;color:#a4b6be;
+  font:500 9px/1.45 "Manrope",sans-serif
+}
+.city-playlist-actions{
+  display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:14px;
+}
+.city-playlist-actions button,
+.city-playlist-actions a{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:35px;padding:0 11px;border-radius:999px;
+  border:1px solid rgba(224,241,250,.13);
+  background:#0a1c24;color:#cfdee5;text-decoration:none;cursor:pointer;
+  font:700 8px/1.2 "Manrope",sans-serif;letter-spacing:.025em;
+}
+.city-playlist-actions button{
+  color:#06131a;background:color-mix(in srgb,var(--accent) 70%,#e8f4fa);
+  border-color:color-mix(in srgb,var(--accent) 58%,#d4e8f4);
+}
+.city-playlist-actions a:hover,
+.city-playlist-actions button:hover{filter:brightness(1.1)}
+#playlistNote{
+  display:block;margin-top:11px;color:#79929e;
+  font:500 8px/1.55 "Manrope",sans-serif;
+}
+@media(max-width:600px){
+  .sound-panel{top:62px;right:10px;width:min(335px,calc(100vw - 20px));max-height:calc(100svh - 74px)}
+  .city-playlist{margin-top:14px}
+}
