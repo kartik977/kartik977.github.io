@@ -412,6 +412,7 @@
     rainStoryBtn.classList.remove('active');
     rainStoryBtn.setAttribute('aria-expanded','false');
     rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
+    weather=null;
     const c=cities[id];
     img.classList.add('is-switching');
     const preload=new Image();
@@ -426,7 +427,7 @@
     body.dataset.phase=phaseFor(c.tz);
     chooseTrack();
     fetchWeather(id);
-    if(enter){ earnStamp(id); enterImmersive(); }
+    if(enter){ enterImmersive(); earnStamp(id); }
     const next=order[(order.indexOf(id)+1)%order.length];
     const p=new Image(); p.src=cities[next].image;
   }
@@ -463,6 +464,7 @@
     body.classList.remove('immersive');
     soundPanel.classList.remove('open');
     body.style.overflow = '';
+    const hadStamp=Boolean(pendingStamp);
     if (pendingStamp){
       const name = pendingStamp;
       pendingStamp = null;
@@ -471,7 +473,7 @@
     }
     if(pendingAchievementToasts.length){
       const messages=[...pendingAchievementToasts]; pendingAchievementToasts=[];
-      messages.forEach((message,i)=>setTimeout(()=>showPassportToast(message),(pendingStamp?3200:900)+i*3200));
+      messages.forEach((message,i)=>setTimeout(()=>showPassportToast(message),(hadStamp?3200:900)+i*3200));
     }
   }
 
