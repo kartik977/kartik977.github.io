@@ -1065,6 +1065,12 @@
     })
   ];
 
+  const liveSignalBadge=document.createElement('div');
+  liveSignalBadge.className='live-signal-badge';
+  liveSignalBadge.setAttribute('aria-live','polite');
+  liveSignalBadge.innerHTML='<i></i><span>LIVE RAIN</span><b>Connecting…</b>';
+  body.appendChild(liveSignalBadge);
+
   const liveRainSection=document.createElement('section');
   liveRainSection.className='section live-rain-section';
   liveRainSection.id='live-rain-world';
@@ -1261,12 +1267,13 @@
     const result=liveRainResults.find(x=>x.id===placeId);
     if(!result)return;
     liveRainStatus.textContent='Opening '+result.name+' rain…';
+    liveSignalBadge.innerHTML='<i></i><span>LIVE RAIN</span><b>'+result.name+' · '+result.amount.toFixed(1)+' mm · '+Math.round(Number(result.current.wind_speed_10m)||0)+' km/h wind</b>';
 
     if(result.curatedId){
       atmosphereMode='live';
       localStorage.setItem('pluvia-v83-atmosphere','live');
       refreshAtmosphereMode();
-      selectCity(result.curatedId,{enter:true});
+      selectCity(result.curatedId,{enter:true,liveSignal:true});
       return;
     }
 
@@ -1302,7 +1309,7 @@
     localStorage.setItem('pluvia-v83-atmosphere','live');
     refreshAtmosphereMode();
 
-    selectCity(dynamicId,{enter:true});
+    selectCity(dynamicId,{enter:true,liveSignal:true});
   }
 
   liveRainSection.addEventListener('click',e=>{
@@ -2232,7 +2239,13 @@
       selectedTemp.textContent=Math.round(weather.temp)+'°';
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
-      if(active===id) applyWeatherAtmosphere(weather);
+      if(active===id){
+        applyWeatherAtmosphere(weather);
+        if(body.classList.contains('live-rain-session')){
+          const liveAmount=Math.max(Number(weather.rain)||0,Number(x.precipitation)||0);
+          liveSignalBadge.innerHTML='<i></i><span>LIVE RAIN</span><b>'+c.name+' · '+liveAmount.toFixed(1)+' mm · '+Math.round(Number(weather.wind)||0)+' km/h wind</b>';
+        }
+      }
       if(active===id&&body.classList.contains('immersive')&&env==='rooftop'&&[95,96,99].includes(Number(weather.code))) scheduleEnvironmentBehavior(false);
       if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
       if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
@@ -2256,8 +2269,9 @@
     if(hint) hint.textContent=cities[id].name+' · '+soul.ambient+' · hold the music button for the mixer';
   }
 
-  function selectCity(id,{enter=false}={}){
+  function selectCity(id,{enter=false,liveSignal=false}={}){
     if(!cities[id]) return;
+    body.classList.toggle('live-rain-session',Boolean(liveSignal));
     if(enter&&transitioning) return;
 
     const c=cities[id];
@@ -2387,7 +2401,7 @@
     stopEnvironmentBehavior();
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
-    body.classList.remove('immersive');
+    body.classList.remove('immersive','live-rain-session');
     soundPanel.classList.remove('open');
     body.style.overflow = '';
     const hadStamp=Boolean(pendingStamp);
