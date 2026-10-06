@@ -277,3 +277,98 @@ body.immersive .passport-panel,body.immersive .passport-scrim,body.immersive .pa
   .achievement-section{padding:2px 14px 16px}.achievement-grid{grid-template-columns:1fr}.achievement-head{align-items:flex-start}
   .achievement-head h4{font-size:21px}.rain-story p{font-size:11px}
 }
+
+
+/* PLUVIA 7.3 — Storm Passage */
+.city-passage{
+  --passage-accent:#86cfff;
+  --passage-accent2:#e986a6;
+  position:fixed;inset:0;z-index:85;overflow:hidden;
+  display:grid;place-items:center;
+  background:
+    radial-gradient(circle at 50% 44%,color-mix(in srgb,var(--passage-accent) 8%,transparent),transparent 28%),
+    linear-gradient(180deg,#02070b 0%,#061018 52%,#020609 100%);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .18s ease,visibility 0s linear .18s;
+}
+.city-passage.active{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .18s ease;
+}
+.city-passage.active.reveal{
+  opacity:0;
+  transition:opacity .58s cubic-bezier(.22,.61,.36,1);
+}
+.passage-rain{
+  position:absolute;inset:-15%;
+  opacity:.36;
+  background:repeating-linear-gradient(
+    108deg,
+    transparent 0 18px,
+    rgba(214,236,247,.08) 19px 20px,
+    transparent 21px 38px
+  );
+  transform:translate3d(-3%,0,0);
+  animation:passageRain .48s linear infinite;
+}
+.passage-cloud{
+  position:absolute;width:72vw;height:42vh;border-radius:50%;
+  opacity:.22;filter:none;
+  background:radial-gradient(ellipse at center,color-mix(in srgb,var(--passage-accent) 18%,#71838c),transparent 68%);
+  will-change:transform,opacity;
+}
+.passage-cloud-a{left:-20vw;top:12vh;animation:passageCloudA 1.25s ease-in-out both}
+.passage-cloud-b{right:-24vw;bottom:8vh;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--passage-accent2) 13%,#66727b),transparent 68%);animation:passageCloudB 1.25s ease-in-out both}
+.passage-copy{
+  position:relative;z-index:2;text-align:center;padding:24px;
+  transform:translateY(10px);opacity:0;
+  animation:passageCopy .78s .12s ease forwards;
+}
+.passage-copy small{
+  display:block;margin-bottom:14px;
+  font:700 8px/1 "Manrope",sans-serif;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:color-mix(in srgb,var(--passage-accent) 66%,#8196a1);
+}
+.passage-copy strong{
+  display:block;
+  font:600 clamp(46px,9vw,118px)/.88 "Playfair Display",serif;
+  letter-spacing:-.055em;
+  color:#edf6fa;
+  text-shadow:0 15px 60px rgba(0,0,0,.5);
+}
+.passage-copy span{
+  display:block;margin-top:17px;
+  color:#8ba0ab;font:700 8px/1.35 "Manrope",sans-serif;
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.city-passage.reveal .passage-copy{
+  opacity:0;
+  transform:translateY(-8px) scale(1.01);
+  transition:opacity .25s ease,transform .35s ease;
+}
+@keyframes passageRain{
+  from{transform:translate3d(-4%,-5%,0)}
+  to{transform:translate3d(4%,7%,0)}
+}
+@keyframes passageCloudA{
+  from{transform:translate3d(-12vw,0,0) scale(1.08);opacity:.12}
+  48%{opacity:.28}
+  to{transform:translate3d(20vw,2vh,0) scale(1.01);opacity:.14}
+}
+@keyframes passageCloudB{
+  from{transform:translate3d(12vw,0,0) scale(1.04);opacity:.1}
+  52%{opacity:.24}
+  to{transform:translate3d(-18vw,-2vh,0) scale(1.1);opacity:.12}
+}
+@keyframes passageCopy{
+  to{transform:translateY(0);opacity:1}
+}
+@media(max-width:700px){
+  .passage-rain{opacity:.28}
+  .passage-cloud{width:92vw;height:38vh}
+  .passage-copy strong{font-size:clamp(42px,15vw,74px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .city-passage,.passage-rain,.passage-cloud,.passage-copy{animation:none!important;transition:none!important}
+}
