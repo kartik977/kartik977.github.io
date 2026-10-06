@@ -360,6 +360,258 @@
   };
   const localTime = tz => new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date());
 
+
+  // PLUVIA 7.4 — Atmosphere Memories
+  const environmentLabels = {
+    cafe:'Café Window',
+    apartment:'Apartment Window',
+    hotel:'Hotel Room',
+    train:'Train Window',
+    car:'Car Windshield',
+    rooftop:'Rooftop'
+  };
+
+  let memories = [];
+  try {
+    const saved = JSON.parse(localStorage.getItem('pluvia-v74-memories') || '[]');
+    if (Array.isArray(saved)) memories = saved.filter(m => m && cities[m.cityId]).slice(0,24);
+  } catch (_) {}
+
+  let memoryDraft = null;
+  let previewFromGallery = false;
+
+  const captureMemoryBtn = document.createElement('button');
+  captureMemoryBtn.id = 'captureMemoryBtn';
+  captureMemoryBtn.className = 'capture-memory-btn';
+  captureMemoryBtn.type = 'button';
+  captureMemoryBtn.setAttribute('aria-label','Capture this moment');
+  captureMemoryBtn.innerHTML = '<span class="capture-icon">◉</span><span>Capture this moment</span>';
+  document.body.appendChild(captureMemoryBtn);
+
+  const memoriesBtn = document.createElement('button');
+  memoriesBtn.className = 'pill memories-pill';
+  memoriesBtn.type = 'button';
+  memoriesBtn.innerHTML = '<span>Atmosphere Memories</span><span class="memory-count" id="memoryCount">0 saved</span>';
+  document.querySelector('.actions')?.appendChild(memoriesBtn);
+  const memoryCount = memoriesBtn.querySelector('#memoryCount');
+
+  const memoryScrim = document.createElement('div');
+  memoryScrim.className = 'memory-scrim';
+
+  const memoryPreview = document.createElement('section');
+  memoryPreview.className = 'memory-preview';
+  memoryPreview.setAttribute('role','dialog');
+  memoryPreview.setAttribute('aria-modal','true');
+  memoryPreview.setAttribute('aria-label','Atmosphere memory preview');
+  memoryPreview.innerHTML =
+    '<button class="memory-close memory-preview-close" type="button" aria-label="Close memory">×</button>'+
+    '<div class="memory-preview-kicker">PLUVIA / ATMOSPHERE MEMORY</div>'+
+    '<div id="memoryPreviewSlot"></div>'+
+    '<div class="memory-preview-actions">'+
+      '<button class="memory-action primary" id="saveMemoryBtn" type="button">Save memory</button>'+
+      '<button class="memory-action danger" id="deleteMemoryBtn" type="button">Remove memory</button>'+
+      '<button class="memory-action" id="closeMemoryBtn" type="button">Close</button>'+
+    '</div>';
+
+  const memoryGallery = document.createElement('section');
+  memoryGallery.className = 'memory-gallery';
+  memoryGallery.setAttribute('role','dialog');
+  memoryGallery.setAttribute('aria-modal','true');
+  memoryGallery.setAttribute('aria-label','Atmosphere Memories');
+  memoryGallery.innerHTML =
+    '<div class="memory-gallery-head">'+
+      '<div><span class="micro">PLUVIA / ATMOSPHERE MEMORIES</span><h3>Moments you kept.</h3><p>Small snapshots of weather, place and the window you were looking through.</p></div>'+
+      '<button class="memory-close memory-gallery-close" type="button" aria-label="Close memories">×</button>'+
+    '</div>'+
+    '<div class="memory-gallery-grid" id="memoryGalleryGrid"></div>';
+
+  const memoryToast = document.createElement('div');
+  memoryToast.className = 'memory-toast';
+
+  document.body.append(memoryScrim,memoryPreview,memoryGallery,memoryToast);
+
+  const memoryPreviewSlot = memoryPreview.querySelector('#memoryPreviewSlot');
+  const saveMemoryBtn = memoryPreview.querySelector('#saveMemoryBtn');
+  const deleteMemoryBtn = memoryPreview.querySelector('#deleteMemoryBtn');
+  const closeMemoryBtn = memoryPreview.querySelector('#closeMemoryBtn');
+  const memoryGalleryGrid = memoryGallery.querySelector('#memoryGalleryGrid');
+
+  function updateMemoryCount(){
+    memoryCount.textContent = memories.length + (memories.length===1?' saved':' saved');
+  }
+
+  function persistMemories(){
+    try { localStorage.setItem('pluvia-v74-memories',JSON.stringify(memories.slice(0,24))); } catch (_) {}
+    updateMemoryCount();
+  }
+
+  function cityLocalDate(tz,date=new Date()){
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,month:'short',day:'numeric',year:'numeric'}).format(date);
+  }
+
+  function captureMemoryData(){
+    const c=cities[active];
+    const soul=citySoul[active]||citySoul.tokyo;
+    const now=new Date();
+    return {
+      id:'m'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+      cityId:active,
+      city:c.name,
+      country:c.country,
+      landmark:c.landmark,
+      time:localTime(c.tz),
+      date:cityLocalDate(c.tz,now),
+      temp:weather&&Number.isFinite(Number(weather.temp))?Math.round(Number(weather.temp)):null,
+      rain:weather&&Number.isFinite(Number(weather.rain))?Number(weather.rain):null,
+      condition:weather?weatherText(weather.code):'Live weather syncing',
+      envKey:env,
+      environment:environmentLabels[env]||env,
+      image:c.image,
+      accent:soul.accent,
+      accent2:soul.accent2,
+      phase:phaseFor(c.tz),
+      capturedAt:now.toISOString()
+    };
+  }
+
+  function memoryWeatherLine(m){
+    if(m.temp===null||m.rain===null) return m.time+' · Live weather syncing';
+    return m.time+' · '+m.temp+'°C · '+Number(m.rain).toFixed(1)+' mm rain';
+  }
+
+  function memoryCardMarkup(m,compact=false){
+    return '<article class="atmosphere-card '+(compact?'compact':'')+'" data-memory-card="'+m.id+'" style="--memory-accent:'+m.accent+';--memory-accent2:'+m.accent2+'">'+
+      '<div class="memory-card-image" data-memory-image="'+m.id+'"></div>'+
+      '<div class="memory-card-shade"></div>'+
+      '<div class="memory-card-content">'+
+        '<div class="memory-card-top"><span>PLUVIA</span><span>'+m.date.toUpperCase()+'</span></div>'+
+        '<div class="memory-card-main"><small>'+m.country+'</small><h4>'+m.city+'</h4><em>'+m.landmark+'</em></div>'+
+        '<div class="memory-card-data"><strong>'+memoryWeatherLine(m)+'</strong><span>'+m.environment+'</span></div>'+
+        '<div class="memory-card-foot"><span>'+m.condition+'</span><span>ATMOSPHERE MEMORY</span></div>'+
+      '</div>'+
+    '</article>';
+  }
+
+  function applyMemoryImages(root,list){
+    list.forEach(m=>{
+      const el=root.querySelector('[data-memory-image="'+m.id+'"]');
+      if(el) el.style.backgroundImage='url("'+m.image.replace(/"/g,'%22')+'")';
+    });
+  }
+
+  function showMemoryToast(message){
+    memoryToast.textContent=message;
+    memoryToast.classList.remove('show');
+    void memoryToast.offsetWidth;
+    memoryToast.classList.add('show');
+    setTimeout(()=>memoryToast.classList.remove('show'),2600);
+  }
+
+  function openMemoryLayer(){
+    memoryScrim.classList.add('open');
+    body.classList.add('memory-open');
+    if(!body.classList.contains('immersive')) body.style.overflow='hidden';
+  }
+
+  function closeAllMemoryLayers(){
+    memoryPreview.classList.remove('open');
+    memoryGallery.classList.remove('open');
+    memoryScrim.classList.remove('open');
+    body.classList.remove('memory-open');
+    if(!body.classList.contains('immersive')) body.style.overflow='';
+    memoryDraft=null;
+    previewFromGallery=false;
+  }
+
+  function renderMemoryPreview(m,{saved=false,fromGallery=false}={}){
+    memoryDraft=m;
+    previewFromGallery=fromGallery;
+    memoryPreviewSlot.innerHTML=memoryCardMarkup(m,false);
+    applyMemoryImages(memoryPreviewSlot,[m]);
+    saveMemoryBtn.hidden=saved;
+    deleteMemoryBtn.hidden=!saved;
+    saveMemoryBtn.disabled=false;
+    saveMemoryBtn.textContent='Save memory';
+    memoryGallery.classList.remove('open');
+    memoryPreview.classList.add('open');
+    openMemoryLayer();
+  }
+
+  function renderMemoryGallery(){
+    if(!memories.length){
+      memoryGalleryGrid.innerHTML='<div class="memory-empty"><span>◌</span><strong>No memories yet.</strong><p>Enter a rainy city and use “Capture this moment” to keep your first atmosphere.</p></div>';
+      return;
+    }
+    memoryGalleryGrid.innerHTML=memories.map(m=>'<button class="memory-gallery-item" type="button" data-memory-open="'+m.id+'">'+memoryCardMarkup(m,true)+'</button>').join('');
+    applyMemoryImages(memoryGalleryGrid,memories);
+  }
+
+  function openMemoryGallery(){
+    if(body.classList.contains('immersive')) return;
+    renderMemoryGallery();
+    memoryPreview.classList.remove('open');
+    memoryGallery.classList.add('open');
+    openMemoryLayer();
+  }
+
+  captureMemoryBtn.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(!body.classList.contains('immersive')||transitioning) return;
+    renderMemoryPreview(captureMemoryData(),{saved:false,fromGallery:false});
+  });
+
+  memoriesBtn.addEventListener('click',openMemoryGallery);
+
+  saveMemoryBtn.addEventListener('click',()=>{
+    if(!memoryDraft) return;
+    if(memories.some(m=>m.id===memoryDraft.id)) return;
+    memories.unshift(memoryDraft);
+    memories=memories.slice(0,24);
+    persistMemories();
+    saveMemoryBtn.disabled=true;
+    saveMemoryBtn.textContent='Saved ✓';
+    showMemoryToast(memoryDraft.city+' atmosphere saved');
+  });
+
+  deleteMemoryBtn.addEventListener('click',()=>{
+    if(!memoryDraft) return;
+    const removed=memoryDraft;
+    memories=memories.filter(m=>m.id!==removed.id);
+    persistMemories();
+    memoryPreview.classList.remove('open');
+    renderMemoryGallery();
+    memoryGallery.classList.add('open');
+    previewFromGallery=false;
+    memoryDraft=null;
+    showMemoryToast('Memory removed');
+  });
+
+  memoryGalleryGrid.addEventListener('click',e=>{
+    const item=e.target.closest('[data-memory-open]');
+    if(!item) return;
+    const m=memories.find(x=>x.id===item.dataset.memoryOpen);
+    if(m) renderMemoryPreview(m,{saved:true,fromGallery:true});
+  });
+
+  function closeMemoryPreview(){
+    memoryPreview.classList.remove('open');
+    if(previewFromGallery&&!body.classList.contains('immersive')){
+      renderMemoryGallery();
+      memoryGallery.classList.add('open');
+      previewFromGallery=false;
+      memoryDraft=null;
+      return;
+    }
+    closeAllMemoryLayers();
+  }
+
+  memoryPreview.querySelector('.memory-preview-close').addEventListener('click',closeMemoryPreview);
+  closeMemoryBtn.addEventListener('click',closeMemoryPreview);
+  memoryGallery.querySelector('.memory-gallery-close').addEventListener('click',closeAllMemoryLayers);
+  memoryScrim.addEventListener('click',closeAllMemoryLayers);
+
+  updateMemoryCount();
+
   function buildRainStory(){
     const c=cities[active], soul=citySoul[active];
     const time=localTime(c.tz);
@@ -655,7 +907,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     holdTimer=setTimeout(()=>{
@@ -675,7 +927,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -689,6 +941,11 @@
   },true);
 
   window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&(memoryPreview.classList.contains('open')||memoryGallery.classList.contains('open'))){
+      if(memoryPreview.classList.contains('open')) closeMemoryPreview();
+      else closeAllMemoryLayers();
+      return;
+    }
     if (!body.classList.contains('immersive')) {
       if (e.key === 'Escape' && passportPanel.classList.contains('open')) closePassport();
       return;
@@ -702,7 +959,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
