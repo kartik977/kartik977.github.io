@@ -1764,7 +1764,9 @@
     '<strong id="playlistTitle">Choose a city</strong>'+
     '<span class="playlist-artist" id="playlistArtist">A city-specific soundtrack</span>'+
     '<div class="city-playlist-actions"><button id="nextCitySong" type="button">Next song →</button>'+
+    '<button id="allCitySongs" type="button" aria-expanded="false">All songs ▾</button>'+
     '<a id="appleTrackLink" href="https://music.apple.com/" target="_blank" rel="noopener noreferrer">Listen on Apple Music ↗</a></div>'+
+    '<div id="cityPlaylistTracks" hidden></div>'+
     '<small id="playlistNote">Apple Music previews · full songs require a music service</small>';
   soundPanel.insertBefore(nowPlaying,soundPanel.querySelector('.mix-row'));
   const playlistCount=nowPlaying.querySelector('#playlistCount');
@@ -1773,6 +1775,29 @@
   const playlistNote=nowPlaying.querySelector('#playlistNote');
   const appleTrackLink=nowPlaying.querySelector('#appleTrackLink');
   const nextCitySong=nowPlaying.querySelector('#nextCitySong');
+  const allCitySongs=nowPlaying.querySelector('#allCitySongs');
+  const cityPlaylistTracks=nowPlaying.querySelector('#cityPlaylistTracks');
+
+  function renderPlaylistTracks(){
+    cityPlaylistTracks.replaceChildren();
+    cities[active].songs.forEach((song,index)=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='playlist-track'+(index===trackIndex?' current':'');
+      button.setAttribute('aria-label','Play '+song[0]+' by '+song[1]);
+      const title=document.createElement('strong');
+      title.textContent=song[0];
+      const artist=document.createElement('span');
+      artist.textContent=song[1];
+      button.append(title,artist);
+      button.addEventListener('click',e=>{
+        e.stopPropagation();
+        musicRotation[active]=(musicRotation[active]||[]).filter(i=>i!==index);
+        setMusicTrack(index,true);
+      });
+      cityPlaylistTracks.append(button);
+    });
+  }
 
   const normalizeTrackText=s=>String(s||'').normalize('NFKD')
     .replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
@@ -1788,7 +1813,8 @@
     playlistArtist.textContent=currentTrack[1]+' · '+cities[active].name;
     playlistCount.textContent=(trackIndex+1)+' / '+cities[active].songs.length;
     appleTrackLink.href=currentTrack[4]||appleSearchUrl(currentTrack);
-    playlistNote.textContent=currentTrack[2]?'Apple Music preview · tap Next to explore':'Finding this city’s music preview…';
+    playlistNote.textContent=currentTrack[2]?'Apple Music preview · tap Next to explore':'Preview available on request';
+    if(!cityPlaylistTracks.hidden)renderPlaylistTracks();
   }
 
   function shuffleIndices(id){
@@ -1817,13 +1843,17 @@
       index=musicRotation[active].shift();
     }
     if(index==null)return;
+    setMusicTrack(index,autoPlay,failedAttempts);
+  }
+
+  function setMusicTrack(index,autoPlay=false,failedAttempts=0){
     const wasPlaying=!audio.paused&&!!audio.currentSrc;
     ++musicRequestId;
     audio.pause();
     audio.removeAttribute('src');
     audio.load();
     trackIndex=index;
-    currentTrack=list[index];
+    currentTrack=cities[active].songs[index];
     updatePlaylist();
     syncMusic();
     if(autoPlay||wasPlaying)void playSelectedTrack(failedAttempts);
@@ -1959,6 +1989,13 @@
   nextCitySong.addEventListener('click',e=>{
     e.stopPropagation();
     chooseTrack(true);
+  });
+  allCitySongs.addEventListener('click',e=>{
+    e.stopPropagation();
+    cityPlaylistTracks.hidden=!cityPlaylistTracks.hidden;
+    allCitySongs.textContent=cityPlaylistTracks.hidden?'All songs ▾':'Hide songs ▴';
+    allCitySongs.setAttribute('aria-expanded',String(!cityPlaylistTracks.hidden));
+    if(!cityPlaylistTracks.hidden)renderPlaylistTracks();
   });
 
   let musicHold=null, heldMusic=false;
