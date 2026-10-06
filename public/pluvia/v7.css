@@ -1305,3 +1305,290 @@ body[data-atmosphere-mode="rain"] .glass-mist{filter:saturate(.62)}
 @media(prefers-reduced-motion:reduce){
   .atmosphere-picker{scroll-behavior:auto}
 }
+
+
+/* PLUVIA 9.0 — Live Rain World */
+.live-rain-section{
+  position:relative;
+  overflow:hidden;
+}
+.live-rain-section::before{
+  content:"";
+  position:absolute;
+  width:52vw;height:52vw;min-width:520px;min-height:520px;
+  left:-20vw;top:6%;
+  border-radius:50%;
+  background:radial-gradient(circle,color-mix(in srgb,var(--accent) 7%,transparent),transparent 68%);
+  pointer-events:none
+}
+.live-rain-head p{max-width:560px}
+.live-rain-shell{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1.65fr) minmax(310px,.72fr);
+  gap:16px;
+  margin-top:30px
+}
+.live-rain-map-wrap,.live-rain-feed{
+  border:1px solid rgba(218,238,248,.1);
+  border-radius:26px;
+  background:linear-gradient(145deg,rgba(8,22,29,.9),rgba(4,12,17,.94));
+  box-shadow:0 26px 90px rgba(0,0,0,.2);
+  overflow:hidden
+}
+.live-rain-map{
+  position:relative;
+  min-height:500px;
+  aspect-ratio:1.85/1;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(82,128,151,.09),transparent 42%),
+    linear-gradient(180deg,#07151c,#061118 72%,#050e14)
+}
+.live-rain-worldmap{
+  position:absolute;
+  inset:5% 4%;
+  width:92%;height:90%;
+  object-fit:contain;
+  opacity:.14;
+  filter:grayscale(1) invert(1) brightness(1.7);
+  mix-blend-mode:screen;
+  pointer-events:none;
+  user-select:none
+}
+.live-rain-grid{
+  position:absolute;inset:0;
+  opacity:.15;
+  background-image:
+    linear-gradient(rgba(168,208,226,.13) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(168,208,226,.13) 1px,transparent 1px);
+  background-size:10% 20%;
+  mask-image:linear-gradient(180deg,transparent,black 12%,black 88%,transparent)
+}
+.live-rain-markers{position:absolute;inset:0}
+.live-rain-marker{
+  --rain-rank:.5;
+  position:absolute;
+  width:16px;height:16px;
+  padding:0;border:0;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:transparent;
+  cursor:pointer;
+  z-index:3
+}
+.live-rain-marker::before{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:50%;
+  background:#8fd5f4;
+  box-shadow:
+    0 0 calc(10px + 14px * var(--rain-rank)) rgba(108,200,240,.56),
+    0 0 0 1px rgba(226,247,255,.35);
+  transition:transform .2s ease,background .2s ease
+}
+.live-rain-marker::after{
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border:1px solid rgba(135,214,247,.42);
+  border-radius:50%;
+  animation:liveRainPulse 2.5s ease-out infinite
+}
+.live-rain-marker i{
+  position:absolute;
+  left:50%;top:-9px;
+  width:1px;height:10px;
+  background:linear-gradient(transparent,rgba(196,231,247,.58));
+  transform:rotate(13deg);
+  transform-origin:bottom;
+  opacity:.7
+}
+.live-rain-marker span{
+  position:absolute;
+  left:50%;top:19px;
+  transform:translateX(-50%);
+  padding:4px 7px;
+  border:1px solid rgba(219,239,248,.08);
+  border-radius:999px;
+  background:rgba(4,14,19,.82);
+  color:#9fb6c1;
+  white-space:nowrap;
+  opacity:0;
+  pointer-events:none;
+  font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.04em;
+  transition:.18s ease
+}
+.live-rain-marker:hover,.live-rain-marker:focus-visible{z-index:10}
+.live-rain-marker:hover::before,.live-rain-marker:focus-visible::before{transform:scale(1.45);background:#c8efff}
+.live-rain-marker:hover span,.live-rain-marker:focus-visible span{opacity:1;top:21px}
+.live-rain-marker.heavy::before{background:#64c8f4}
+.live-rain-marker.storm::before{
+  background:#d2e9ff;
+  box-shadow:0 0 24px rgba(128,196,255,.8),0 0 48px rgba(126,151,255,.32)
+}
+.live-rain-marker.storm::after{border-color:rgba(184,210,255,.62);animation-duration:1.7s}
+.live-rain-marker.minor span{display:none}
+@keyframes liveRainPulse{
+  0%{transform:scale(.55);opacity:.7}
+  78%,100%{transform:scale(2.1);opacity:0}
+}
+.live-rain-map.refreshing .live-rain-markers{opacity:.42;transition:opacity .2s ease}
+.live-rain-map-empty{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  z-index:2;
+  color:#698693;
+  font:700 9px/1.5 "Manrope",sans-serif;
+  letter-spacing:.1em;
+  text-transform:uppercase
+}
+.live-rain-map-empty[hidden]{display:none}
+.live-rain-map-foot{
+  display:flex;
+  min-height:54px;
+  align-items:center;justify-content:space-between;
+  gap:12px;
+  padding:0 18px;
+  border-top:1px solid rgba(219,239,248,.075);
+  color:#7e99a5;
+  font:600 8px/1.4 "Manrope",sans-serif
+}
+.live-rain-map-foot button{
+  border:0;background:transparent;
+  color:#a8c0cb;cursor:pointer;
+  font:700 8px/1 "Manrope",sans-serif;
+  letter-spacing:.04em
+}
+.live-rain-map-foot button:disabled{opacity:.42;cursor:default}
+
+.live-rain-feed{
+  display:flex;
+  min-height:554px;
+  flex-direction:column
+}
+.live-rain-feed-head{
+  display:flex;
+  min-height:58px;
+  align-items:center;justify-content:space-between;
+  padding:0 16px;
+  border-bottom:1px solid rgba(219,239,248,.075);
+  color:#79939e;
+  font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.15em
+}
+.live-rain-feed-head b{
+  display:grid;place-items:center;
+  min-width:31px;height:24px;padding:0 8px;
+  border-radius:999px;
+  background:color-mix(in srgb,var(--accent) 10%,rgba(255,255,255,.025));
+  color:color-mix(in srgb,var(--accent) 68%,#9eb4bf);
+  letter-spacing:0
+}
+.live-rain-list{
+  flex:1;
+  max-height:550px;
+  overflow:auto;
+  scrollbar-width:thin;
+  overscroll-behavior:contain
+}
+.live-rain-loading{
+  min-height:240px;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  text-align:center;
+  color:#6d8996;
+  font:600 9px/1.7 "Manrope",sans-serif
+}
+.live-rain-card{
+  display:grid;
+  width:100%;
+  grid-template-columns:32px minmax(0,1fr) auto auto;
+  gap:10px;
+  align-items:center;
+  min-height:73px;
+  padding:10px 13px;
+  border:0;
+  border-bottom:1px solid rgba(219,239,248,.055);
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+  transition:background .18s ease
+}
+.live-rain-card:hover,.live-rain-card:focus-visible{
+  background:color-mix(in srgb,var(--accent) 6%,rgba(255,255,255,.012))
+}
+.live-rain-rank{
+  color:#526e7a;
+  font:700 8px/1 "Manrope",sans-serif;
+  letter-spacing:.08em
+}
+.live-rain-card-main{min-width:0}
+.live-rain-card-main strong{
+  display:block;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#d6e5ec;
+  font:600 15px/1.15 "Playfair Display",serif
+}
+.live-rain-card-main small{
+  display:block;margin-top:5px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#718d99;
+  font:500 8px/1.3 "Manrope",sans-serif
+}
+.live-rain-card-weather{text-align:right}
+.live-rain-card-weather b{
+  display:block;
+  color:#9ccfe6;
+  font:700 9px/1 "Manrope",sans-serif
+}
+.live-rain-card-weather small{
+  display:block;margin-top:5px;
+  color:#607c89;
+  font:600 7px/1 "Manrope",sans-serif
+}
+.live-rain-watch{
+  padding:7px 8px;
+  border:1px solid rgba(210,237,248,.1);
+  border-radius:999px;
+  color:#8da7b2;
+  font:700 6px/1 "Manrope",sans-serif;
+  letter-spacing:.06em
+}
+.live-rain-card:hover .live-rain-watch{color:#d7ecf5;border-color:color-mix(in srgb,var(--accent) 25%,rgba(255,255,255,.1))}
+.live-rain-source{
+  margin-top:12px;
+  color:#536f7c;
+  font:500 7px/1.5 "Manrope",sans-serif;
+  text-align:right
+}
+.live-rain-source a{color:#7899a8;text-decoration:underline;text-underline-offset:2px}
+
+@media(max-width:1000px){
+  .live-rain-shell{grid-template-columns:1fr}
+  .live-rain-map{min-height:420px}
+  .live-rain-feed{min-height:0}
+  .live-rain-list{max-height:380px}
+}
+@media(max-width:600px){
+  .live-rain-shell{margin-top:22px}
+  .live-rain-map-wrap,.live-rain-feed{border-radius:19px}
+  .live-rain-map{min-height:310px;aspect-ratio:1.25/1}
+  .live-rain-worldmap{inset:8% -13%;width:126%;height:84%;max-width:none}
+  .live-rain-grid{background-size:20% 20%}
+  .live-rain-marker{width:13px;height:13px}
+  .live-rain-marker span{display:none}
+  .live-rain-map-foot{min-height:64px;align-items:flex-start;flex-direction:column;justify-content:center;padding:10px 14px}
+  .live-rain-card{grid-template-columns:25px minmax(0,1fr) auto;min-height:70px;padding:10px}
+  .live-rain-watch{display:none}
+  .live-rain-card-main strong{font-size:14px}
+  .live-rain-source{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  .live-rain-marker::after{animation:none!important;opacity:.25}
+}
