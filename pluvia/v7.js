@@ -1056,12 +1056,6 @@
     ['santiago','Santiago','Chile',-33.4489,-70.6693,'America/Santiago','South America']
   ].map(([id,name,country,lat,lon,tz,region])=>({id,name,country,lat,lon,tz,region}));
 
-  const curatedLiveIds={
-    london:'london',mumbai:'mumbai',seattle:'seattle',singapore:'singapore',
-    'sao-paulo':'saopaulo',paris:'paris','new-york':'newyork',seoul:'seoul',
-    vancouver:'vancouver',amsterdam:'amsterdam',kyoto:'kyoto',tokyo:'tokyo'
-  };
-
   // Add the existing twelve to the world scan without duplicating the UI catalogue.
   const liveRainScanPlaces=[
     ...liveRainPlaces,
@@ -1080,7 +1074,7 @@
     '<div class="live-rain-shell">'+
       '<div class="live-rain-map-wrap">'+
         '<div class="live-rain-map" id="liveRainMap" aria-label="World map of cities currently reporting rain">'+
-          '<img class="live-rain-worldmap" alt="" aria-hidden="true" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/BlankMap-World.svg?width=1600">'+
+          '<img class="live-rain-worldmap" alt="" aria-hidden="true" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/BlankMap-World-Equirectangular.svg?width=1600">'+
           '<div class="live-rain-grid" aria-hidden="true"></div>'+
           '<div class="live-rain-markers" id="liveRainMarkers"></div>'+
           '<div class="live-rain-map-empty" id="liveRainMapEmpty">Scanning the world for rain…</div>'+
@@ -1115,9 +1109,10 @@
     const precipitation=Math.max(0,Number(current?.precipitation)||0);
     const code=Number(current?.weather_code);
     if(!(rain>.01||precipitation>.01||rainyCodes.has(code)))return null;
-    const score=rain*12+precipitation*4+([95,96,99].includes(code)?24:0)+([80,81,82].includes(code)?5:0);
-    const level=[95,96,99].includes(code)||rain>=4?'storm':rain>=1.5?'heavy':rain>=.35?'steady':'light';
-    return {...entry,current:{...current},rain,precipitation,code,score,level};
+    const amount=Math.max(rain,precipitation);
+    const score=amount*12+([95,96,99].includes(code)?24:0)+([80,81,82].includes(code)?5:0);
+    const level=[95,96,99].includes(code)||amount>=4?'storm':amount>=1.5?'heavy':amount>=.35?'steady':'light';
+    return {...entry,current:{...current},rain,precipitation,amount,code,score,level};
   }
 
   function mapPoint(place){
@@ -1149,7 +1144,7 @@
       button.style.top=p.y+'%';
       button.style.setProperty('--rain-rank',String(Math.min(1,.25+r.score/35)));
       button.dataset.liveRainId=r.id;
-      button.title=r.name+' · '+liveRainCondition(r)+' · '+r.rain.toFixed(1)+' mm';
+      button.title=r.name+' · '+liveRainCondition(r)+' · '+r.amount.toFixed(1)+' mm';
       button.setAttribute('aria-label','Watch live rain in '+r.name+', '+r.country);
       button.innerHTML='<i></i><span>'+r.name+'</span>';
       if(index>25)button.classList.add('minor');
@@ -1165,7 +1160,7 @@
       '<button class="live-rain-card" type="button" data-live-rain-id="'+r.id+'">'+
         '<span class="live-rain-rank">'+String(index+1).padStart(2,'0')+'</span>'+
         '<span class="live-rain-card-main"><strong>'+r.name+'</strong><small>'+r.country+' · '+liveRainCondition(r)+'</small></span>'+
-        '<span class="live-rain-card-weather"><b>'+r.rain.toFixed(1)+' mm</b><small>'+Math.round(Number(r.current.wind_speed_10m)||0)+' km/h</small></span>'+
+        '<span class="live-rain-card-weather"><b>'+r.amount.toFixed(1)+' mm</b><small>'+Math.round(Number(r.current.wind_speed_10m)||0)+' km/h</small></span>'+
         '<span class="live-rain-watch">WATCH ↗</span>'+
       '</button>'
     ).join('');
@@ -1281,12 +1276,19 @@
     const anchorSoul=citySoul[anchorId]||citySoul.tokyo;
     const dynamicId='live-'+result.id;
 
+    const genericLiveSvg='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">'+
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06131a"/><stop offset=".52" stop-color="#17303b"/><stop offset="1" stop-color="#071017"/></linearGradient>'+
+      '<radialGradient id="r"><stop stop-color="#6baac4" stop-opacity=".28"/><stop offset="1" stop-color="#06131a" stop-opacity="0"/></radialGradient></defs>'+
+      '<rect width="1600" height="1000" fill="url(#g)"/><ellipse cx="1090" cy="190" rx="620" ry="400" fill="url(#r)"/></svg>'
+    );
+    const liveView=view||{src:genericLiveSvg,pos:'50% 50%',label:result.name+' · live rain'};
     cities[dynamicId]={
-      name:result.name,country:result.country,landmark:'Live city view',
-      lat:result.lat,lon:result.lon,tz:result.tz,pos:view?.pos||'50% 50%',
-      image:view?.src||'',songs:(anchorCity.songs||[]).map(track=>[...track]),liveRain:true
+      name:result.name,country:result.country,landmark:liveView.label,
+      lat:result.lat,lon:result.lon,tz:result.tz,pos:liveView.pos||'50% 50%',
+      image:liveView.src,songs:(anchorCity.songs||[]).map(track=>[...track]),liveRain:true
     };
-    cityViews[dynamicId]=view?[view]:[{src:'',pos:'50% 50%',label:result.name+' · live rain'}];
+    cityViews[dynamicId]=[liveView];
     citySoul[dynamicId]={
       ...anchorSoul,
       ambient:'live world rain',
@@ -1300,15 +1302,7 @@
     localStorage.setItem('pluvia-v83-atmosphere','live');
     refreshAtmosphereMode();
 
-    if(view?.src){
-      selectCity(dynamicId,{enter:true});
-    }else{
-      // Never show another city's photograph as if it belonged here.
-      const layer=photoLayers[activePhotoLayer];
-      layer.removeAttribute('src');
-      layer.style.background='linear-gradient(145deg,#07141b,#142a34 52%,#071018)';
-      selectCity(dynamicId,{enter:true});
-    }
+    selectCity(dynamicId,{enter:true});
   }
 
   liveRainSection.addEventListener('click',e=>{
@@ -2358,20 +2352,20 @@
   });
 
   takeMe.addEventListener('click', async ()=>{
-    takeMe.disabled=true; takeMe.textContent='Finding rain…';
-    let candidates=[];
-    await Promise.all(order.map(async id=>{
-      const c=cities[id];
-      try{
-        const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+c.lat+'&longitude='+c.lon+'&current=rain,precipitation&timezone=auto');
-        const d=await r.json(); const x=d.current||{};
-        if(Number(x.rain??x.precipitation??0)>0) candidates.push(id);
-      }catch(_){}
-    }));
-    if(!candidates.length) candidates=order;
-    const id=candidates[Math.floor(Math.random()*candidates.length)];
-    selectCity(id,{enter:true});
-    takeMe.disabled=false; takeMe.textContent="Take me somewhere it's raining";
+    takeMe.disabled=true; takeMe.textContent='Scanning the world…';
+    try{
+      if(!liveRainResults.length||Date.now()-liveRainLastUpdated>4.5*60*1000)await refreshLiveRainWorld();
+      if(liveRainResults.length){
+        const pool=liveRainResults.slice(0,Math.min(18,liveRainResults.length));
+        const result=pool[Math.floor(Math.random()*pool.length)];
+        await enterLiveRain(result.id);
+      }else{
+        const id=order[Math.floor(Math.random()*order.length)];
+        selectCity(id,{enter:true});
+      }
+    }finally{
+      takeMe.disabled=false; takeMe.textContent="Take me somewhere it's raining";
+    }
   });
 
   function enterImmersive(){
@@ -2474,10 +2468,10 @@
   function updatePlaylist(){
     if(!currentTrack)return;
     playlistTitle.textContent=currentTrack[0];
-    playlistArtist.textContent=currentTrack[1]+' · '+cities[active].name;
+    playlistArtist.textContent=currentTrack[1]+' · '+(cities[active].liveRain?'Pluvia World Radio':cities[active].name);
     playlistCount.textContent=(trackIndex+1)+' / '+cities[active].songs.length;
     appleTrackLink.href=currentTrack[4]||appleSearchUrl(currentTrack);
-    playlistNote.textContent=currentTrack[2]?'Apple Music preview · tap Next to explore':'Preview available on request';
+    playlistNote.textContent=cities[active].liveRain?'Regional Pluvia mix · Apple Music preview':(currentTrack[2]?'Apple Music preview · tap Next to explore':'Preview available on request');
     if(!cityPlaylistTracks.hidden)renderPlaylistTracks();
   }
 
@@ -2616,7 +2610,7 @@
     if(token!==musicRequestId||city!==active||track!==currentTrack)return;
     if(!url){fail();return}
     audio.src=url;
-    playlistNote.textContent='Apple Music preview · short clip';
+    playlistNote.textContent=cities[active].liveRain?'Regional Pluvia mix · short preview':'Apple Music preview · short clip';
     appleTrackLink.href=track[4]||appleSearchUrl(track,city);
     try{await audio.play();}
     catch(_){
