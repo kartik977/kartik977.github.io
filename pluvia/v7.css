@@ -804,7 +804,7 @@ body[data-env="rooftop"] .living-glass-layer{opacity:.62}
 
 .living-glass-drop{
   position:absolute;left:0;top:0;
-  width:var(--gs);height:var(--gsh);
+  width:var(--gs);height:calc(var(--gs) * 1.22);
   border-radius:58% 46% 62% 52%;
   opacity:0;
   background:
