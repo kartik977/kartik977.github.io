@@ -600,6 +600,7 @@
       endsAt:Date.now()+mode.minutes*60*1000
     };
 
+    soundPanel.classList.remove('open');
     body.classList.add('focus-active','focus-controls-visible');
     focusHud.classList.add('active');
     focusHint.classList.add('show');
