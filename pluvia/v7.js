@@ -1108,7 +1108,7 @@
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
       document.documentElement.style.setProperty('--glass-rain-opacity',String(Math.min(.9,.42+Number(weather.rain||0)*.08)));
-      if(active===id&&body.classList.contains('immersive')&&env==='rooftop') scheduleEnvironmentBehavior(false);
+      if(active===id&&body.classList.contains('immersive')&&env==='rooftop'&&[95,96,99].includes(Number(weather.code))) scheduleEnvironmentBehavior(false);
       if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
       if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
       return weather;
