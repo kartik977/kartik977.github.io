@@ -1079,11 +1079,24 @@
     '<p>Pluvia scans major cities around the world and lights up places reporting rain now. Pick a signal and watch the real weather through Pluvia.</p></div>'+
     '<div class="live-rain-shell">'+
       '<div class="live-rain-map-wrap">'+
-        '<div class="live-rain-map" id="liveRainMap" aria-label="World map of cities currently reporting rain">'+
-          '<img class="live-rain-worldmap" alt="" aria-hidden="true" src="https://commons.wikimedia.org/wiki/Special:Redirect/file/BlankMap-World-Equirectangular.svg?width=1600">'+
+        '<div class="live-rain-map radar-enabled" id="liveRainMap" aria-label="Global rain radar. Click a rain cell to inspect it.">'+
+          '<div class="radar-world" id="radarWorld" aria-hidden="true">'+
+            '<div class="radar-tile-layer radar-base-layer" id="radarBaseLayer"></div>'+
+            '<div class="radar-tile-layer radar-data-layer active" id="radarLayerA"></div>'+
+            '<div class="radar-tile-layer radar-data-layer" id="radarLayerB"></div>'+
+          '</div>'+
           '<div class="live-rain-grid" aria-hidden="true"></div>'+
           '<div class="live-rain-markers" id="liveRainMarkers"></div>'+
+          '<div class="radar-click-hint">CLICK A RAIN CELL · OPEN NEAREST PLUVIA PLACE</div>'+
+          '<div class="radar-inspect" id="radarInspect" hidden></div>'+
           '<div class="live-rain-map-empty" id="liveRainMapEmpty">Scanning the world for rain…</div>'+
+        '</div>'+
+        '<div class="radar-controls">'+
+          '<button type="button" id="radarPlay" aria-label="Play recent radar">▶</button>'+
+          '<input id="radarTimeline" type="range" min="0" max="0" value="0" step="1" aria-label="Radar timeline">'+
+          '<span id="radarFrameTime">Radar connecting…</span>'+
+          '<button type="button" id="radarLatest">Latest</button>'+
+          '<button type="button" id="radarChase">Chase strongest ↗</button>'+
         '</div>'+
         '<div class="live-rain-map-foot"><span id="liveRainStatus">Connecting to live weather…</span>'+
           '<button type="button" id="refreshLiveRain">Refresh signal ↻</button></div>'+
@@ -1092,7 +1105,7 @@
         '<div class="live-rain-list" id="liveRainList"><div class="live-rain-loading">Finding rain around the world…</div></div>'+
       '</div>'+
     '</div>'+
-    '<div class="live-rain-source">Live weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · City imagery: Wikimedia Commons · signals refresh automatically.</div>';
+    '<div class="live-rain-source">Live weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Radar: <a href="https://www.rainviewer.com/" target="_blank" rel="noopener noreferrer">RainViewer</a> · City imagery: Wikimedia Commons · radar shows recent observed precipitation where coverage is available.</div>';
 
   document.querySelector('#cities')?.insertAdjacentElement('afterend',liveRainSection);
 
@@ -1103,6 +1116,24 @@
   const liveRainStatus=$('#liveRainStatus');
   const liveRainCount=$('#liveRainCount');
   const refreshLiveRain=$('#refreshLiveRain');
+  const radarWorld=$('#radarWorld');
+  const radarBaseLayer=$('#radarBaseLayer');
+  const radarLayers=[$('#radarLayerA'),$('#radarLayerB')];
+  const radarPlay=$('#radarPlay');
+  const radarTimeline=$('#radarTimeline');
+  const radarFrameTime=$('#radarFrameTime');
+  const radarLatest=$('#radarLatest');
+  const radarChase=$('#radarChase');
+  const radarInspect=$('#radarInspect');
+  let radarFrames=[];
+  let radarHost='';
+  let radarFrameIndex=0;
+  let radarActiveLayer=0;
+  let radarPlaying=false;
+  let radarPlaybackTimer=null;
+  let radarLastUpdated=0;
+  const radarZoom=1;
+
   let liveRainResults=[];
   let liveRainRefreshing=false;
   let liveRainLastUpdated=0;
@@ -1121,11 +1152,195 @@
     return {...entry,current:{...current},rain,precipitation,amount,code,score,level};
   }
 
+  function mercatorY(lat){
+    const clamped=Math.max(-85.05112878,Math.min(85.05112878,Number(lat)||0));
+    const rad=clamped*Math.PI/180;
+    return (1-Math.asinh(Math.tan(rad))/Math.PI)/2;
+  }
+
   function mapPoint(place){
+    const w=Math.max(1,liveRainMap.clientWidth||1000);
+    const h=Math.max(1,liveRainMap.clientHeight||540);
+    const world=w;
+    const offsetY=(h-world)/2;
+    const x=((Number(place.lon)+180)/360)*world;
+    const y=mercatorY(place.lat)*world+offsetY;
     return {
-      x:Math.max(1.5,Math.min(98.5,((place.lon+180)/360)*100)),
-      y:Math.max(3,Math.min(97,((90-place.lat)/180)*100))
+      x:(x/w)*100,
+      y:(y/h)*100,
+      visible:y>=-12&&y<=h+12
     };
+  }
+
+  function radarClickLatLon(event){
+    const rect=liveRainMap.getBoundingClientRect();
+    const world=rect.width;
+    const offsetY=(rect.height-world)/2;
+    const x=(event.clientX-rect.left)/world;
+    const y=(event.clientY-rect.top-offsetY)/world;
+    if(x<0||x>1||y<0||y>1)return null;
+    const lon=x*360-180;
+    const lat=Math.atan(Math.sinh(Math.PI*(1-2*y)))*180/Math.PI;
+    return {lat,lon};
+  }
+
+
+  function populateRadarBase(){
+    if(radarBaseLayer.childElementCount)return;
+    for(let y=0;y<2;y++){
+      for(let x=0;x<2;x++){
+        const tile=document.createElement('img');
+        tile.alt='';
+        tile.decoding='async';
+        tile.loading='eager';
+        tile.src='https://maps.rainviewer.com/styles/m2_dark/512/'+radarZoom+'/'+x+'/'+y+'.png';
+        radarBaseLayer.appendChild(tile);
+      }
+    }
+  }
+
+  function radarTileUrl(frame,x,y){
+    return radarHost+frame.path+'/512/'+radarZoom+'/'+x+'/'+y+'/2/1_1.png';
+  }
+
+  function setRadarLayer(layer,frame){
+    layer.replaceChildren();
+    for(let y=0;y<2;y++){
+      for(let x=0;x<2;x++){
+        const tile=document.createElement('img');
+        tile.alt='';
+        tile.decoding='async';
+        tile.loading='eager';
+        tile.src=radarTileUrl(frame,x,y);
+        layer.appendChild(tile);
+      }
+    }
+  }
+
+  function formatRadarTime(frame){
+    if(!frame)return 'Radar unavailable';
+    return new Intl.DateTimeFormat('en-US',{
+      hour:'numeric',minute:'2-digit',timeZoneName:'short'
+    }).format(new Date(frame.time*1000));
+  }
+
+  function showRadarFrame(index,{crossfade=true}={}){
+    if(!radarFrames.length)return;
+    radarFrameIndex=Math.max(0,Math.min(radarFrames.length-1,Number(index)||0));
+    radarTimeline.value=String(radarFrameIndex);
+    radarFrameTime.textContent=(radarFrameIndex===radarFrames.length-1?'LATEST · ':'')+formatRadarTime(radarFrames[radarFrameIndex]);
+
+    const nextLayer=radarLayers[crossfade?1-radarActiveLayer:radarActiveLayer];
+    setRadarLayer(nextLayer,radarFrames[radarFrameIndex]);
+    if(crossfade){
+      nextLayer.classList.add('active');
+      radarLayers[radarActiveLayer].classList.remove('active');
+      radarActiveLayer=1-radarActiveLayer;
+    }else{
+      nextLayer.classList.add('active');
+    }
+  }
+
+  function stopRadarPlayback(){
+    radarPlaying=false;
+    clearInterval(radarPlaybackTimer);
+    radarPlaybackTimer=null;
+    radarPlay.textContent='▶';
+    radarPlay.setAttribute('aria-label','Play recent radar');
+  }
+
+  function startRadarPlayback(){
+    if(radarFrames.length<2)return;
+    stopRadarPlayback();
+    radarPlaying=true;
+    radarPlay.textContent='Ⅱ';
+    radarPlay.setAttribute('aria-label','Pause radar playback');
+    if(radarFrameIndex>=radarFrames.length-1)radarFrameIndex=0;
+    showRadarFrame(radarFrameIndex,{crossfade:true});
+    radarPlaybackTimer=setInterval(()=>{
+      const next=(radarFrameIndex+1)%radarFrames.length;
+      showRadarFrame(next,{crossfade:true});
+    },1200);
+  }
+
+  async function refreshRadarFrames(){
+    try{
+      const res=await fetch('https://api.rainviewer.com/public/weather-maps.json',{cache:'no-store'});
+      if(!res.ok)throw new Error('radar metadata unavailable');
+      const data=await res.json();
+      const frames=(data?.radar?.past||[]).slice(-12);
+      if(!frames.length)throw new Error('no radar frames');
+      radarHost=data.host||'https://tilecache.rainviewer.com';
+      radarFrames=frames;
+      radarTimeline.max=String(frames.length-1);
+      radarLastUpdated=Date.now();
+      populateRadarBase();
+      showRadarFrame(frames.length-1,{crossfade:false});
+      liveRainMap.classList.add('radar-ready');
+    }catch(_){
+      radarFrameTime.textContent='Radar temporarily unavailable';
+      liveRainMap.classList.remove('radar-ready');
+    }
+  }
+
+  function haversineKm(a,b){
+    const R=6371,toRad=v=>v*Math.PI/180;
+    const dLat=toRad(Number(b.lat)-Number(a.lat));
+    const dLon=toRad(Number(b.lon)-Number(a.lon));
+    const lat1=toRad(Number(a.lat)),lat2=toRad(Number(b.lat));
+    const s=Math.sin(dLat/2)**2+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+    return 2*R*Math.asin(Math.min(1,Math.sqrt(s)));
+  }
+
+  function nearestRadarPlace(point){
+    let best=null,bestKm=Infinity;
+    liveRainScanPlaces.forEach(place=>{
+      const km=haversineKm(point,place);
+      if(km<bestKm){best=place;bestKm=km}
+    });
+    return best?{place:best,km:bestKm}:null;
+  }
+
+  async function inspectRadarPoint(point){
+    if(!point)return;
+    radarInspect.hidden=false;
+    radarInspect.className='radar-inspect loading';
+    radarInspect.textContent='Checking live weather at '+Math.abs(point.lat).toFixed(1)+'°'+(point.lat>=0?'N':'S')+' · '+Math.abs(point.lon).toFixed(1)+'°'+(point.lon>=0?'E':'W')+'…';
+    try{
+      const current='temperature_2m,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m';
+      const url='https://api.open-meteo.com/v1/forecast?latitude='+point.lat.toFixed(4)+'&longitude='+point.lon.toFixed(4)+'&current='+current;
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)throw new Error('point weather failed');
+      const data=await res.json();
+      const nearest=nearestRadarPlace(point);
+      const signal=rainSignal({
+        id:'radar-'+point.lat.toFixed(3)+'-'+point.lon.toFixed(3),
+        name:nearest?'Near '+nearest.place.name:'Radar Point',
+        country:nearest?.place.country||'',
+        lat:point.lat,lon:point.lon,
+        tz:nearest?.place.tz||'UTC',
+        region:nearest?.place.region||'World',
+        imageName:nearest?.place.name||''
+      },data.current||{});
+
+      if(!signal){
+        radarInspect.className='radar-inspect dry';
+        radarInspect.innerHTML='<strong>No current rain confirmation here</strong><span>The radar image may be a few minutes behind, or the precipitation may be nearby. Try another colored rain cell.</span>';
+        return;
+      }
+
+      radarInspect.className='radar-inspect wet';
+      radarInspect.innerHTML='<strong>'+liveRainCondition(signal)+' · '+signal.amount.toFixed(1)+' mm</strong>'+
+        '<span>'+(nearest?'Nearest Pluvia place: '+nearest.place.name+' · '+Math.round(nearest.km)+' km away':'Live radar point')+'</span>'+
+        '<button type="button" id="openRadarPoint">Watch this rain ↗</button>';
+      radarInspect.querySelector('#openRadarPoint')?.addEventListener('click',e=>{
+        e.stopPropagation();
+        void enterLiveRain(signal);
+      },{once:true});
+    }catch(_){
+      radarInspect.className='radar-inspect dry';
+      radarInspect.innerHTML='<strong>Could not verify this point</strong><span>Try again or choose one of the confirmed raining cities.</span>';
+    }
   }
 
   function liveRainCondition(result){
@@ -1143,6 +1358,7 @@
     liveRainMarkers.replaceChildren();
     liveRainResults.forEach((r,index)=>{
       const p=mapPoint(r);
+      if(!p.visible)return;
       const button=document.createElement('button');
       button.type='button';
       button.className='live-rain-marker '+r.level;
@@ -1238,8 +1454,9 @@
     };
 
     try{
-      let options=await search(place.name+' '+place.country+' skyline city');
-      if(!options.length)options=await search(place.name+' '+place.country);
+      const imageName=place.imageName||place.name;
+      let options=await search(imageName+' '+place.country+' skyline city');
+      if(!options.length)options=await search(imageName+' '+place.country);
       const landscape=options.filter(x=>/^image\/(jpeg|png|webp)/.test(x.mime||'')&&Number(x.width)>900&&Number(x.width)>Number(x.height)*1.12);
       const pick=landscape[0]||options.find(x=>/^image\/(jpeg|png|webp)/.test(x.mime||''))||null;
       if(!pick)return null;
@@ -1263,8 +1480,8 @@
     return 'london';
   }
 
-  async function enterLiveRain(placeId){
-    const result=liveRainResults.find(x=>x.id===placeId);
+  async function enterLiveRain(placeRef){
+    const result=typeof placeRef==='string'?liveRainResults.find(x=>x.id===placeRef):placeRef;
     if(!result)return;
     liveRainStatus.textContent='Opening '+result.name+' rain…';
     liveSignalBadge.innerHTML='<i></i><span>LIVE RAIN</span><b>'+result.name+' · '+result.amount.toFixed(1)+' mm · '+Math.round(Number(result.current.wind_speed_10m)||0)+' km/h wind</b>';
@@ -1324,6 +1541,30 @@
       }});
   }
 
+
+  radarPlay.addEventListener('click',e=>{
+    e.stopPropagation();
+    radarPlaying?stopRadarPlayback():startRadarPlayback();
+  });
+  radarLatest.addEventListener('click',e=>{
+    e.stopPropagation();
+    stopRadarPlayback();
+    showRadarFrame(radarFrames.length-1,{crossfade:true});
+  });
+  radarTimeline.addEventListener('input',e=>{
+    stopRadarPlayback();
+    showRadarFrame(Number(e.target.value),{crossfade:true});
+  });
+  radarChase.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(liveRainResults.length)void enterLiveRain(liveRainResults[0].id);
+  });
+  liveRainMap.addEventListener('click',e=>{
+    if(e.target.closest('.live-rain-marker,.radar-inspect'))return;
+    const point=radarClickLatLon(e);
+    if(point)void inspectRadarPoint(point);
+  });
+
   liveRainSection.addEventListener('click',e=>{
     const target=e.target.closest('[data-live-rain-id]');
     if(target)void enterLiveRain(target.dataset.liveRainId);
@@ -1333,8 +1574,16 @@
   setInterval(()=>{
     if(document.hidden)return;
     if(Date.now()-liveRainLastUpdated>4.5*60*1000)void refreshLiveRainWorld();
+    if(Date.now()-radarLastUpdated>4.5*60*1000)void refreshRadarFrames();
   },60000);
   void refreshLiveRainWorld();
+  void refreshRadarFrames();
+
+  let liveRainResizeRaf=0;
+  window.addEventListener('resize',()=>{
+    cancelAnimationFrame(liveRainResizeRaf);
+    liveRainResizeRaf=requestAnimationFrame(()=>{if(liveRainResults.length)renderLiveRainWorld()});
+  },{passive:true});
 
   const phaseFor = tz => {
     const parts = new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',hour12:false}).formatToParts(new Date());
