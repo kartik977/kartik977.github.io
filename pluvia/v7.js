@@ -226,6 +226,92 @@
   window.addEventListener('resize',resizeCondensation,{passive:true});
   resizeCondensation();
 
+  // PLUVIA 7.7 — Environment Behaviors
+  let envBehaviorTimer=null;
+  let envEffectTimers=[];
+
+  function clearEnvEffectTimers(){
+    envEffectTimers.forEach(clearTimeout);
+    envEffectTimers=[];
+  }
+
+  function stopEnvironmentBehavior(){
+    clearTimeout(envBehaviorTimer);
+    envBehaviorTimer=null;
+    clearEnvEffectTimers();
+    body.classList.remove('env-car-wiping','env-train-pass','env-rooftop-lightning');
+  }
+
+  function scheduleEnvTimeout(fn,delay){
+    const id=setTimeout(fn,delay);
+    envEffectTimers.push(id);
+    return id;
+  }
+
+  function triggerCarWipe(){
+    if(!body.classList.contains('immersive')||env!=='car') return;
+    body.classList.remove('env-car-wiping');
+    void body.offsetWidth;
+    body.classList.add('env-car-wiping');
+
+    const path=[
+      [.53,.84],[.59,.75],[.65,.65],[.70,.55],[.75,.47],[.80,.40],[.84,.36],
+      [.80,.40],[.75,.47],[.70,.55],[.65,.65],[.59,.75],[.53,.84]
+    ];
+    path.forEach(([px,py],i)=>{
+      scheduleEnvTimeout(()=>wipeCondensation(innerWidth*px,innerHeight*py),i*55);
+    });
+    scheduleEnvTimeout(()=>body.classList.remove('env-car-wiping'),1120);
+  }
+
+  function triggerTrainPass(){
+    if(!body.classList.contains('immersive')||env!=='train') return;
+    body.classList.remove('env-train-pass');
+    void body.offsetWidth;
+    body.classList.add('env-train-pass');
+    scheduleEnvTimeout(()=>body.classList.remove('env-train-pass'),1150);
+  }
+
+  function triggerRooftopLightning(){
+    if(!body.classList.contains('immersive')||env!=='rooftop') return;
+    body.classList.remove('env-rooftop-lightning');
+    void body.offsetWidth;
+    body.classList.add('env-rooftop-lightning');
+    scheduleEnvTimeout(()=>body.classList.remove('env-rooftop-lightning'),520);
+  }
+
+  function scheduleEnvironmentBehavior(first=false){
+    stopEnvironmentBehavior();
+    if(!body.classList.contains('immersive')) return;
+
+    if(env==='car'){
+      const delay=first?1800:7600+Math.random()*2600;
+      envBehaviorTimer=setTimeout(()=>{
+        triggerCarWipe();
+        envBehaviorTimer=setTimeout(()=>scheduleEnvironmentBehavior(false),1350);
+      },delay);
+      return;
+    }
+
+    if(env==='train'){
+      const delay=first?3200+Math.random()*2200:9200+Math.random()*6200;
+      envBehaviorTimer=setTimeout(()=>{
+        triggerTrainPass();
+        envBehaviorTimer=setTimeout(()=>scheduleEnvironmentBehavior(false),1450);
+      },delay);
+      return;
+    }
+
+    if(env==='rooftop'){
+      const thunder=[95,96,99].includes(Number(weather?.code));
+      const delay=first?(5200+Math.random()*3200):(thunder?7600+Math.random()*7200:22000+Math.random()*17000);
+      envBehaviorTimer=setTimeout(()=>{
+        triggerRooftopLightning();
+        envBehaviorTimer=setTimeout(()=>scheduleEnvironmentBehavior(false),900);
+      },delay);
+    }
+  }
+
 
   const weatherPanel = document.querySelector('.weather');
   const rainStoryBtn = document.createElement('button');
@@ -488,6 +574,7 @@
       body.dataset.env=env;
       localStorage.setItem('pluvia-v7-env',env);
       envChoices.forEach(x=>x.classList.toggle('active',x===b));
+      scheduleEnvironmentBehavior(true);
     });
   });
 
@@ -1021,6 +1108,7 @@
       selectedCondition.textContent=weatherText(weather.code);
       selectedMeta.textContent=Number(weather.rain).toFixed(1)+' mm rain · '+Math.round(weather.wind)+' km/h wind';
       document.documentElement.style.setProperty('--glass-rain-opacity',String(Math.min(.9,.42+Number(weather.rain||0)*.08)));
+      if(active===id&&body.classList.contains('immersive')&&env==='rooftop') scheduleEnvironmentBehavior(false);
       if(active===id&&rainStory.classList.contains('show')) refreshRainStory();
       if(active===id&&body.classList.contains('immersive')) recordRainExperience(id,weather);
       return weather;
@@ -1130,8 +1218,10 @@
     }
     soundPanel.classList.remove('open');
     resizeRain();
+    scheduleEnvironmentBehavior(true);
   }
   function exitImmersive(){
+    stopEnvironmentBehavior();
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive');
@@ -1345,9 +1435,11 @@
     requestAnimationFrame(draw);
     if(document.hidden||ts-last<33)return;last=ts;
     ctx.clearRect(0,0,rw,rh);
-    const boost=body.classList.contains('immersive')?1:0.65;
+    const immersive=body.classList.contains('immersive');
+    const boost=immersive?(env==='rooftop'?1.3:env==='car'?1.06:1):0.65;
+    const windPush=immersive&&env==='rooftop'?1.72:1.15;
     for(const d of drops){
-      d.y+=d.v*boost;d.x+=1.15*boost;
+      d.y+=d.v*boost;d.x+=windPush*boost;
       if(d.y>rh+70){d.y=-80-Math.random()*120;d.x=Math.random()*rw}
       ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x+5,d.y+d.l);
       ctx.strokeStyle='rgba(205,232,246,'+(d.a*boost)+')';ctx.lineWidth=d.w;ctx.stroke();
