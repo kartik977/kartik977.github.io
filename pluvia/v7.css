@@ -1592,3 +1592,61 @@ body[data-atmosphere-mode="rain"] .glass-mist{filter:saturate(.62)}
 @media(prefers-reduced-motion:reduce){
   .live-rain-marker::after{animation:none!important;opacity:.25}
 }
+
+
+/* PLUVIA 9.0 — Live Rain Badge */
+.live-signal-badge{
+  position:fixed;
+  z-index:72;
+  left:18px;
+  top:18px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  max-width:min(430px,calc(100vw - 92px));
+  min-height:38px;
+  padding:0 12px;
+  border:1px solid rgba(176,224,244,.13);
+  border-radius:999px;
+  background:rgba(4,15,21,.8);
+  box-shadow:0 14px 42px rgba(0,0,0,.2);
+  opacity:0;
+  transform:translateY(-8px);
+  pointer-events:none;
+  transition:opacity .28s ease,transform .28s ease;
+  backdrop-filter:blur(10px)
+}
+body.immersive.live-rain-session .live-signal-badge{
+  opacity:1;
+  transform:translateY(0)
+}
+.live-signal-badge i{
+  width:7px;height:7px;border-radius:50%;
+  flex:0 0 auto;
+  background:#83d7f5;
+  box-shadow:0 0 0 4px rgba(131,215,245,.08),0 0 18px rgba(117,209,246,.5);
+  animation:liveSignalDot 1.8s ease-in-out infinite
+}
+.live-signal-badge span{
+  color:#9ed9ef;
+  font:800 7px/1 "Manrope",sans-serif;
+  letter-spacing:.14em;
+  white-space:nowrap
+}
+.live-signal-badge b{
+  min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#9fb5bf;
+  font:600 7px/1 "Manrope",sans-serif
+}
+@keyframes liveSignalDot{
+  0%,100%{opacity:.55;transform:scale(.82)}
+  50%{opacity:1;transform:scale(1.12)}
+}
+@media(max-width:600px){
+  .live-signal-badge{left:10px;top:10px;right:70px;max-width:none}
+  .live-signal-badge b{font-size:6px}
+}
+@media(prefers-reduced-motion:reduce){
+  .live-signal-badge i{animation:none!important}
+}
