@@ -102,7 +102,7 @@
   passportPanel.setAttribute('aria-modal','true');
   passportPanel.setAttribute('aria-label','Pluvia Rain Passport');
   passportPanel.innerHTML = '<div class="passport-head">'+
-    '<div><span class="micro">PLUVIA / 07.1 · RAIN PASSPORT</span><h3>Skies you\'ve experienced.</h3><p>Every city you enter leaves a rain stamp behind. Complete the six-city collection to earn the World of Rain mark.</p></div>'+
+    '<div><span class="micro">PLUVIA / 07.1 · RAIN PASSPORT</span><h3>Skies you\'ve experienced.</h3><p>Every city you enter leaves a rain stamp behind. Complete the 12-city collection to earn the World of Rain mark.</p></div>'+
     '<button class="passport-close" type="button" aria-label="Close passport">×</button></div>'+
     '<div class="passport-progress"><div class="passport-progress-track"><i id="passportProgressFill"></i></div><strong id="passportProgressText">0 / '+order.length+' skies experienced</strong></div>'+
     '<div class="passport-grid" id="passportGrid"></div>'+
