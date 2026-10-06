@@ -639,6 +639,7 @@
     '<div id="memoryPreviewSlot"></div>'+
     '<div class="memory-preview-actions">'+
       '<button class="memory-action primary" id="saveMemoryBtn" type="button">Save memory</button>'+
+      '<button class="memory-action export" id="exportMemoryBtn" type="button">Download PNG</button>'+
       '<button class="memory-action danger" id="deleteMemoryBtn" type="button">Remove memory</button>'+
       '<button class="memory-action" id="closeMemoryBtn" type="button">Close</button>'+
     '</div>';
@@ -662,6 +663,7 @@
 
   const memoryPreviewSlot = memoryPreview.querySelector('#memoryPreviewSlot');
   const saveMemoryBtn = memoryPreview.querySelector('#saveMemoryBtn');
+  const exportMemoryBtn = memoryPreview.querySelector('#exportMemoryBtn');
   const deleteMemoryBtn = memoryPreview.querySelector('#deleteMemoryBtn');
   const closeMemoryBtn = memoryPreview.querySelector('#closeMemoryBtn');
   const memoryGalleryGrid = memoryGallery.querySelector('#memoryGalleryGrid');
@@ -906,6 +908,7 @@
       envKey:env,
       environment:environmentLabels[env]||env,
       image:c.image,
+      imagePos:c.pos||'50% 50%',
       accent:soul.accent,
       accent2:soul.accent2,
       phase:phaseFor(c.tz),
@@ -936,6 +939,235 @@
       const el=root.querySelector('[data-memory-image="'+m.id+'"]');
       if(el) el.style.backgroundImage='url("'+m.image.replace(/"/g,'%22')+'")';
     });
+  }
+
+
+  // PLUVIA 7.8 — Memory Export
+  function parseHexColor(hex,fallback='#86cfff'){
+    const clean=String(hex||fallback).replace('#','');
+    const val=/^[0-9a-f]{6}$/i.test(clean)?clean:fallback.replace('#','');
+    return {
+      r:parseInt(val.slice(0,2),16),
+      g:parseInt(val.slice(2,4),16),
+      b:parseInt(val.slice(4,6),16)
+    };
+  }
+
+  function rgba(hex,alpha){
+    const c=parseHexColor(hex);
+    return 'rgba('+c.r+','+c.g+','+c.b+','+alpha+')';
+  }
+
+  function roundedRectPath(ctx,x,y,w,h,r){
+    const rr=Math.min(r,w/2,h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr);
+    ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr);
+    ctx.arcTo(x,y,x+w,y,rr);
+    ctx.closePath();
+  }
+
+  function drawTextFit(ctx,text,x,y,maxWidth,startSize,minSize,fontFamily,weight='600'){
+    let size=startSize;
+    do{
+      ctx.font=weight+' '+size+'px '+fontFamily;
+      if(ctx.measureText(text).width<=maxWidth) break;
+      size-=2;
+    }while(size>minSize);
+    ctx.fillText(text,x,y);
+    return size;
+  }
+
+  function drawCoverImage(ctx,image,w,h,pos='50% 50%'){
+    const parts=String(pos||'50% 50%').split(/\s+/);
+    const px=Math.max(0,Math.min(100,parseFloat(parts[0])||50))/100;
+    const py=Math.max(0,Math.min(100,parseFloat(parts[1])||50))/100;
+    const scale=Math.max(w/image.width,h/image.height);
+    const dw=image.width*scale,dh=image.height*scale;
+    const overflowX=Math.max(0,dw-w),overflowY=Math.max(0,dh-h);
+    const dx=-overflowX*px,dy=-overflowY*py;
+    ctx.drawImage(image,dx,dy,dw,dh);
+  }
+
+  async function loadExportImage(url){
+    try{
+      const res=await fetch(url,{mode:'cors',cache:'force-cache'});
+      if(!res.ok) throw new Error('image fetch failed');
+      const blob=await res.blob();
+      const objectUrl=URL.createObjectURL(blob);
+      const image=await new Promise((resolve,reject)=>{
+        const im=new Image();
+        im.onload=()=>resolve(im);
+        im.onerror=reject;
+        im.src=objectUrl;
+      });
+      return {image,objectUrl};
+    }catch(_){
+      return null;
+    }
+  }
+
+  function drawMemoryRain(ctx,w,h,accent){
+    ctx.save();
+    ctx.globalAlpha=.17;
+    ctx.strokeStyle=rgba(accent,.72);
+    ctx.lineWidth=2;
+    for(let i=0;i<34;i++){
+      const x=(i*83%101)/101*w;
+      const y=(i*149%103)/103*h;
+      const len=30+(i%7)*8;
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+      ctx.lineTo(x+9,y+len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  async function renderMemoryPng(memory){
+    const W=1200,H=1500;
+    const canvas=document.createElement('canvas');
+    canvas.width=W;canvas.height=H;
+    const c=canvas.getContext('2d');
+
+    const accent=memory.accent||'#86cfff';
+    const accent2=memory.accent2||'#e986a6';
+
+    const bg=c.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0,'#07131a');
+    bg.addColorStop(.58,'#071016');
+    bg.addColorStop(1,'#020609');
+    c.fillStyle=bg;
+    c.fillRect(0,0,W,H);
+
+    let loaded=null;
+    if(memory.image) loaded=await loadExportImage(memory.image);
+
+    if(loaded?.image){
+      c.save();
+      roundedRectPath(c,42,42,W-84,H-84,44);
+      c.clip();
+      drawCoverImage(c,loaded.image,W,H,memory.imagePos||'50% 50%');
+      c.restore();
+    }else{
+      const fallback=c.createRadialGradient(W*.72,H*.18,0,W*.72,H*.18,W*.72);
+      fallback.addColorStop(0,rgba(accent,.28));
+      fallback.addColorStop(.46,rgba(accent2,.12));
+      fallback.addColorStop(1,'rgba(3,8,12,0)');
+      c.fillStyle=fallback;c.fillRect(0,0,W,H);
+    }
+
+    const shade=c.createLinearGradient(0,0,0,H);
+    shade.addColorStop(0,'rgba(2,7,10,.18)');
+    shade.addColorStop(.34,'rgba(2,7,10,.26)');
+    shade.addColorStop(.66,'rgba(2,7,10,.62)');
+    shade.addColorStop(1,'rgba(1,5,8,.97)');
+    c.fillStyle=shade;c.fillRect(0,0,W,H);
+
+    const glow=c.createRadialGradient(W*.76,H*.14,0,W*.76,H*.14,W*.58);
+    glow.addColorStop(0,rgba(accent,.28));
+    glow.addColorStop(1,rgba(accent,0));
+    c.fillStyle=glow;c.fillRect(0,0,W,H);
+
+    drawMemoryRain(c,W,H,accent);
+
+    c.strokeStyle=rgba(accent,.38);
+    c.lineWidth=2;
+    roundedRectPath(c,42,42,W-84,H-84,44);
+    c.stroke();
+
+    c.fillStyle='rgba(224,239,246,.72)';
+    c.font='700 22px Manrope, sans-serif';
+    c.letterSpacing='4px';
+    c.fillText('PLUVIA',82,104);
+    c.textAlign='right';
+    c.fillText(String(memory.date||'').toUpperCase(),W-82,104);
+    c.textAlign='left';
+
+    const baseY=890;
+    c.fillStyle=rgba(accent,.88);
+    c.font='700 22px Manrope, sans-serif';
+    c.fillText(String(memory.country||'').toUpperCase(),82,baseY);
+
+    c.fillStyle='#f1f7fa';
+    drawTextFit(c,memory.city||'',82,baseY+125,W-164,112,66,'"Playfair Display", Georgia, serif','600');
+
+    c.fillStyle='rgba(216,231,238,.86)';
+    c.font='italic 500 38px "Playfair Display", Georgia, serif';
+    c.fillText(memory.landmark||'',82,baseY+185);
+
+    c.strokeStyle='rgba(255,255,255,.16)';
+    c.lineWidth=2;
+    c.beginPath();c.moveTo(82,baseY+246);c.lineTo(W-82,baseY+246);c.stroke();
+
+    c.fillStyle='#f2f8fb';
+    c.font='600 29px Manrope, sans-serif';
+    c.fillText(memoryWeatherLine(memory),82,baseY+315);
+
+    c.font='700 19px Manrope, sans-serif';
+    const envText=String(memory.environment||'').toUpperCase();
+    const envWidth=c.measureText(envText).width+42;
+    c.fillStyle=rgba(accent,.13);
+    roundedRectPath(c,82,baseY+352,envWidth,48,24);c.fill();
+    c.strokeStyle=rgba(accent,.42);c.stroke();
+    c.fillStyle='rgba(211,229,237,.88)';
+    c.fillText(envText,103,baseY+384);
+
+    c.strokeStyle='rgba(255,255,255,.11)';
+    c.beginPath();c.moveTo(82,H-136);c.lineTo(W-82,H-136);c.stroke();
+
+    c.font='700 17px Manrope, sans-serif';
+    c.fillStyle='rgba(131,154,165,.9)';
+    c.fillText(String(memory.condition||'').toUpperCase(),82,H-90);
+
+    c.textAlign='right';
+    c.fillStyle=rgba(accent2,.84);
+    c.fillText('ATMOSPHERE MEMORY',W-82,H-90);
+    c.textAlign='left';
+
+    if(loaded?.objectUrl) URL.revokeObjectURL(loaded.objectUrl);
+
+    return await new Promise((resolve,reject)=>{
+      canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('PNG render failed')),'image/png',.96);
+    });
+  }
+
+  function safeMemoryFilename(memory){
+    const city=String(memory.city||'pluvia').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const date=String(memory.date||'memory').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    return 'pluvia-'+city+'-'+date+'.png';
+  }
+
+  async function downloadMemoryPng(memory){
+    if(!memory||exportMemoryBtn.disabled) return;
+    const original=exportMemoryBtn.textContent;
+    exportMemoryBtn.disabled=true;
+    exportMemoryBtn.textContent='Rendering…';
+
+    try{
+      if(document.fonts?.ready) await document.fonts.ready;
+      const blob=await renderMemoryPng(memory);
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download=safeMemoryFilename(memory);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),3000);
+      exportMemoryBtn.textContent='Downloaded ✓';
+      showMemoryToast('PNG exported · '+memory.city);
+      setTimeout(()=>{
+        exportMemoryBtn.disabled=false;
+        exportMemoryBtn.textContent=original;
+      },1800);
+    }catch(_){
+      exportMemoryBtn.disabled=false;
+      exportMemoryBtn.textContent=original;
+      showMemoryToast('Could not export this memory');
+    }
   }
 
   function showMemoryToast(message){
@@ -969,6 +1201,8 @@
     applyMemoryImages(memoryPreviewSlot,[m]);
     saveMemoryBtn.hidden=saved;
     deleteMemoryBtn.hidden=!saved;
+    exportMemoryBtn.disabled=false;
+    exportMemoryBtn.textContent='Download PNG';
     saveMemoryBtn.disabled=false;
     saveMemoryBtn.textContent='Save memory';
     memoryGallery.classList.remove('open');
@@ -1000,6 +1234,8 @@
   });
 
   memoriesBtn.addEventListener('click',openMemoryGallery);
+
+  exportMemoryBtn.addEventListener('click',()=>downloadMemoryPng(memoryDraft));
 
   saveMemoryBtn.addEventListener('click',()=>{
     if(!memoryDraft) return;
