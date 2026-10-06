@@ -1825,8 +1825,10 @@
   function applyWeatherAtmosphere(w){
     weatherAtmosphere=weatherProfile(w);
     body.dataset.weather=weatherAtmosphere.kind;
+    const tone=weatherAtmosphere.kind==='clear'?.82:weatherAtmosphere.kind==='storm'?1:.94;
     document.documentElement.style.setProperty('--weather-mist-opacity',weatherAtmosphere.mist.toFixed(2));
     document.documentElement.style.setProperty('--weather-cloud-opacity',weatherAtmosphere.cloud.toFixed(2));
+    document.documentElement.style.setProperty('--weather-tone-opacity',tone.toFixed(2));
     document.documentElement.style.setProperty('--glass-rain-opacity',weatherAtmosphere.wetness.toFixed(2));
   }
 
@@ -2345,10 +2347,19 @@
     Object.keys(mix).forEach(k=>outs[k].value=mix[k].value+'%');
   }
   Object.keys(mix).forEach(k=>mix[k].addEventListener('input',()=>{initSound();applyMix()}));
+  function triggerWeatherLightning(){
+    if(!body.classList.contains('immersive')||weatherAtmosphere.kind!=='storm')return;
+    body.classList.remove('weather-lightning');
+    void body.offsetWidth;
+    body.classList.add('weather-lightning');
+    setTimeout(()=>body.classList.remove('weather-lightning'),520);
+  }
+
   function scheduleThunder(){
     if(!ac) return;
     setTimeout(()=>{
       if(body.classList.contains('immersive')&&Number(mix.thunder.value)>0){
+        if(weatherAtmosphere.kind==='storm')triggerWeatherLightning();
         const osc=ac.createOscillator(),g=ac.createGain();
         osc.type='sine';osc.frequency.setValueAtTime(55,ac.currentTime);osc.frequency.exponentialRampToValueAtTime(28,ac.currentTime+1.4);
         g.gain.setValueAtTime(0,ac.currentTime);g.gain.linearRampToValueAtTime((Number(mix.thunder.value)/100)*.15,ac.currentTime+.03);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+1.4);
