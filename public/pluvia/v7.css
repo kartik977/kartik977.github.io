@@ -593,3 +593,188 @@ body.memory-open .capture-memory-btn{opacity:.22;pointer-events:none}
 @media(prefers-reduced-motion:reduce){
   .memory-scrim,.memory-preview,.memory-gallery,.memory-toast,.atmosphere-card{transition:none!important}
 }
+
+
+/* PLUVIA 7.5 — Focus / Sleep Mode */
+.focus-main-pill .focus-pill-state{
+  font:700 8px/1 "Manrope",sans-serif;letter-spacing:.12em;
+  color:#7892a0;text-transform:uppercase
+}
+
+.focus-immersive-btn{
+  position:fixed;z-index:64;right:18px;bottom:max(20px,env(safe-area-inset-bottom));
+  min-height:46px;padding:0 15px;border-radius:999px;
+  border:1px solid rgba(226,243,251,.18);
+  background:rgba(4,13,19,.76);color:#dcebf2;
+  display:none;align-items:center;gap:8px;cursor:pointer;
+  box-shadow:0 14px 44px rgba(0,0,0,.3);
+  font:700 9px/1 "Manrope",sans-serif;letter-spacing:.11em;text-transform:uppercase
+}
+body.immersive:not(.focus-active) .focus-immersive-btn{display:flex}
+.focus-immersive-btn span{color:var(--accent);font-size:17px;font-weight:400}
+.focus-immersive-btn:hover{border-color:color-mix(in srgb,var(--accent) 48%,rgba(255,255,255,.15))}
+
+.focus-scrim{
+  position:fixed;inset:0;z-index:106;
+  background:rgba(1,6,10,.78);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .2s ease,visibility 0s linear .2s
+}
+.focus-scrim.open{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transition:opacity .2s ease
+}
+
+.focus-panel{
+  position:fixed;z-index:107;left:50%;top:50%;
+  width:min(680px,calc(100vw - 28px));max-height:calc(100svh - 28px);
+  overflow:auto;padding:0;border-radius:28px;
+  border:1px solid rgba(226,243,251,.14);
+  background:#071219;box-shadow:0 34px 120px rgba(0,0,0,.6);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translate(-50%,-47%) scale(.985);
+  transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s
+}
+.focus-panel.open{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+  transition:opacity .2s ease,transform .2s ease
+}
+.focus-panel-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:22px;
+  padding:25px 25px 20px;border-bottom:1px solid rgba(255,255,255,.065)
+}
+.focus-panel-head h3{
+  margin:7px 0 0;font:600 clamp(31px,5vw,52px)/.95 "Playfair Display",serif;
+  letter-spacing:-.045em
+}
+.focus-panel-head p{
+  max-width:510px;margin:11px 0 0;color:#8298a4;font-size:11px;line-height:1.58
+}
+.focus-close{
+  width:42px;height:42px;flex:0 0 42px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);background:#0b1820;color:#edf6fa;
+  cursor:pointer;font-size:20px
+}
+
+.focus-mode-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px
+}
+.focus-mode-card{
+  min-height:142px;padding:18px;border-radius:20px;text-align:left;cursor:pointer;
+  border:1px solid rgba(225,242,250,.09);
+  background:
+    radial-gradient(circle at 82% 15%,color-mix(in srgb,var(--accent) 8%,transparent),transparent 38%),
+    rgba(255,255,255,.015);
+  color:#edf6fa
+}
+.focus-mode-card:hover{
+  border-color:color-mix(in srgb,var(--accent) 35%,rgba(255,255,255,.08));
+  transform:translateY(-2px)
+}
+.focus-mode-card small{
+  display:block;color:#6f8794;font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.16em;text-transform:uppercase
+}
+.focus-mode-card strong{
+  display:block;margin-top:22px;font:600 31px/1 "Playfair Display",serif
+}
+.focus-mode-card span{
+  display:block;margin-top:8px;color:#849aa6;font-size:10px
+}
+.focus-mode-card.sleep{
+  background:
+    radial-gradient(circle at 84% 15%,color-mix(in srgb,var(--accent2) 11%,transparent),transparent 42%),
+    rgba(255,255,255,.015)
+}
+
+.focus-panel-note{
+  margin:0 18px 18px;padding:14px 15px;border:1px solid rgba(225,242,250,.07);
+  border-radius:16px;display:flex;gap:11px;align-items:flex-start;
+  color:#768e9a;background:rgba(255,255,255,.014)
+}
+.focus-panel-note span{color:var(--accent);font-size:15px}
+.focus-panel-note p{margin:0;font-size:9px;line-height:1.55}
+
+.focus-hud{
+  position:fixed;z-index:72;left:50%;top:max(18px,env(safe-area-inset-top));
+  width:min(560px,calc(100vw - 30px));min-height:72px;
+  padding:13px 14px 13px 17px;border-radius:21px;
+  border:1px solid color-mix(in srgb,var(--accent) 18%,rgba(255,255,255,.08));
+  background:rgba(4,13,19,.83);
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  box-shadow:0 18px 55px rgba(0,0,0,.34);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translate(-50%,-9px);
+  transition:opacity .22s ease,transform .22s ease,visibility 0s linear .22s
+}
+.focus-hud.active{display:flex}
+body.focus-active.focus-controls-visible .focus-hud{
+  opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0);
+  transition:opacity .22s ease,transform .22s ease
+}
+.focus-hud-copy small{
+  display:block;color:color-mix(in srgb,var(--accent) 72%,#7d939e);
+  font:700 7px/1 "Manrope",sans-serif;letter-spacing:.17em;text-transform:uppercase
+}
+.focus-hud-copy strong{
+  display:block;margin-top:5px;font:600 25px/1 "Manrope",sans-serif;letter-spacing:-.04em
+}
+.focus-hud-copy span{
+  display:block;margin-top:5px;color:#78909c;font-size:8px
+}
+.focus-hud-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.focus-hud-actions button{
+  min-height:35px;padding:0 11px;border-radius:999px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.09);background:#0a171f;color:#a9bec8;
+  font:700 7px/1 "Manrope",sans-serif;letter-spacing:.11em;text-transform:uppercase
+}
+.focus-hud-actions button:last-child{color:#d5aaaa}
+
+.focus-hint{
+  position:fixed;z-index:69;left:50%;bottom:max(24px,env(safe-area-inset-bottom));
+  transform:translate(-50%,10px);
+  padding:10px 13px;border-radius:999px;border:1px solid rgba(225,242,250,.09);
+  background:rgba(3,11,16,.72);color:#718a96;
+  font:700 7px/1 "Manrope",sans-serif;letter-spacing:.12em;text-transform:uppercase;
+  opacity:0;pointer-events:none;transition:.25s ease
+}
+.focus-hint.show{opacity:1;transform:translate(-50%,0)}
+
+body.focus-active .music-btn,
+body.focus-active .capture-memory-btn,
+body.focus-active .focus-immersive-btn{
+  opacity:0!important;pointer-events:none!important
+}
+body.focus-active.focus-controls-visible .music-btn,
+body.focus-active.focus-controls-visible .capture-memory-btn{
+  opacity:1!important;pointer-events:auto!important
+}
+body.focus-active .info-card{display:none!important}
+
+@media(max-width:600px){
+  .focus-immersive-btn{
+    right:14px;bottom:max(14px,env(safe-area-inset-bottom));
+    width:46px;min-height:43px;padding:0;justify-content:center
+  }
+  .focus-immersive-btn b{display:none}
+  .focus-mode-grid{grid-template-columns:1fr 1fr;padding:13px}
+  .focus-mode-card{min-height:120px;padding:15px}
+  .focus-mode-card strong{font-size:26px;margin-top:18px}
+  .focus-panel-head{padding:20px 17px 16px}
+  .focus-panel-note{margin:0 13px 13px}
+  .focus-hud{
+    top:max(12px,env(safe-area-inset-top));min-height:68px;padding:11px 12px 11px 14px;
+    align-items:flex-start
+  }
+  .focus-hud-copy strong{font-size:21px}
+  .focus-hud-actions{max-width:150px}
+  .focus-hud-actions button{min-height:31px;padding:0 9px}
+}
+@media(max-width:430px){
+  .focus-mode-grid{grid-template-columns:1fr}
+  .focus-mode-card{min-height:105px}
+}
+@media(prefers-reduced-motion:reduce){
+  .focus-scrim,.focus-panel,.focus-hud,.focus-hint,.focus-mode-card{transition:none!important}
+}
