@@ -23,6 +23,24 @@
     saopaulo:{name:'São Paulo',country:'Brazil',landmark:'São Paulo Skyline',lat:-23.5505,lon:-46.6333,tz:'America/Sao_Paulo',pos:'50% 48%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Sao%20Paulo%20Skyline%20at%20night.jpg?width=1400',songs:[
       ['Chove Chuva','Jorge Ben Jor','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/5c/33/d4/5c33d404-1858-7b31-86b3-ae5309666870/mzaf_15401932118259935778.plus.aac.ep.m4a'],
       ['Águas de Março','Elis Regina & Antônio Carlos Jobim','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/46/c9/83/46c98301-28e6-bc75-e495-55638bccca96/mzaf_9192636079966759712.plus.aac.ep.m4a']
+    ]},
+    paris:{name:'Paris',country:'France',landmark:'Eiffel Tower',lat:48.8566,lon:2.3522,tz:'Europe/Paris',pos:'50% 48%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Eiffel%20Tower%20%40%20night.JPG?width=1400',songs:[
+      ['La pluie (feat. Stromae)','Orelsan','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cb/64/b5/cb64b5a5-f111-ea7c-4710-8d9cb6403291/mzaf_8064440749058682800.plus.aac.ep.m4a']
+    ]},
+    newyork:{name:'New York',country:'United States',landmark:'Empire State Building',lat:40.7128,lon:-74.006,tz:'America/New_York',pos:'50% 44%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Empire%20State%20Building%20At%20Night%20-%20April%2023%2C%202026.jpg?width=1400',songs:[
+      ["Raindrops Keep Fallin' On My Head",'B.J. Thomas','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d8/65/1f/d8651f1f-9727-fadf-66a8-927525341ff5/mzaf_10345859008706664501.plus.aac.ep.m4a']
+    ]},
+    seoul:{name:'Seoul',country:'South Korea',landmark:'N Seoul Tower',lat:37.5665,lon:126.978,tz:'Asia/Seoul',pos:'50% 45%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Namsan%20Tower%2C%20Seoul%20-%20Namsan2299.jpg?width=1400',songs:[
+      ['Rain','BTS','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9f/f3/0d/9ff30d01-5859-5c48-d399-aa3cc83c7aad/mzaf_13367482002701672017.plus.aac.ep.m4a']
+    ]},
+    vancouver:{name:'Vancouver',country:'Canada',landmark:'Vancouver Skyline',lat:49.2827,lon:-123.1207,tz:'America/Vancouver',pos:'50% 52%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Night%20skyline%20-%20Vancouver%2C%20Canada%20-%20DSC00080.JPG?width=1400',songs:[
+      ['Rainy Day','Coldplay','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/3b/ba/2b/3bba2bea-0934-7e70-40c5-19e4b8a9cf0d/mzaf_4666180967380001516.plus.aac.ep.m4a']
+    ]},
+    amsterdam:{name:'Amsterdam',country:'Netherlands',landmark:'Amsterdam Canals',lat:52.3676,lon:4.9041,tz:'Europe/Amsterdam',pos:'50% 52%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Amsterdam%20Canal%20by%20Night.jpg?width=1400',songs:[
+      ['Het Regent Zonnestralen','Acda en de Munnik','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/75/4c/5e/754c5e7a-d777-cafb-ddcb-b0a18ee9b0fc/mzaf_4468387962725334816.plus.aac.ep.m4a']
+    ]},
+    kyoto:{name:'Kyoto',country:'Japan',landmark:'Tō-ji Pagoda',lat:35.0116,lon:135.7681,tz:'Asia/Tokyo',pos:'50% 46%',image:'https://commons.wikimedia.org/wiki/Special:Redirect/file/T%C5%8D-ji%20wooden%20pagoda%20at%20night.%20Minami-ku%2C%20Kyoto.jpg?width=1400',songs:[
+      ['Rain','Hata Motohiro','https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/85/ce/64/85ce6424-0f8d-b1eb-3524-c21e352f9c7d/mzaf_17028835718644657456.plus.aac.ep.m4a']
     ]}
   };
   const order = Object.keys(cities);
@@ -51,7 +69,13 @@
     mumbai:{code:'BOM · IN',mark:'मुं'},
     seattle:{code:'SEA · US',mark:'SEA'},
     singapore:{code:'SIN · SG',mark:'SG'},
-    saopaulo:{code:'SAO · BR',mark:'SP'}
+    saopaulo:{code:'SAO · BR',mark:'SP'},
+    paris:{code:'PAR · FR',mark:'PAR'},
+    newyork:{code:'NYC · US',mark:'NY'},
+    seoul:{code:'SEL · KR',mark:'서울'},
+    vancouver:{code:'YVR · CA',mark:'YVR'},
+    amsterdam:{code:'AMS · NL',mark:'AMS'},
+    kyoto:{code:'KYO · JP',mark:'京'}
   };
 
   let visited = new Set();
@@ -66,7 +90,7 @@
   const passportBtn = document.createElement('button');
   passportBtn.className = 'pill passport-pill';
   passportBtn.type = 'button';
-  passportBtn.innerHTML = '<span>Rain Passport</span><span class="passport-count" id="passportButtonCount">0 / 6 skies</span>';
+  passportBtn.innerHTML = '<span>Rain Passport</span><span class="passport-count" id="passportButtonCount">0 / '+order.length+' skies</span>';
   document.querySelector('.actions')?.appendChild(passportBtn);
 
   const passportScrim = document.createElement('div');
@@ -80,9 +104,9 @@
   passportPanel.innerHTML = '<div class="passport-head">'+
     '<div><span class="micro">PLUVIA / 07.1 · RAIN PASSPORT</span><h3>Skies you\'ve experienced.</h3><p>Every city you enter leaves a rain stamp behind. Complete the six-city collection to earn the World of Rain mark.</p></div>'+
     '<button class="passport-close" type="button" aria-label="Close passport">×</button></div>'+
-    '<div class="passport-progress"><div class="passport-progress-track"><i id="passportProgressFill"></i></div><strong id="passportProgressText">0 / 6 skies experienced</strong></div>'+
+    '<div class="passport-progress"><div class="passport-progress-track"><i id="passportProgressFill"></i></div><strong id="passportProgressText">0 / '+order.length+' skies experienced</strong></div>'+
     '<div class="passport-grid" id="passportGrid"></div>'+
-    '<div class="passport-complete" id="passportComplete"><div><span>COLLECTION COMPLETE</span><strong>World of Rain</strong></div><span>06 / 06 · ALL SKIES STAMPED</span></div>';
+    '<div class="passport-complete" id="passportComplete"><div><span>COLLECTION COMPLETE</span><strong>World of Rain</strong></div><span>'+String(order.length).padStart(2,'0')+' / '+String(order.length).padStart(2,'0')+' · ALL SKIES STAMPED</span></div>';
   document.body.append(passportScrim, passportPanel);
 
   const passportToast = document.createElement('div');
@@ -279,7 +303,7 @@
       const name = pendingStamp;
       pendingStamp = null;
       const allDone = visited.size === order.length;
-      showPassportToast(allDone ? 'World of Rain complete · 6 / 6 skies' : name + ' stamped in your Rain Passport');
+      showPassportToast(allDone ? 'World of Rain complete · '+order.length+' / '+order.length+' skies' : name + ' stamped in your Rain Passport');
     }
   }
 
