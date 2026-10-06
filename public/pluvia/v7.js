@@ -1075,8 +1075,8 @@
   liveRainSection.className='section live-rain-section';
   liveRainSection.id='live-rain-world';
   liveRainSection.innerHTML=
-    '<div class="section-head live-rain-head"><div><span class="micro">LIVE / WORLD RAIN SIGNAL</span><h2>It’s raining right now.</h2></div>'+
-    '<p>Pluvia scans major cities around the world and lights up places reporting rain now. Pick a signal and watch the real weather through Pluvia.</p></div>'+
+    '<div class="section-head live-rain-head"><div><span class="micro">LIVE / GLOBAL RAIN RADAR</span><h2>Watch the rain moving.</h2></div>'+
+    '<p>Observed radar shows where precipitation is moving now. Play the recent timeline, click a rain cell, or jump into a confirmed rainy city through Pluvia.</p></div>'+
     '<div class="live-rain-shell">'+
       '<div class="live-rain-map-wrap">'+
         '<div class="live-rain-map radar-enabled" id="liveRainMap" aria-label="Global rain radar. Click a rain cell to inspect it.">'+
@@ -1277,6 +1277,7 @@
       populateRadarBase();
       showRadarFrame(frames.length-1,{crossfade:false});
       liveRainMap.classList.add('radar-ready');
+      liveRainMapEmpty.hidden=true;
     }catch(_){
       radarFrameTime.textContent='Radar temporarily unavailable';
       liveRainMap.classList.remove('radar-ready');
@@ -1541,6 +1542,8 @@
       }});
   }
 
+
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)stopRadarPlayback()});
 
   radarPlay.addEventListener('click',e=>{
     e.stopPropagation();
