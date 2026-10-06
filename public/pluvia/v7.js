@@ -443,7 +443,7 @@
   function persistMemories(){
     try { localStorage.setItem('pluvia-v74-memories',JSON.stringify(memories.slice(0,24))); } catch (_) {}
     updateMemoryCount();
-
+  }
 
   // PLUVIA 7.5 — Focus / Sleep Mode
   const focusModes = {
@@ -652,7 +652,6 @@
     e.stopPropagation();
     finishFocusSession({manual:true});
   });
-  }
 
   function cityLocalDate(tz,date=new Date()){
     return new Intl.DateTimeFormat('en-US',{timeZone:tz,month:'short',day:'numeric',year:'numeric'}).format(date);
