@@ -1028,3 +1028,25 @@ body.focus-active[data-env="train"] .city-photo{animation-duration:25s}
     animation:none!important
   }
 }
+
+
+/* PLUVIA 7.8 — Memory Export */
+.memory-action.export{
+  position:relative;
+  border-color:color-mix(in srgb,var(--accent) 28%,rgba(255,255,255,.08));
+  color:color-mix(in srgb,var(--accent) 68%,#d8e8ef);
+  background:
+    linear-gradient(145deg,color-mix(in srgb,var(--accent) 7%,#0a1720),#08131a)
+}
+.memory-action.export:hover{
+  border-color:color-mix(in srgb,var(--accent) 48%,rgba(255,255,255,.1));
+  background:color-mix(in srgb,var(--accent) 10%,#09161e)
+}
+.memory-action.export:before{
+  content:"↓";margin-right:7px;font-size:11px;font-weight:500
+}
+.memory-action.export:disabled:before{content:"◌"}
+@media(max-width:560px){
+  .memory-preview-actions{display:grid;grid-template-columns:1fr 1fr}
+  .memory-action{width:100%;justify-content:center}
+}
