@@ -634,7 +634,7 @@
     }
 
     if(env==='rooftop'){
-      const thunder=[95,96,99].includes(Number(weather?.code));
+      const thunder=weatherAtmosphere.kind==='storm'||[95,96,99].includes(Number(weather?.code));
       const delay=first?(5200+Math.random()*3200):(thunder?7600+Math.random()*7200:22000+Math.random()*17000);
       envBehaviorTimer=setTimeout(()=>{
         triggerRooftopLightning();
@@ -1785,6 +1785,64 @@
     kind:'drizzle',density:.52,speed:1,alpha:1,lean:5,windX:1.1,mist:.22,cloud:.28,wetness:.52
   };
 
+  // PLUVIA 8.3 — Atmosphere Chooser
+  const atmosphereModes=['live','drizzle','rain','storm','snow'];
+  let atmosphereMode=localStorage.getItem('pluvia-v83-atmosphere')||'live';
+  if(!atmosphereModes.includes(atmosphereMode))atmosphereMode='live';
+
+  const atmosphereLabels={live:'Live',drizzle:'Drizzle',rain:'Rain',storm:'Storm',snow:'Snow'};
+  const atmosphereMainBtn=document.createElement('button');
+  atmosphereMainBtn.className='pill atmosphere-main-pill';
+  atmosphereMainBtn.type='button';
+  atmosphereMainBtn.innerHTML='<span>Atmosphere</span><span class="atmosphere-pill-state">'+atmosphereLabels[atmosphereMode]+'</span>';
+  document.querySelector('.actions')?.appendChild(atmosphereMainBtn);
+
+  const atmospherePicker=document.createElement('div');
+  atmospherePicker.className='atmosphere-picker';
+  atmospherePicker.innerHTML='<div class="atmosphere-picker-head"><span>ATMOSPHERE MODE</span><small>Live uses the city’s real weather</small></div><div class="atmosphere-picker-options">'+
+    atmosphereModes.map(mode=>'<button type="button" data-atmosphere-mode="'+mode+'">'+atmosphereLabels[mode]+'</button>').join('')+
+    '</div>';
+  soundPanel.insertBefore(atmospherePicker,soundPanel.querySelector('.mix-row'));
+
+  function presetWeatherProfile(mode){
+    const liveWind=Math.max(0,Number(weather?.wind)||10);
+    const direction=Number.isFinite(Number(weather?.direction))?Number(weather.direction):105;
+    const radians=direction*Math.PI/180;
+    const windForce=Math.min(1,liveWind/42);
+    const windX=(-Math.sin(radians))*(.6+windForce*4.4);
+    const lean=(-Math.sin(radians))*(5+windForce*21);
+
+    if(mode==='drizzle')return {kind:'drizzle',density:.5,speed:.88,alpha:.88,mist:.22,cloud:.48,wetness:.58,windX,lean};
+    if(mode==='rain')return {kind:'rain',density:.78,speed:1.14,alpha:1.08,mist:.27,cloud:.64,wetness:.78,windX,lean};
+    if(mode==='storm')return {kind:'storm',density:1,speed:1.42,alpha:1.24,mist:.34,cloud:.94,wetness:.94,windX:windX*1.25,lean:lean*1.18};
+    if(mode==='snow')return {kind:'snow',density:.7,speed:.42,alpha:.92,mist:.3,cloud:.76,wetness:.5,windX:windX*.48,lean:lean*.32};
+    return weatherProfile(weather);
+  }
+
+  function refreshAtmosphereMode(){
+    weatherAtmosphere=atmosphereMode==='live'?weatherProfile(weather):presetWeatherProfile(atmosphereMode);
+    applyWeatherAtmosphereProfile(weatherAtmosphere);
+    atmosphereMainBtn.querySelector('.atmosphere-pill-state').textContent=atmosphereLabels[atmosphereMode];
+    atmospherePicker.querySelectorAll('[data-atmosphere-mode]').forEach(btn=>{
+      btn.classList.toggle('active',btn.dataset.atmosphereMode===atmosphereMode);
+      btn.setAttribute('aria-pressed',String(btn.dataset.atmosphereMode===atmosphereMode));
+    });
+  }
+
+  atmospherePicker.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-atmosphere-mode]');
+    if(!btn)return;
+    atmosphereMode=btn.dataset.atmosphereMode;
+    localStorage.setItem('pluvia-v83-atmosphere',atmosphereMode);
+    refreshAtmosphereMode();
+    if(atmosphereMode==='storm'&&body.classList.contains('immersive'))triggerWeatherLightning();
+  });
+
+  atmosphereMainBtn.addEventListener('click',()=>{
+    soundPanel.classList.add('open');
+    setTimeout(()=>atmospherePicker.scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'}),0);
+  });
+
   function weatherProfile(w){
     if(!w) return {kind:'drizzle',density:.52,speed:1,alpha:1,mist:.22,cloud:.28,wetness:.52};
 
@@ -1822,15 +1880,23 @@
     return p;
   }
 
-  function applyWeatherAtmosphere(w){
-    weatherAtmosphere=weatherProfile(w);
+  function applyWeatherAtmosphereProfile(profile){
+    weatherAtmosphere=profile;
     body.dataset.weather=weatherAtmosphere.kind;
+    body.dataset.atmosphereMode=atmosphereMode;
     const tone=weatherAtmosphere.kind==='clear'?.82:weatherAtmosphere.kind==='storm'?1:.94;
     document.documentElement.style.setProperty('--weather-mist-opacity',weatherAtmosphere.mist.toFixed(2));
     document.documentElement.style.setProperty('--weather-cloud-opacity',weatherAtmosphere.cloud.toFixed(2));
     document.documentElement.style.setProperty('--weather-tone-opacity',tone.toFixed(2));
     document.documentElement.style.setProperty('--glass-rain-opacity',weatherAtmosphere.wetness.toFixed(2));
   }
+
+  function applyWeatherAtmosphere(w){
+    weatherAtmosphere=atmosphereMode==='live'?weatherProfile(w):presetWeatherProfile(atmosphereMode);
+    applyWeatherAtmosphereProfile(weatherAtmosphere);
+  }
+
+  refreshAtmosphereMode();
 
   async function fetchWeather(id){
     const c=cities[id];
@@ -2461,18 +2527,26 @@
     for(let i=0;i<count;i++){
       const d=drops[i];
       d.y+=d.v*speed;
-      d.x+=wind;
+      d.x+=wind+(profile.kind==='snow'?Math.sin((ts*.001)+(i*.9))*.45:0);
       if(d.y>rh+90||d.x>rw+120||d.x<-120){
         d.y=-80-Math.random()*120;
         d.x=Math.random()*rw;
       }
-      ctx.beginPath();
-      ctx.moveTo(d.x,d.y);
-      ctx.lineTo(d.x+lean,d.y+d.l*(.88+profile.speed*.12));
       const opacity=Math.min(.48,d.a*envBoost*profile.alpha);
-      ctx.strokeStyle='rgba(205,232,246,'+opacity+')';
-      ctx.lineWidth=d.w*(profile.kind==='storm'?1.12:1);
-      ctx.stroke();
+      if(profile.kind==='snow'){
+        const radius=Math.max(1.2,Math.min(3.8,d.w*1.75));
+        ctx.beginPath();
+        ctx.arc(d.x,d.y,radius,0,Math.PI*2);
+        ctx.fillStyle='rgba(236,246,251,'+Math.min(.68,opacity*1.45)+')';
+        ctx.fill();
+      }else{
+        ctx.beginPath();
+        ctx.moveTo(d.x,d.y);
+        ctx.lineTo(d.x+lean,d.y+d.l*(.88+profile.speed*.12));
+        ctx.strokeStyle='rgba(205,232,246,'+opacity+')';
+        ctx.lineWidth=d.w*(profile.kind==='storm'?1.12:1);
+        ctx.stroke();
+      }
     }
   }
   window.addEventListener('resize',resizeRain,{passive:true});
