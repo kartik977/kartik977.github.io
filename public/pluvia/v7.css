@@ -778,3 +778,100 @@ body.focus-active .info-card{display:none!important}
 @media(prefers-reduced-motion:reduce){
   .focus-scrim,.focus-panel,.focus-hud,.focus-hint,.focus-mode-card{transition:none!important}
 }
+
+
+/* PLUVIA 7.6 — Living Glass */
+:root{--glass-rain-opacity:.52}
+
+.living-glass-layer,
+.glass-condensation{
+  position:fixed;inset:0;z-index:4;
+  pointer-events:none;
+}
+.living-glass-layer{
+  overflow:hidden;opacity:0;
+  transition:opacity .4s ease;
+}
+body.immersive .living-glass-layer{opacity:1}
+.glass-condensation{
+  width:100%;height:100%;
+  opacity:0;
+  transition:opacity .7s ease;
+}
+body.immersive .glass-condensation{opacity:.22}
+body[data-env="rooftop"] .glass-condensation{opacity:.08}
+body[data-env="rooftop"] .living-glass-layer{opacity:.62}
+
+.living-glass-drop{
+  position:absolute;left:0;top:0;
+  width:var(--gs);height:calc(var(--gs) * 1.22);
+  border-radius:58% 46% 62% 52%;
+  opacity:0;
+  background:
+    radial-gradient(circle at 32% 25%,rgba(255,255,255,.5) 0 8%,transparent 10%),
+    radial-gradient(circle at 65% 68%,rgba(149,199,224,.18),transparent 55%),
+    linear-gradient(145deg,rgba(230,246,253,.26),rgba(142,187,210,.08) 44%,rgba(4,15,21,.12));
+  border:1px solid rgba(226,242,249,.24);
+  box-shadow:
+    inset -1px -2px 2px rgba(4,13,18,.18),
+    inset 1px 1px 1px rgba(245,251,253,.16),
+    0 1px 2px rgba(0,0,0,.14);
+}
+body.immersive .living-glass-drop{
+  animation:livingGlassFall var(--gd) linear var(--gdelay) infinite;
+}
+.living-glass-drop:after{
+  content:"";position:absolute;left:50%;top:74%;
+  width:1px;height:var(--gtrail);
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,rgba(218,240,250,.22),rgba(202,229,242,.07) 44%,transparent);
+  opacity:.72;
+}
+.living-glass-drop.merge-drop:before{
+  content:"";position:absolute;
+  width:42%;height:42%;right:-35%;top:20%;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.45),rgba(178,216,233,.12) 46%,rgba(4,13,18,.08));
+  border:1px solid rgba(226,242,249,.18);
+  animation:glassSatellite 5.6s ease-in-out infinite;
+}
+
+@keyframes livingGlassFall{
+  0%{
+    transform:translate3d(var(--gx),-18vh,0) scale(.84);
+    opacity:0
+  }
+  8%{opacity:.34}
+  23%{
+    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .18)),16vh,0) scale(.92)
+  }
+  24%{transform:translate3d(calc(var(--gx) + (var(--gdrift) * .18)),16.5vh,0) scale(.98,1.12)}
+  48%{
+    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .46)),49vh,0) scale(.96,1.06)
+  }
+  72%{
+    transform:translate3d(calc(var(--gx) + (var(--gdrift) * .74)),82vh,0) scale(1.02,1.15)
+  }
+  92%{opacity:var(--glass-rain-opacity)}
+  100%{
+    transform:translate3d(calc(var(--gx) + var(--gdrift)),118vh,0) scale(.9,1.2);
+    opacity:0
+  }
+}
+@keyframes glassSatellite{
+  0%,30%{transform:translate3d(8px,-2px,0) scale(.72);opacity:.72}
+  52%{transform:translate3d(2px,1px,0) scale(.84);opacity:.78}
+  62%,100%{transform:translate3d(-3px,3px,0) scale(.18);opacity:0}
+}
+
+body.focus-active .living-glass-layer{opacity:.82}
+body.focus-active .glass-condensation{opacity:.16}
+
+@media(max-width:700px){
+  body.immersive .glass-condensation{opacity:.18}
+  .living-glass-drop{box-shadow:inset -1px -1px 1px rgba(4,13,18,.16),inset 1px 1px 1px rgba(245,251,253,.14)}
+}
+@media(prefers-reduced-motion:reduce){
+  .living-glass-drop{animation:none!important;display:none!important}
+  .glass-condensation{opacity:.1!important}
+}
