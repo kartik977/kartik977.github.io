@@ -1273,7 +1273,13 @@
       atmosphereMode='live';
       localStorage.setItem('pluvia-v83-atmosphere','live');
       refreshAtmosphereMode();
-      selectCity(result.curatedId,{enter:true,liveSignal:true});
+      selectCity(result.curatedId,{enter:true,liveSignal:true,liveWeather:{
+        temp:Number(result.current.temperature_2m),
+        rain:Number(result.current.rain??result.current.precipitation??0),
+        wind:Number(result.current.wind_speed_10m??0),
+        direction:Number(result.current.wind_direction_10m??105),
+        code:Number(result.current.weather_code)
+      }});
       return;
     }
 
@@ -1309,7 +1315,13 @@
     localStorage.setItem('pluvia-v83-atmosphere','live');
     refreshAtmosphereMode();
 
-    selectCity(dynamicId,{enter:true,liveSignal:true});
+    selectCity(dynamicId,{enter:true,liveSignal:true,liveWeather:{
+        temp:Number(result.current.temperature_2m),
+        rain:Number(result.current.rain??result.current.precipitation??0),
+        wind:Number(result.current.wind_speed_10m??0),
+        direction:Number(result.current.wind_direction_10m??105),
+        code:Number(result.current.weather_code)
+      }});
   }
 
   liveRainSection.addEventListener('click',e=>{
@@ -2269,10 +2281,10 @@
     if(hint) hint.textContent=cities[id].name+' · '+soul.ambient+' · hold the music button for the mixer';
   }
 
-  function selectCity(id,{enter=false,liveSignal=false}={}){
+  function selectCity(id,{enter=false,liveSignal=false,liveWeather=null}={}){
     if(!cities[id]) return;
-    body.classList.toggle('live-rain-session',Boolean(liveSignal));
     if(enter&&transitioning) return;
+    body.classList.toggle('live-rain-session',Boolean(liveSignal));
 
     const c=cities[id];
     const cinematic=enter&&!matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -2294,8 +2306,8 @@
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
       rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
-      weather=null;
-      applyWeatherAtmosphere(null);
+      weather=liveWeather?{...liveWeather}:null;
+      applyWeatherAtmosphere(weather);
 
       currentViewIndex=entryViewIndex;
       currentView=entryView;
@@ -2309,6 +2321,11 @@
       selectedCity.textContent=c.name;
       selectedTime.textContent=localTime(c.tz)+' local';
       body.dataset.phase=phaseFor(c.tz);
+      if(weather){
+        selectedTemp.textContent=Math.round(Number(weather.temp))+'°';
+        selectedCondition.textContent=weatherText(Number(weather.code));
+        selectedMeta.textContent=Number(weather.rain||0).toFixed(1)+' mm rain · '+Math.round(Number(weather.wind)||0)+' km/h wind';
+      }
       chooseTrack();
       fetchWeather(id);
 
@@ -2347,8 +2364,8 @@
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
       rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
-      weather=null;
-      applyWeatherAtmosphere(null);
+      weather=liveWeather?{...liveWeather}:null;
+      applyWeatherAtmosphere(weather);
       selectedCity.textContent=c.name;
       selectedTime.textContent=localTime(c.tz)+' local';
       body.dataset.phase=phaseFor(c.tz);
