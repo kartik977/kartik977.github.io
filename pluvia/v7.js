@@ -98,6 +98,40 @@
   const rainStoryText = rainStory.querySelector('#rainStoryText');
   let rainStoryVariant = 0;
 
+  // PLUVIA 7.3 — Storm Passage
+  const cityPassage = document.createElement('div');
+  cityPassage.className = 'city-passage';
+  cityPassage.setAttribute('aria-hidden','true');
+  cityPassage.innerHTML = '<div class="passage-rain"></div><div class="passage-cloud passage-cloud-a"></div><div class="passage-cloud passage-cloud-b"></div><div class="passage-copy"><small>PLUVIA / CROSSING THE STORM</small><strong id="passageCity">TOKYO</strong><span id="passageMeta">Tokyo Tower · local time</span></div>';
+  document.body.appendChild(cityPassage);
+  const passageCity = cityPassage.querySelector('#passageCity');
+  const passageMeta = cityPassage.querySelector('#passageMeta');
+  let transitionSeq = 0;
+  let transitioning = false;
+
+  function beginPassage(id){
+    const c=cities[id], soul=citySoul[id]||citySoul.tokyo;
+    passageCity.textContent=c.name.toUpperCase();
+    passageMeta.textContent=c.landmark+' · '+localTime(c.tz)+' local';
+    cityPassage.style.setProperty('--passage-accent',soul.accent);
+    cityPassage.style.setProperty('--passage-accent2',soul.accent2);
+    cityPassage.classList.remove('reveal');
+    cityPassage.classList.add('active');
+    cityPassage.setAttribute('aria-hidden','false');
+    transitioning=true;
+  }
+
+  function revealPassage(seq){
+    if(seq!==transitionSeq) return;
+    cityPassage.classList.add('reveal');
+    setTimeout(()=>{
+      if(seq!==transitionSeq) return;
+      cityPassage.classList.remove('active','reveal');
+      cityPassage.setAttribute('aria-hidden','true');
+      transitioning=false;
+    },620);
+  }
+
   // PLUVIA 7.1 — Rain Passport
   const passportMeta = {
     tokyo:{code:'TYO · JP',mark:'東京'},
@@ -406,30 +440,56 @@
 
   function selectCity(id,{enter=false}={}){
     if(!cities[id]) return;
-    active=id;
-    applyCityTheme(id);
-    rainStory.classList.remove('show');
-    rainStoryBtn.classList.remove('active');
-    rainStoryBtn.setAttribute('aria-expanded','false');
-    rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
-    weather=null;
+    if(enter&&transitioning) return;
+
     const c=cities[id];
+    const cinematic=enter&&!matchMedia('(prefers-reduced-motion:reduce)').matches;
+    const seq=++transitionSeq;
+
+    if(cinematic) beginPassage(id);
+
     img.classList.add('is-switching');
     const preload=new Image();
-    preload.onload=()=>{
+
+    const commit=()=>{
+      if(seq!==transitionSeq) return;
+
+      active=id;
+      applyCityTheme(id);
+      rainStory.classList.remove('show');
+      rainStoryBtn.classList.remove('active');
+      rainStoryBtn.setAttribute('aria-expanded','false');
+      rainStoryBtn.querySelector('span').textContent='Tell me about this rain';
+      weather=null;
+
       img.src=c.image;
       img.style.objectPosition=c.pos;
+      selectedCity.textContent=c.name;
+      selectedTime.textContent=localTime(c.tz)+' local';
+      body.dataset.phase=phaseFor(c.tz);
+      chooseTrack();
+      fetchWeather(id);
+
+      if(enter){
+        enterImmersive();
+        earnStamp(id);
+      }
+
       setTimeout(()=>img.classList.remove('is-switching'),30);
+
+      const next=order[(order.indexOf(id)+1)%order.length];
+      const p=new Image(); p.src=cities[next].image;
+
+      if(cinematic){
+        setTimeout(()=>revealPassage(seq),260);
+      }else{
+        transitioning=false;
+      }
     };
+
+    preload.onload=commit;
+    preload.onerror=commit;
     preload.src=c.image;
-    selectedCity.textContent=c.name;
-    selectedTime.textContent=localTime(c.tz)+' local';
-    body.dataset.phase=phaseFor(c.tz);
-    chooseTrack();
-    fetchWeather(id);
-    if(enter){ enterImmersive(); earnStamp(id); }
-    const next=order[(order.indexOf(id)+1)%order.length];
-    const p=new Image(); p.src=cities[next].image;
   }
 
   cityGrid.addEventListener('click',e=>{
@@ -593,6 +653,7 @@
 
   let pointerStart=null,holdTimer=null,holdShown=false;
   body.addEventListener('pointerdown',e=>{
+    if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
     if(e.target.closest('#musicBtn,#soundPanel')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
@@ -633,6 +694,7 @@
       return;
     }
     if(e.key==='Escape') exitImmersive();
+    if(transitioning) return;
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       const i=order.indexOf(active);
       selectCity(e.key==='ArrowRight'?order[(i+1)%order.length]:order[(i-1+order.length)%order.length],{enter:true});
