@@ -1349,13 +1349,16 @@
     }
   };
 
-  const liveCameraBtn=document.createElement('button');
-  liveCameraBtn.id='liveCameraBtn';
-  liveCameraBtn.className='live-camera-btn';
-  liveCameraBtn.type='button';
-  liveCameraBtn.setAttribute('aria-label','Open live camera');
-  liveCameraBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="12" height="12" rx="2"/><path d="m15.5 10 5-2.8v9.6l-5-2.8z"/></svg><span>Live camera</span>';
-  document.body.appendChild(liveCameraBtn);
+  let liveCameraBtn=$('#liveCameraBtn');
+  if(!liveCameraBtn){
+    liveCameraBtn=document.createElement('button');
+    liveCameraBtn.id='liveCameraBtn';
+    liveCameraBtn.className='live-camera-btn';
+    liveCameraBtn.type='button';
+    liveCameraBtn.setAttribute('aria-label','Open live camera');
+    liveCameraBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="12" height="12" rx="2"/><path d="m15.5 10 5-2.8v9.6l-5-2.8z"/></svg><span>Live camera</span>';
+    document.body.appendChild(liveCameraBtn);
+  }
 
   const liveCameraPanel=document.createElement('aside');
   liveCameraPanel.className='live-camera-panel';
@@ -3662,6 +3665,13 @@
 
   function enterImmersive(){
     body.classList.add('immersive');
+    liveCameraBtn.style.display='inline-flex';
+    liveCameraBtn.style.visibility='visible';
+    liveCameraBtn.style.position='fixed';
+    liveCameraBtn.style.right='18px';
+    liveCameraBtn.style.bottom='82px';
+    liveCameraBtn.style.top='auto';
+    liveCameraBtn.style.zIndex='96';
     updateLiveCameraAvailability();
     requestAnimationFrame(()=>updateLiveCameraAvailability());
     resetGlassFog();
@@ -3683,6 +3693,7 @@
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive','live-rain-session');
+    liveCameraBtn.style.display='none';
     soundPanel.classList.remove('open');
     closeLiveCamera();
     body.style.overflow = '';
