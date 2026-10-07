@@ -2325,9 +2325,3 @@ body.immersive.focus-active #liveCameraBtn{opacity:0!important;pointer-events:no
     bottom:max(72px,calc(env(safe-area-inset-bottom) + 72px))!important
   }
 }
-
-
-/* PLUVIA 9.6.3 — static camera control */
-#liveCameraBtn{z-index:96}
-body:not(.immersive) #liveCameraBtn{display:none!important}
-body.immersive #liveCameraBtn{display:inline-flex!important}
