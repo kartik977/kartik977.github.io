@@ -1675,7 +1675,7 @@
       const landscape=options.filter(x=>/^image\/(jpeg|png|webp)/.test(x.mime||'')&&Number(x.width)>900&&Number(x.width)>Number(x.height)*1.12);
       const pick=landscape[0]||options.find(x=>/^image\/(jpeg|png|webp)/.test(x.mime||''))||null;
       if(!pick)return null;
-      const view={src:pick.src,pos:'50% 50%',label:place.name+' live view'};
+      const view={src:pick.src,pos:'50% 50%',label:place.name+' city view'};
       liveImageCache.set(place.id,view);
       try{sessionStorage.setItem(storageKey,JSON.stringify(view));}catch(_){}
       return view;
@@ -1715,7 +1715,7 @@
       name:result.name,country:result.country,landmark:worldView.label,
       lat:result.lat,lon:result.lon,tz:result.tz,pos:worldView.pos||'50% 50%',
       image:worldView.src,songs:(anchorCity.songs||[]).map(track=>[...track]),
-      liveRain:Boolean(liveRainFlag),worldPlace:true
+      liveRain:Boolean(liveRainFlag),worldPlace:true,strictLiveDry:!liveRainFlag
     };
     cityViews[dynamicId]=[worldView];
     citySoul[dynamicId]={
@@ -2756,6 +2756,17 @@
   }
 
   function applyWeatherAtmosphere(w){
+    if(atmosphereMode==='live'&&cities[active]?.strictLiveDry&&w){
+      const code=Number(w.code);
+      const actualRain=Math.max(0,Number(w.rain)||0);
+      const reportingRain=actualRain>.01||[51,53,55,56,57,61,63,65,80,81,82,95,96,99].includes(code);
+      if(!reportingRain){
+        const base=weatherProfile(w);
+        weatherAtmosphere={...base,density:0,alpha:0,wetness:.08};
+        applyWeatherAtmosphereProfile(weatherAtmosphere);
+        return;
+      }
+    }
     weatherAtmosphere=atmosphereMode==='live'?weatherProfile(w):presetWeatherProfile(atmosphereMode);
     applyWeatherAtmosphereProfile(weatherAtmosphere);
   }
