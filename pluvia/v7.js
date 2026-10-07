@@ -1329,6 +1329,12 @@
       videoId:'z-jYdOIKcTQ',
       source:'https://www.youtube.com/watch?v=z-jYdOIKcTQ'
     },
+    singapore:{
+      label:'Singapore Marina Bay',
+      provider:'Singapore City Live Cam',
+      videoId:'mUjXE5M7wgE',
+      source:'https://www.youtube.com/watch?v=mUjXE5M7wgE'
+    },
     london:{
       label:'Abbey Road Crossing',
       provider:'EarthCam',
@@ -1383,6 +1389,7 @@
     if(!c)return null;
     const name=String(c.name||'').toLowerCase();
     if(name.includes('new york'))return 'newyork';
+    if(name==='singapore')return 'singapore';
     if(name==='london')return 'london';
     if(name==='dublin')return 'world-dublin';
     return null;
@@ -1396,13 +1403,21 @@
   function updateLiveCameraAvailability(){
     const feed=activeLiveCameraFeed();
     liveCameraBtn.classList.toggle('available',Boolean(feed));
-    liveCameraBtn.hidden=!feed;
+    liveCameraBtn.classList.toggle('unavailable',!feed);
+    liveCameraBtn.hidden=false;
+    liveCameraBtn.setAttribute('aria-disabled',String(!feed));
+    liveCameraBtn.setAttribute('aria-label',feed?'Open live camera':'No verified live camera for this city yet');
+    const label=liveCameraBtn.querySelector('span');
+    if(label)label.textContent=feed?'Live camera':'Camera unavailable';
     if(!feed&&liveCameraPanel.classList.contains('open'))closeLiveCamera();
   }
 
   function openLiveCamera(){
     const feed=activeLiveCameraFeed();
-    if(!feed)return;
+    if(!feed){
+      if(typeof showShareToast==='function')showShareToast('No verified live camera for '+(cities[active]?.name||'this place')+' yet');
+      return;
+    }
     liveCameraTitle.textContent=(cities[active]?.name||'Live city')+' · '+feed.label;
     liveCameraProvider.textContent='Public feed by '+feed.provider+' · shown alongside Pluvia';
     liveCameraSource.href=feed.source;
