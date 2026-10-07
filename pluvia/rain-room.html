@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#061018" />
+  <meta name="description" content="My Rain Room — saved Pluvia weather experiences." />
+  <title>My Rain Room — PLUVIA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./rain-room.css?v=1.0.0" />
+</head>
+<body>
+  <div class="room-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="room-topbar">
+    <a class="room-brand" href="./"><span class="drop-mark"></span><span>PLUVIA</span></a>
+    <nav class="room-switch" aria-label="Pluvia views">
+      <a href="./">Explore</a>
+      <a class="active" href="./rain-room.html" aria-current="page">My Rain Room <span id="navRoomCount">0</span></a>
+    </nav>
+  </header>
+
+  <main class="room-shell">
+    <section class="room-hero">
+      <div>
+        <span class="room-kicker"><i></i> 09.7 / PERSONAL PLUVIA</span>
+        <h1>Your rain,<br><em>waiting for you.</em></h1>
+        <p>Favorite skies saved exactly the way you left them — city, window, atmosphere, sound mix and city radio.</p>
+      </div>
+      <aside class="room-stat">
+        <span>SAVED EXPERIENCES</span>
+        <strong id="heroRoomCount">0</strong>
+        <small>stored on this browser</small>
+      </aside>
+    </section>
+
+    <section class="room-library">
+      <div class="room-section-head">
+        <div><span>MY COLLECTION</span><h2>Rain Rooms.</h2></div>
+        <a class="create-room" href="./#cities">+ Create a new room</a>
+      </div>
+      <div class="room-grid" id="roomGrid"></div>
+    </section>
+  </main>
+
+  <footer class="room-footer">
+    <span>PLUVIA — A digital weather experiment.</span>
+    <a href="./">Back to Explore ↗</a>
+  </footer>
+
+  <div class="room-toast" id="roomToast" role="status" aria-live="polite"></div>
+  <script src="./rain-room.js?v=1.0.0"></script>
+</body>
+</html>
