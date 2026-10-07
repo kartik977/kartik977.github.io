@@ -1835,3 +1835,262 @@ body.immersive.live-rain-session .live-signal-badge{
 @media(prefers-reduced-motion:reduce){
   .radar-data-layer{transition:none!important}
 }
+
+
+/* PLUVIA 9.2 — Anywhere on Earth */
+.anywhere-search-shell{
+  position:relative;
+  z-index:12;
+  max-width:880px;
+  margin:28px auto 22px
+}
+.anywhere-search{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  min-height:64px;
+  padding:8px 9px 8px 16px;
+  border:1px solid rgba(218,239,248,.12);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 10% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 38%),
+    rgba(5,17,23,.88);
+  box-shadow:0 20px 62px rgba(0,0,0,.22);
+  transition:border-color .2s ease,box-shadow .2s ease
+}
+.anywhere-search:focus-within{
+  border-color:color-mix(in srgb,var(--accent) 35%,rgba(218,239,248,.12));
+  box-shadow:0 24px 76px rgba(0,0,0,.28),0 0 0 3px color-mix(in srgb,var(--accent) 5%,transparent)
+}
+.anywhere-search-icon{
+  display:grid;
+  place-items:center;
+  width:26px;height:26px;
+  color:color-mix(in srgb,var(--accent) 65%,#9ab2bd);
+  font:500 21px/1 "Manrope",sans-serif
+}
+.anywhere-search input{
+  width:100%;
+  min-width:0;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#d8e8ef;
+  font:500 15px/1.2 "Manrope",sans-serif
+}
+.anywhere-search input::placeholder{color:#67828f}
+.anywhere-search input::-webkit-search-cancel-button{filter:invert(.8);opacity:.45}
+.anywhere-search button{
+  min-height:46px;
+  padding:0 18px;
+  border:1px solid color-mix(in srgb,var(--accent) 42%,rgba(255,255,255,.08));
+  border-radius:14px;
+  background:color-mix(in srgb,var(--accent) 74%,#edf7fb);
+  color:#061219;
+  cursor:pointer;
+  font:800 8px/1 "Manrope",sans-serif;
+  letter-spacing:.05em;
+  text-transform:uppercase
+}
+.anywhere-search-shell.searching .anywhere-search-icon{
+  animation:anywhereSearchPulse .9s ease-in-out infinite alternate
+}
+@keyframes anywhereSearchPulse{
+  from{opacity:.35;transform:scale(.9)}
+  to{opacity:1;transform:scale(1.08)}
+}
+
+.anywhere-search-results{
+  position:absolute;
+  left:0;right:0;top:72px;
+  z-index:20;
+  max-height:360px;
+  overflow:auto;
+  padding:7px;
+  border:1px solid rgba(218,239,248,.11);
+  border-radius:18px;
+  background:rgba(4,15,21,.97);
+  box-shadow:0 28px 90px rgba(0,0,0,.38);
+  scrollbar-width:thin
+}
+.anywhere-search-results[hidden]{display:none}
+.anywhere-result{
+  display:grid;
+  width:100%;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  min-height:58px;
+  padding:10px 12px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer
+}
+.anywhere-result:hover,.anywhere-result:focus-visible{
+  background:color-mix(in srgb,var(--accent) 7%,rgba(255,255,255,.015))
+}
+.anywhere-result-main{min-width:0}
+.anywhere-result-main strong{
+  display:block;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#d6e6ed;
+  font:600 14px/1.15 "Playfair Display",serif
+}
+.anywhere-result-main small{
+  display:block;
+  margin-top:5px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#728d99;
+  font:500 8px/1.2 "Manrope",sans-serif
+}
+.anywhere-result-meta{
+  max-width:180px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:#58727e;
+  font:600 7px/1 "Manrope",sans-serif
+}
+.anywhere-search-empty{
+  min-height:68px;
+  display:grid;
+  place-items:center;
+  padding:12px;
+  color:#698490;
+  text-align:center;
+  font:600 8px/1.5 "Manrope",sans-serif
+}
+
+.anywhere-place-card{
+  position:relative;
+  display:grid;
+  gap:15px;
+  margin-top:10px;
+  padding:18px;
+  border:1px solid rgba(218,239,248,.11);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(111,196,232,.07),transparent 35%),
+    rgba(5,17,23,.91);
+  box-shadow:0 20px 68px rgba(0,0,0,.21)
+}
+.anywhere-place-card[hidden]{display:none}
+.anywhere-place-card.wet{
+  border-color:rgba(127,211,244,.2);
+  background:
+    radial-gradient(circle at 90% 0%,rgba(97,190,235,.13),transparent 38%),
+    rgba(5,17,23,.93)
+}
+.anywhere-place-card.loading{min-height:110px}
+.anywhere-place-loading{
+  display:grid;place-items:center;
+  min-height:74px;
+  color:#75919d;
+  font:600 8px/1.4 "Manrope",sans-serif
+}
+.anywhere-place-top{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px
+}
+.anywhere-place-top h3{
+  margin:7px 0 4px;
+  color:#e1edf2;
+  font:500 clamp(28px,4vw,46px)/.95 "Playfair Display",serif
+}
+.anywhere-place-top>div>small{
+  color:#728d99;
+  font:500 8px/1.3 "Manrope",sans-serif
+}
+.anywhere-place-weather{
+  flex:0 0 auto;
+  text-align:right
+}
+.anywhere-place-weather strong{
+  display:block;
+  color:#d9e9ef;
+  font:500 34px/.9 "Playfair Display",serif
+}
+.anywhere-place-weather span{
+  display:block;margin-top:6px;
+  color:#9bb4bf;
+  font:700 8px/1 "Manrope",sans-serif
+}
+.anywhere-place-weather small{
+  display:block;margin-top:5px;
+  color:#607d89;
+  font:600 7px/1 "Manrope",sans-serif
+}
+.anywhere-place-card>p{
+  max-width:680px;
+  margin:0;
+  color:#8099a5;
+  font:500 9px/1.6 "Manrope",sans-serif
+}
+.anywhere-place-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px
+}
+.anywhere-action{
+  min-height:38px;
+  padding:0 13px;
+  border:1px solid rgba(218,239,248,.11);
+  border-radius:999px;
+  background:rgba(255,255,255,.02);
+  color:#9ab1bb;
+  cursor:pointer;
+  font:700 7px/1 "Manrope",sans-serif;
+  letter-spacing:.04em
+}
+.anywhere-action.primary{
+  border-color:color-mix(in srgb,var(--accent) 42%,rgba(255,255,255,.1));
+  background:color-mix(in srgb,var(--accent) 76%,#edf7fb);
+  color:#061219
+}
+.anywhere-place-card.opening{
+  opacity:.58;
+  pointer-events:none
+}
+.anywhere-place-close{
+  position:absolute;
+  right:11px;top:10px;
+  width:30px;height:30px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:#6f8994;
+  cursor:pointer;
+  font:400 20px/1 "Manrope",sans-serif
+}
+.anywhere-place-close:hover{color:#c4d9e2}
+
+@media(max-width:700px){
+  .anywhere-search-shell{margin:22px 0 18px}
+  .anywhere-search{
+    grid-template-columns:auto minmax(0,1fr);
+    min-height:58px;
+    padding:8px 12px;
+    border-radius:17px
+  }
+  .anywhere-search button{
+    grid-column:1/3;
+    min-height:38px;
+    margin-top:1px
+  }
+  .anywhere-search-results{top:111px}
+  .anywhere-result-meta{display:none}
+  .anywhere-place-card{padding:16px;border-radius:17px}
+  .anywhere-place-top{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:14px
+  }
+  .anywhere-place-weather{text-align:left}
+}
+@media(prefers-reduced-motion:reduce){
+  .anywhere-search-shell.searching .anywhere-search-icon{animation:none!important}
+}
