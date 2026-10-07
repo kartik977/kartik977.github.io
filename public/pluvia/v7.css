@@ -2306,3 +2306,22 @@ body.immersive .live-camera-btn{display:inline-flex}
   background:rgba(4,13,19,.76);
   transform:none
 }
+
+
+/* PLUVIA 9.6.2 — fail-safe live camera visibility */
+body.immersive #liveCameraBtn{
+  display:inline-flex!important;
+  visibility:visible!important;
+  top:auto!important;
+  right:18px!important;
+  bottom:max(82px,calc(env(safe-area-inset-bottom) + 82px))!important;
+  opacity:1
+}
+body.immersive #liveCameraBtn.unavailable{opacity:.48}
+body.immersive.focus-active #liveCameraBtn{opacity:0!important;pointer-events:none!important}
+@media(max-width:600px){
+  body.immersive #liveCameraBtn{
+    right:12px!important;
+    bottom:max(72px,calc(env(safe-area-inset-bottom) + 72px))!important
+  }
+}
