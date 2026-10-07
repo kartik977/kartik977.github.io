@@ -1324,10 +1324,10 @@
   // PLUVIA 9.6 — Live Webcam Layer
   const liveCameraFeeds={
     newyork:{
-      label:'Times Square · 1515 Broadway',
-      provider:'CouchTourist',
-      embedUrl:'https://couchtourist.com/embed/cam/10641/',
-      source:'https://couchtourist.com/cams/united-states/new-york/times-square-1515-broadway-live-view/'
+      label:'Times Square · 1560 Broadway',
+      provider:'OpenCCTV',
+      embedUrl:'https://opencctv.org/cameras/united-states/new-york/new-york-city/1560-broadway-cam-140176',
+      source:'https://opencctv.org/cameras/united-states/new-york/new-york-city/1560-broadway-cam-140176'
     },
     singapore:{
       label:'Singapore Marina Bay',
@@ -1337,9 +1337,9 @@
     },
     london:{
       label:'Abbey Road Crossing',
-      provider:'CouchTourist',
-      embedUrl:'https://couchtourist.com/embed/cam/288/',
-      source:'https://couchtourist.com/cams/united-kingdom/london/beatles-abbey-road-crossing/'
+      provider:'OpenCCTV',
+      embedUrl:'https://opencctv.org/cameras/united-kingdom/london/abbey-road-crossing-cam-126849',
+      source:'https://opencctv.org/cameras/united-kingdom/london/abbey-road-crossing-cam-126849'
     },
     'world-dublin':{
       label:'Temple Bar',
@@ -1461,11 +1461,11 @@
 
     frame.addEventListener('load',()=>{
       if(token!==liveCameraFeedToken)return;
-      liveCameraProvider.textContent='Live embed via '+feed.provider+' · shown alongside Pluvia';
+      liveCameraProvider.textContent='Live public camera via '+feed.provider+' · embedded source';
     });
 
     liveCameraFrame.appendChild(frame);
-    liveCameraProvider.textContent='Connecting to '+feed.provider+'…';
+    liveCameraProvider.textContent='Connecting to '+feed.provider+' live camera…';
   }
 
   async function playLiveCameraCandidate(feed,index,token){
