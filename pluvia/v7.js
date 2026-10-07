@@ -1321,274 +1321,6 @@
   let liveRainLastUpdated=0;
   const liveImageCache=new Map();
 
-  // PLUVIA 9.6 — Live Webcam Layer
-  const liveCameraFeeds={
-    newyork:{
-      label:'Times Square · 1560 Broadway',
-      provider:'OpenCCTV',
-      embedUrl:'https://opencctv.org/cameras/united-states/new-york/new-york-city/1560-broadway-cam-140176',
-      source:'https://opencctv.org/cameras/united-states/new-york/new-york-city/1560-broadway-cam-140176'
-    },
-    singapore:{
-      label:'Singapore Marina Bay',
-      provider:'Singapore City Live Cam',
-      videoIds:['l5w5MQmESJE','LhsIlmvwEbc'],
-      source:'https://www.youtube.com/watch?v=l5w5MQmESJE'
-    },
-    london:{
-      label:'Abbey Road Crossing',
-      provider:'OpenCCTV',
-      embedUrl:'https://opencctv.org/cameras/united-kingdom/london/abbey-road-crossing-cam-126849',
-      source:'https://opencctv.org/cameras/united-kingdom/london/abbey-road-crossing-cam-126849'
-    },
-    'world-dublin':{
-      label:'Temple Bar',
-      provider:'EarthCam',
-      videoIds:['u4UZ4UvZXrg'],
-      source:'https://www.youtube.com/watch?v=u4UZ4UvZXrg'
-    }
-  };
-
-  let liveCameraBtn=$('#liveCameraBtn');
-  if(!liveCameraBtn){
-    liveCameraBtn=document.createElement('button');
-    liveCameraBtn.id='liveCameraBtn';
-    liveCameraBtn.className='live-camera-btn';
-    liveCameraBtn.type='button';
-    liveCameraBtn.setAttribute('aria-label','Open live camera');
-    liveCameraBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="12" height="12" rx="2"/><path d="m15.5 10 5-2.8v9.6l-5-2.8z"/></svg><span>Live camera</span>';
-    document.body.appendChild(liveCameraBtn);
-  }
-
-  const liveCameraPanel=document.createElement('aside');
-  liveCameraPanel.className='live-camera-panel';
-  liveCameraPanel.setAttribute('role','dialog');
-  liveCameraPanel.setAttribute('aria-modal','false');
-  liveCameraPanel.setAttribute('aria-label','Live city camera');
-  liveCameraPanel.innerHTML=
-    '<div class="live-camera-head">'+
-      '<div><span class="live-camera-kicker"><i></i> LIVE CAMERA / REAL WORLD</span><strong id="liveCameraTitle">Live view</strong><small id="liveCameraProvider">Public source</small></div>'+
-      '<button id="liveCameraClose" type="button" aria-label="Close live camera">×</button>'+
-    '</div>'+
-    '<div class="live-camera-frame-wrap">'+
-      '<iframe id="liveCameraFrame" title="Live city camera" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'+
-      '<div class="live-camera-note">Feed availability and timing are controlled by the source provider.</div>'+
-    '</div>'+
-    '<div class="live-camera-foot">'+
-      '<span>PLUVIA INTERPRETATION ↔ REAL CAMERA</span>'+
-      '<a id="liveCameraSource" href="#" target="_blank" rel="noopener noreferrer">Open source ↗</a>'+
-    '</div>';
-  document.body.appendChild(liveCameraPanel);
-
-  const liveCameraFrame=$('#liveCameraFrame');
-  const liveCameraTitle=$('#liveCameraTitle');
-  const liveCameraProvider=$('#liveCameraProvider');
-  const liveCameraSource=$('#liveCameraSource');
-  const liveCameraClose=$('#liveCameraClose');
-  const liveCameraFrameWrap=liveCameraPanel.querySelector('.live-camera-frame-wrap');
-
-  const liveCameraFallback=document.createElement('div');
-  liveCameraFallback.className='live-camera-fallback';
-  liveCameraFallback.hidden=true;
-  liveCameraFallback.innerHTML=
-    '<span>◉</span><strong>Live video is unavailable here right now.</strong>'+
-    '<small>The camera provider may have ended or rotated the stream.</small>'+
-    '<a id="liveCameraFallbackLink" href="#" target="_blank" rel="noopener noreferrer">Open live source ↗</a>';
-  liveCameraFrameWrap.appendChild(liveCameraFallback);
-  const liveCameraFallbackLink=liveCameraFallback.querySelector('#liveCameraFallbackLink');
-
-  let liveCameraPlayer=null;
-  let liveCameraFeedToken=0;
-  let liveCameraCandidateIndex=0;
-  let liveCameraApiPromise=null;
-  let liveCameraReadyTimer=null;
-
-  function loadYouTubeIframeApi(){
-    if(window.YT&&window.YT.Player)return Promise.resolve(window.YT);
-    if(liveCameraApiPromise)return liveCameraApiPromise;
-    liveCameraApiPromise=new Promise((resolve,reject)=>{
-      const existing=document.querySelector('script[data-pluvia-youtube-api]');
-      const done=()=>window.YT&&window.YT.Player?resolve(window.YT):reject(new Error('YouTube player unavailable'));
-      const previous=window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady=()=>{
-        try{if(typeof previous==='function')previous()}catch(_){}
-        done();
-      };
-      if(existing){setTimeout(done,3000);return}
-      const script=document.createElement('script');
-      script.src='https://www.youtube.com/iframe_api';
-      script.async=true;
-      script.dataset.pluviaYoutubeApi='1';
-      script.onerror=()=>reject(new Error('YouTube API failed'));
-      document.head.appendChild(script);
-      setTimeout(()=>{if(!(window.YT&&window.YT.Player))reject(new Error('YouTube API timed out'))},9000);
-    });
-    return liveCameraApiPromise;
-  }
-
-  function destroyLiveCameraPlayer(){
-    clearTimeout(liveCameraReadyTimer);
-    liveCameraReadyTimer=null;
-    try{liveCameraPlayer?.destroy()}catch(_){}
-    liveCameraPlayer=null;
-    liveCameraFrame.replaceChildren();
-    liveCameraFrame.style.display='none';
-  }
-
-  function showLiveCameraFallback(feed){
-    destroyLiveCameraPlayer();
-    liveCameraFallback.hidden=false;
-    liveCameraFallbackLink.href=feed?.source||'#';
-    liveCameraProvider.textContent='Embedded view unavailable · source can still be opened directly';
-  }
-
-  function playDirectLiveCameraEmbed(feed,token){
-    if(token!==liveCameraFeedToken)return;
-    destroyLiveCameraPlayer();
-    liveCameraFallback.hidden=true;
-    liveCameraFrame.style.display='block';
-
-    const frame=document.createElement('iframe');
-    frame.src=feed.embedUrl;
-    frame.title=(cities[active]?.name||'Live city')+' live camera';
-    frame.allow='autoplay; fullscreen; picture-in-picture';
-    frame.allowFullscreen=true;
-    frame.loading='eager';
-    frame.referrerPolicy='strict-origin-when-cross-origin';
-    frame.style.width='100%';
-    frame.style.height='100%';
-    frame.style.border='0';
-
-    frame.addEventListener('load',()=>{
-      if(token!==liveCameraFeedToken)return;
-      liveCameraProvider.textContent='Live public camera via '+feed.provider+' · embedded source';
-    });
-
-    liveCameraFrame.appendChild(frame);
-    liveCameraProvider.textContent='Connecting to '+feed.provider+' live camera…';
-  }
-
-  async function playLiveCameraCandidate(feed,index,token){
-    if(token!==liveCameraFeedToken)return;
-    if(feed.embedUrl){
-      playDirectLiveCameraEmbed(feed,token);
-      return;
-    }
-    const ids=Array.isArray(feed.videoIds)?feed.videoIds:[feed.videoId].filter(Boolean);
-    if(index>=ids.length){showLiveCameraFallback(feed);return}
-    liveCameraCandidateIndex=index;
-    liveCameraFallback.hidden=true;
-    liveCameraFrame.style.display='block';
-
-    try{
-      const YT=await loadYouTubeIframeApi();
-      if(token!==liveCameraFeedToken)return;
-      destroyLiveCameraPlayer();
-      liveCameraFrame.style.display='block';
-      const id=ids[index];
-
-      liveCameraPlayer=new YT.Player(liveCameraFrame,{
-        videoId:id,
-        playerVars:{autoplay:1,mute:1,playsinline:1,rel:0,modestbranding:1},
-        events:{
-          onReady:event=>{
-            if(token!==liveCameraFeedToken)return;
-            clearTimeout(liveCameraReadyTimer);
-            try{event.target.mute();event.target.playVideo()}catch(_){}
-          },
-          onStateChange:event=>{
-            if(token!==liveCameraFeedToken)return;
-            if(event.data===YT.PlayerState.PLAYING){
-              clearTimeout(liveCameraReadyTimer);
-              liveCameraProvider.textContent='Live feed by '+feed.provider+' · shown alongside Pluvia';
-            }
-          },
-          onError:()=>{
-            if(token!==liveCameraFeedToken)return;
-            void playLiveCameraCandidate(feed,index+1,token);
-          }
-        }
-      });
-
-      liveCameraReadyTimer=setTimeout(()=>{
-        if(token!==liveCameraFeedToken)return;
-        void playLiveCameraCandidate(feed,index+1,token);
-      },8500);
-    }catch(_){
-      if(token!==liveCameraFeedToken)return;
-      showLiveCameraFallback(feed);
-    }
-  }
-
-  function liveCameraKeyForCity(id){
-    if(liveCameraFeeds[id])return id;
-    const c=cities[id];
-    if(!c)return null;
-    const name=String(c.name||'').toLowerCase();
-    if(name.includes('new york'))return 'newyork';
-    if(name==='singapore')return 'singapore';
-    if(name==='london')return 'london';
-    if(name==='dublin')return 'world-dublin';
-    return null;
-  }
-
-  function activeLiveCameraFeed(){
-    const key=liveCameraKeyForCity(active);
-    return key?liveCameraFeeds[key]:null;
-  }
-
-  function updateLiveCameraAvailability(){
-    const feed=activeLiveCameraFeed();
-    liveCameraBtn.hidden=false;
-    liveCameraBtn.removeAttribute('hidden');
-    liveCameraBtn.classList.toggle('available',Boolean(feed));
-    liveCameraBtn.classList.toggle('unavailable',!feed);
-    liveCameraBtn.setAttribute('aria-disabled',String(!feed));
-    liveCameraBtn.setAttribute('aria-label',feed?'Open live camera':'No verified live camera for this city yet');
-    const label=liveCameraBtn.querySelector('span');
-    if(label)label.textContent=feed?'Live camera':'Camera unavailable';
-    if(!feed&&liveCameraPanel.classList.contains('open'))closeLiveCamera();
-  }
-
-  function openLiveCamera(){
-    const feed=activeLiveCameraFeed();
-    if(!feed){
-      if(typeof showShareToast==='function')showShareToast('No verified live camera for '+(cities[active]?.name||'this place')+' yet');
-      return;
-    }
-    const token=++liveCameraFeedToken;
-    liveCameraCandidateIndex=0;
-    liveCameraTitle.textContent=(cities[active]?.name||'Live city')+' · '+feed.label;
-    liveCameraProvider.textContent='Connecting to '+feed.provider+'…';
-    liveCameraSource.href=feed.source;
-    liveCameraFallbackLink.href=feed.source;
-    liveCameraFallback.hidden=true;
-    liveCameraPanel.classList.add('open');
-    body.classList.add('live-camera-open');
-    liveCameraBtn.classList.add('active');
-    void playLiveCameraCandidate(feed,0,token);
-  }
-
-  function closeLiveCamera(){
-    ++liveCameraFeedToken;
-    clearTimeout(liveCameraReadyTimer);
-    destroyLiveCameraPlayer();
-    liveCameraFallback.hidden=true;
-    liveCameraPanel.classList.remove('open');
-    body.classList.remove('live-camera-open');
-    liveCameraBtn.classList.remove('active');
-  }
-
-  liveCameraBtn.addEventListener('pointerdown',event=>event.stopPropagation());
-  liveCameraBtn.addEventListener('click',event=>{
-    event.stopPropagation();
-    liveCameraPanel.classList.contains('open')?closeLiveCamera():openLiveCamera();
-  });
-  liveCameraPanel.addEventListener('pointerdown',event=>event.stopPropagation());
-  liveCameraPanel.addEventListener('click',event=>event.stopPropagation());
-  liveCameraClose.addEventListener('click',closeLiveCamera);
-
-
   // PLUVIA 9.5 — Storm Chaser 2.0
   const stormChaserHud=document.createElement('aside');
   stormChaserHud.className='storm-chaser-hud';
@@ -3705,7 +3437,6 @@
       clearTimeout(viewTimer);viewTimer=null;
       active=id;
       applyCityTheme(id);
-      updateLiveCameraAvailability();
       rainStory.classList.remove('show');
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
@@ -3764,7 +3495,6 @@
       layer.classList.add('active-view');
       active=id;
       applyCityTheme(id);
-      updateLiveCameraAvailability();
       rainStory.classList.remove('show');
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
@@ -3806,17 +3536,9 @@
 
   function enterImmersive(){
     body.classList.add('immersive');
-    liveCameraBtn.style.display='inline-flex';
-    liveCameraBtn.style.visibility='visible';
-    liveCameraBtn.style.position='fixed';
-    liveCameraBtn.style.right='18px';
-    liveCameraBtn.style.bottom='82px';
-    liveCameraBtn.style.top='auto';
-    liveCameraBtn.style.zIndex='96';
-    updateLiveCameraAvailability();
-    requestAnimationFrame(()=>updateLiveCameraAvailability());
     resetGlassFog();
     recordExperience(active);
+    if(pendingPersonalRoom)setTimeout(()=>finishPersonalRoomRestore(),520);
     if(pendingFocusStart){
       const modeKey=pendingFocusStart;
       pendingFocusStart=null;
@@ -3834,9 +3556,7 @@
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive','live-rain-session');
-    liveCameraBtn.style.display='none';
     soundPanel.classList.remove('open');
-    closeLiveCamera();
     body.style.overflow = '';
     const hadStamp=Boolean(pendingStamp);
     if (pendingStamp){
@@ -4185,6 +3905,266 @@
     Object.keys(mix).forEach(k=>outs[k].value=mix[k].value+'%');
   }
   Object.keys(mix).forEach(k=>mix[k].addEventListener('input',()=>{initSound();applyMix()}));
+
+
+  // PLUVIA 9.7 — Personal Pluvia / My Rain Room
+  const personalRoomStorageKey='pluvia-v97-rain-rooms';
+  let personalRooms=[];
+  let pendingPersonalRoom=null;
+
+  try{
+    const saved=JSON.parse(localStorage.getItem(personalRoomStorageKey)||'[]');
+    if(Array.isArray(saved))personalRooms=saved.filter(room=>room&&room.id).slice(0,8);
+  }catch(_){}
+
+  const personalRoomBtn=document.createElement('button');
+  personalRoomBtn.className='pill personal-room-main-btn';
+  personalRoomBtn.type='button';
+  personalRoomBtn.innerHTML='<span>My Rain Room</span><span class="personal-room-pill-count">0 saved</span>';
+  document.querySelector('.actions')?.appendChild(personalRoomBtn);
+
+  const saveRoomImmersiveBtn=document.createElement('button');
+  saveRoomImmersiveBtn.id='saveRoomImmersiveBtn';
+  saveRoomImmersiveBtn.className='save-room-immersive-btn';
+  saveRoomImmersiveBtn.type='button';
+  saveRoomImmersiveBtn.innerHTML='<span>♡</span><b>Save to Rain Room</b>';
+  document.body.appendChild(saveRoomImmersiveBtn);
+
+  const personalRoomScrim=document.createElement('div');
+  personalRoomScrim.className='personal-room-scrim';
+
+  const personalRoomPanel=document.createElement('section');
+  personalRoomPanel.className='personal-room-panel';
+  personalRoomPanel.setAttribute('role','dialog');
+  personalRoomPanel.setAttribute('aria-modal','true');
+  personalRoomPanel.setAttribute('aria-label','My Rain Room');
+  personalRoomPanel.innerHTML=
+    '<div class="personal-room-head">'+
+      '<div><span class="micro">09.7 / PERSONAL PLUVIA</span><h3>My Rain Room.</h3>'+
+      '<p>Keep your favorite skies exactly the way you like them — city, window, atmosphere and sound mix.</p></div>'+
+      '<button class="personal-room-close" type="button" aria-label="Close My Rain Room">×</button>'+
+    '</div>'+
+    '<div class="personal-room-summary"><span>FAVORITE SKIES</span><b id="personalRoomCount">0 saved rooms</b></div>'+
+    '<div class="personal-room-grid" id="personalRoomGrid"></div>'+
+    '<div class="personal-room-note">Enter any city, choose your window and atmosphere, then tap <b>Save to Rain Room</b> inside the immersive view.</div>';
+
+  const personalRoomToast=document.createElement('div');
+  personalRoomToast.className='personal-room-toast';
+  personalRoomToast.setAttribute('role','status');
+  personalRoomToast.setAttribute('aria-live','polite');
+
+  document.body.append(personalRoomScrim,personalRoomPanel,personalRoomToast);
+
+  const personalRoomGrid=personalRoomPanel.querySelector('#personalRoomGrid');
+  const personalRoomCount=personalRoomPanel.querySelector('#personalRoomCount');
+  const personalRoomPillCount=personalRoomBtn.querySelector('.personal-room-pill-count');
+  let personalRoomToastTimer=null;
+
+  function showPersonalRoomToast(message){
+    clearTimeout(personalRoomToastTimer);
+    personalRoomToast.textContent=message;
+    personalRoomToast.classList.add('show');
+    personalRoomToastTimer=setTimeout(()=>personalRoomToast.classList.remove('show'),2800);
+  }
+
+  function personalRoomPlace(){
+    const c=cities[active];
+    if(!c)return null;
+    if(order.includes(active))return {cityId:active,place:null};
+    if(c.worldPlace){
+      return {
+        cityId:null,
+        place:{
+          id:'personal-'+String(c.name||'place').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+Number(c.lat).toFixed(3)+'-'+Number(c.lon).toFixed(3),
+          name:c.name,country:c.country||'',
+          countryCode:(cityMusicMarket[active]||'US').toUpperCase(),
+          lat:Number(c.lat),lon:Number(c.lon),tz:c.tz||'UTC',
+          region:regionByCity[active]||anywhereRegion(c.lat,c.lon),
+          imageName:c.name
+        }
+      };
+    }
+    return {cityId:active,place:null};
+  }
+
+  function personalRoomCityName(room){
+    if(room.cityId&&cities[room.cityId])return cities[room.cityId].name;
+    return room.place?.name||'Saved sky';
+  }
+
+  function persistPersonalRooms(){
+    try{localStorage.setItem(personalRoomStorageKey,JSON.stringify(personalRooms.slice(0,8)))}catch(_){}
+  }
+
+  function renderPersonalRooms(){
+    const count=personalRooms.length;
+    personalRoomPillCount.textContent=count+(count===1?' saved':' saved');
+    personalRoomCount.textContent=count+(count===1?' saved room':' saved rooms');
+
+    if(!count){
+      personalRoomGrid.innerHTML=
+        '<div class="personal-room-empty"><span>☂</span><strong>Your room is waiting.</strong>'+
+        '<p>Save a favorite city experience and it will appear here with your window, atmosphere and sound preferences.</p></div>';
+      return;
+    }
+
+    personalRoomGrid.innerHTML=personalRooms.map(room=>{
+      const name=personalRoomCityName(room);
+      const envLabel=environmentLabels[room.env]||room.env||'Window';
+      const mode=atmosphereLabels[room.atmosphere]||'Live';
+      const music=Math.round(Number(room.mix?.music??72))+'% music';
+      return '<article class="personal-room-card">'+
+        '<button class="personal-room-open" type="button" data-personal-room-open="'+room.id+'">'+
+          '<span class="personal-room-star">★</span>'+
+          '<small>FAVORITE SKY</small>'+
+          '<strong>'+name+'</strong>'+
+          '<em>'+envLabel+' · '+mode+'</em>'+
+          '<div><span>'+music+'</span><span>'+(room.trackTitle||'City radio')+'</span></div>'+
+          '<b>ENTER MY ROOM ↗</b>'+
+        '</button>'+
+        '<button class="personal-room-delete" type="button" data-personal-room-delete="'+room.id+'" aria-label="Remove '+name+' from My Rain Room">×</button>'+
+      '</article>';
+    }).join('');
+  }
+
+  function openPersonalRoomPanel(){
+    renderPersonalRooms();
+    personalRoomScrim.classList.add('open');
+    personalRoomPanel.classList.add('open');
+    body.classList.add('personal-room-open');
+  }
+
+  function closePersonalRoomPanel(){
+    personalRoomScrim.classList.remove('open');
+    personalRoomPanel.classList.remove('open');
+    body.classList.remove('personal-room-open');
+  }
+
+  function saveCurrentPersonalRoom(){
+    const c=cities[active];
+    const placeData=personalRoomPlace();
+    if(!c||!placeData)return;
+
+    const room={
+      id:'room-'+Date.now(),
+      savedAt:Date.now(),
+      cityId:placeData.cityId,
+      place:placeData.place,
+      env,
+      atmosphere:atmosphereMode,
+      mix:{
+        rain:Number(mix.rain.value),
+        thunder:Number(mix.thunder.value),
+        city:Number(mix.city.value),
+        music:Number(mix.music.value)
+      },
+      trackIndex:Number.isInteger(trackIndex)?trackIndex:0,
+      trackTitle:currentTrack?.[0]||'City radio',
+      musicPlaying:!audio.paused
+    };
+
+    const cityKey=room.cityId||((room.place?.name||'')+'|'+Number(room.place?.lat).toFixed(3)+'|'+Number(room.place?.lon).toFixed(3));
+    personalRooms=[
+      room,
+      ...personalRooms.filter(existing=>{
+        const existingKey=existing.cityId||((existing.place?.name||'')+'|'+Number(existing.place?.lat).toFixed(3)+'|'+Number(existing.place?.lon).toFixed(3));
+        return !(existingKey===cityKey&&existing.env===room.env&&existing.atmosphere===room.atmosphere);
+      })
+    ].slice(0,8);
+
+    persistPersonalRooms();
+    renderPersonalRooms();
+    showPersonalRoomToast(c.name+' saved to My Rain Room');
+  }
+
+  function applyPersonalRoomPreferences(room){
+    applySharedEnvironment(room.env);
+
+    if(atmosphereModes.includes(room.atmosphere)){
+      atmosphereMode=room.atmosphere;
+      localStorage.setItem('pluvia-v83-atmosphere',atmosphereMode);
+      refreshAtmosphereMode();
+    }
+
+    if(room.mix){
+      Object.keys(mix).forEach(key=>{
+        const value=Number(room.mix[key]);
+        if(Number.isFinite(value))mix[key].value=Math.max(0,Math.min(100,value));
+      });
+      applyMix();
+    }
+  }
+
+  function finishPersonalRoomRestore(){
+    const room=pendingPersonalRoom;
+    if(!room)return;
+    pendingPersonalRoom=null;
+
+    const songs=cities[active]?.songs||[];
+    if(songs.length){
+      const index=Math.max(0,Math.min(songs.length-1,Number(room.trackIndex)||0));
+      setMusicTrack(index,Boolean(room.musicPlaying));
+    }
+    showPersonalRoomToast('Welcome back to '+personalRoomCityName(room));
+  }
+
+  async function enterPersonalRoom(room){
+    if(!room)return;
+    closePersonalRoomPanel();
+    applyPersonalRoomPreferences(room);
+    pendingPersonalRoom=room;
+
+    if(room.cityId&&cities[room.cityId]){
+      selectCity(room.cityId,{enter:true});
+      return;
+    }
+
+    if(room.place){
+      try{
+        const current=await fetchAnywhereWeather(room.place);
+        const signal=rainSignal(room.place,current);
+        const dynamicId=await registerWorldPlace(room.place,{liveRainFlag:atmosphereMode==='live'&&Boolean(signal)});
+        selectCity(dynamicId,{
+          enter:true,
+          liveSignal:atmosphereMode==='live'&&Boolean(signal),
+          liveWeather:anywhereWeatherObject(current)
+        });
+      }catch(_){
+        const dynamicId=await registerWorldPlace(room.place,{liveRainFlag:false});
+        selectCity(dynamicId,{enter:true,liveSignal:false});
+      }
+    }
+  }
+
+  personalRoomBtn.addEventListener('click',openPersonalRoomPanel);
+  personalRoomScrim.addEventListener('click',closePersonalRoomPanel);
+  personalRoomPanel.querySelector('.personal-room-close').addEventListener('click',closePersonalRoomPanel);
+  saveRoomImmersiveBtn.addEventListener('pointerdown',event=>event.stopPropagation());
+  saveRoomImmersiveBtn.addEventListener('click',event=>{
+    event.stopPropagation();
+    saveCurrentPersonalRoom();
+  });
+
+  personalRoomGrid.addEventListener('click',event=>{
+    const remove=event.target.closest('[data-personal-room-delete]');
+    if(remove){
+      const id=remove.dataset.personalRoomDelete;
+      personalRooms=personalRooms.filter(room=>room.id!==id);
+      persistPersonalRooms();
+      renderPersonalRooms();
+      showPersonalRoomToast('Removed from My Rain Room');
+      return;
+    }
+
+    const open=event.target.closest('[data-personal-room-open]');
+    if(open){
+      const room=personalRooms.find(item=>item.id===open.dataset.personalRoomOpen);
+      if(room)void enterPersonalRoom(room);
+    }
+  });
+
+  renderPersonalRooms();
+
   function triggerWeatherLightning(){
     if(!body.classList.contains('immersive')||weatherAtmosphere.kind!=='storm')return;
     body.classList.remove('weather-lightning');
@@ -4211,7 +4191,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -4234,7 +4214,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -4249,6 +4229,10 @@
   },true);
 
   window.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&personalRoomPanel.classList.contains('open')){
+      closePersonalRoomPanel();
+      return;
+    }
     if(e.key==='Escape'&&focusPanel.classList.contains('open')){
       closeFocusPanel();
       return;
@@ -4262,7 +4246,6 @@
       if (e.key === 'Escape' && passportPanel.classList.contains('open')) closePassport();
       return;
     }
-    if(e.key==='Escape'&&liveCameraPanel.classList.contains('open')){closeLiveCamera();return}
     if(e.key==='Escape'){if(stormChaseActive)stopStormChase({keepScene:true});exitImmersive();}
     if(transitioning) return;
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
@@ -4272,7 +4255,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.

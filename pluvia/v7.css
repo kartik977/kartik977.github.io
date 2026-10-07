@@ -2363,3 +2363,13 @@ body.immersive #liveCameraBtn{display:inline-flex!important}
   display:block;
   background:#02070b
 }
+
+
+/* PLUVIA 9.6.6 — official published iframe feeds */
+.live-camera-player>iframe{
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  border:0!important;
+  background:#02070b
+}
