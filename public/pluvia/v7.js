@@ -1321,6 +1321,279 @@
   let liveRainLastUpdated=0;
   const liveImageCache=new Map();
 
+
+
+  // PLUVIA 9.4 — Rain Events
+  const rainEventsPanel=document.createElement('section');
+  rainEventsPanel.className='rain-events-panel';
+  rainEventsPanel.innerHTML=
+    '<div class="rain-events-head">'+
+      '<div><span class="micro">09.4 / RAIN EVENTS</span><h3>The weather just changed.</h3></div>'+
+      '<div class="rain-events-live"><i></i><span>LISTENING</span><b id="rainEventsCount">0 events</b></div>'+
+    '</div>'+
+    '<div class="rain-events-list" id="rainEventsList"></div>';
+  liveRainSection.querySelector('.live-rain-shell')?.insertAdjacentElement('beforebegin',rainEventsPanel);
+
+  const rainEventsList=$('#rainEventsList');
+  const rainEventsCount=$('#rainEventsCount');
+
+  const rainEventToast=document.createElement('aside');
+  rainEventToast.className='rain-event-toast';
+  rainEventToast.setAttribute('role','status');
+  rainEventToast.setAttribute('aria-live','polite');
+  document.body.appendChild(rainEventToast);
+
+  const rainEventLevelRank={light:0,steady:1,heavy:2,storm:3};
+  const rainEventStorageKey='pluvia-v94-rain-events';
+  const rainSnapshotStorageKey='pluvia-v94-rain-snapshot';
+  let rainEventToastTimer=null;
+  let rainEvents=[];
+  let rainEventSnapshot=null;
+
+  const rainPlaceKey=place=>String(place?.name||'').trim().toLowerCase()+'|'+String(place?.country||'').trim().toLowerCase();
+
+  try{
+    const saved=JSON.parse(localStorage.getItem(rainEventStorageKey)||'[]');
+    if(Array.isArray(saved)){
+      const cutoff=Date.now()-90*60*1000;
+      rainEvents=saved.filter(event=>event&&Number(event.time)>cutoff).slice(0,12);
+    }
+  }catch(_){}
+
+  try{
+    const saved=JSON.parse(localStorage.getItem(rainSnapshotStorageKey)||'null');
+    if(saved&&Array.isArray(saved.items)&&Date.now()-Number(saved.time)<45*60*1000)rainEventSnapshot=saved;
+  }catch(_){}
+
+  function rainEventMeta(event){
+    if(event.type==='storm')return {label:'STORM ARRIVAL',icon:'⚡'};
+    if(event.type==='start')return {label:'RAIN STARTED',icon:'◉'};
+    if(event.type==='heavier')return {label:'INTENSIFYING',icon:'↑'};
+    if(event.type==='easing')return {label:'EASING',icon:'↓'};
+    return {label:'RAIN ENDED',icon:'○'};
+  }
+
+  function rainEventTitle(event){
+    if(event.type==='storm')return 'A storm is moving into '+event.name+'.';
+    if(event.type==='start')return 'It started raining in '+event.name+'.';
+    if(event.type==='heavier')return 'The rain is getting heavier in '+event.name+'.';
+    if(event.type==='easing')return 'The rain is easing in '+event.name+'.';
+    return 'The rain stopped in '+event.name+'.';
+  }
+
+  function rainEventDetail(event){
+    if(event.type==='stop')return 'The live rain signal ended since the previous scan.';
+    if(event.type==='start')return event.condition+' · '+event.amount.toFixed(1)+' mm · '+Math.round(event.wind||0)+' km/h wind';
+    if(event.previousAmount!=null){
+      return event.previousAmount.toFixed(1)+' → '+event.amount.toFixed(1)+' mm · '+event.condition;
+    }
+    return event.condition+' · '+event.amount.toFixed(1)+' mm';
+  }
+
+  function rainEventAgo(time){
+    const minutes=Math.max(0,Math.round((Date.now()-Number(time))/60000));
+    if(minutes<1)return 'now';
+    if(minutes===1)return '1 min ago';
+    return minutes+' min ago';
+  }
+
+  function renderRainEvents(){
+    const activeEvents=rainEvents.filter(event=>Date.now()-Number(event.time)<90*60*1000).slice(0,8);
+    rainEvents=activeEvents;
+    rainEventsCount.textContent=activeEvents.length+(activeEvents.length===1?' event':' events');
+
+    if(!activeEvents.length){
+      rainEventsList.innerHTML=
+        '<div class="rain-events-empty"><span>◌</span><div><strong>Listening for the next change.</strong>'+
+        '<small>Pluvia compares each world-weather scan with the previous one. Rain starts, stops, storms and meaningful intensity changes will appear here.</small></div></div>';
+      return;
+    }
+
+    rainEventsList.innerHTML=activeEvents.map(event=>{
+      const meta=rainEventMeta(event);
+      const action=event.type==='stop'?'OPEN SKY ↗':'WATCH THIS RAIN ↗';
+      return '<button class="rain-event-card '+event.type+'" type="button" data-rain-event-id="'+event.id+'">'+
+        '<span class="rain-event-icon">'+meta.icon+'</span>'+
+        '<span class="rain-event-copy"><small>'+meta.label+' · '+rainEventAgo(event.time)+'</small><strong>'+rainEventTitle(event)+'</strong><em>'+rainEventDetail(event)+'</em></span>'+
+        '<span class="rain-event-action">'+action+'</span>'+
+      '</button>';
+    }).join('');
+  }
+
+  function saveRainEvents(){
+    try{localStorage.setItem(rainEventStorageKey,JSON.stringify(rainEvents.slice(0,12)))}catch(_){}
+  }
+
+  function snapshotRainSignals(results){
+    return results.map(result=>({
+      key:rainPlaceKey(result),
+      id:result.id,
+      name:result.name,
+      country:result.country,
+      amount:Number(result.amount)||0,
+      level:result.level||'light',
+      code:Number(result.code)||0,
+      wind:Number(result.current?.wind_speed_10m)||0,
+      condition:liveRainCondition(result)
+    }));
+  }
+
+  function buildRainEvent(type,current,previous,time){
+    const source=current||previous;
+    return {
+      id:time+'-'+type+'-'+String(source.key||rainPlaceKey(source)).replace(/[^a-z0-9]+/g,'-'),
+      type,
+      time,
+      key:source.key||rainPlaceKey(source),
+      placeId:current?.id||previous?.id||'',
+      name:source.name,
+      country:source.country,
+      amount:Number(current?.amount)||0,
+      previousAmount:previous?Number(previous.amount)||0:null,
+      wind:Number(current?.wind)||0,
+      condition:current?.condition||'Live weather'
+    };
+  }
+
+  function detectRainEvents(previous,currentResults,now){
+    if(!previous||!Array.isArray(previous.items))return [];
+    const age=now-Number(previous.time||0);
+    if(age<45*1000||age>45*60*1000)return [];
+
+    const before=new Map(previous.items.map(item=>[item.key,item]));
+    const afterItems=snapshotRainSignals(currentResults);
+    const after=new Map(afterItems.map(item=>[item.key,item]));
+    const detected=[];
+
+    after.forEach((current,key)=>{
+      const prior=before.get(key);
+      if(!prior){
+        detected.push(buildRainEvent(current.level==='storm'?'storm':'start',current,null,now));
+        return;
+      }
+
+      const previousRank=rainEventLevelRank[prior.level]??0;
+      const currentRank=rainEventLevelRank[current.level]??0;
+      const increase=current.amount-Number(prior.amount||0);
+      const decrease=Number(prior.amount||0)-current.amount;
+
+      if(current.level==='storm'&&prior.level!=='storm'){
+        detected.push(buildRainEvent('storm',current,prior,now));
+      }else if(
+        currentRank>previousRank||
+        (increase>=.55&&current.amount>=Math.max(.45,Number(prior.amount||0)*1.55))
+      ){
+        detected.push(buildRainEvent('heavier',current,prior,now));
+      }else if(
+        currentRank<previousRank&&decrease>=.2||
+        (decrease>=.35&&current.amount<=Number(prior.amount||0)*.55)
+      ){
+        detected.push(buildRainEvent('easing',current,prior,now));
+      }
+    });
+
+    before.forEach((prior,key)=>{
+      if(!after.has(key))detected.push(buildRainEvent('stop',null,prior,now));
+    });
+
+    const priority={storm:5,start:4,heavier:3,stop:2,easing:1};
+    return detected.sort((a,b)=>(priority[b.type]||0)-(priority[a.type]||0)).slice(0,8);
+  }
+
+  function showRainEventToast(event){
+    const meta=rainEventMeta(event);
+    rainEventToast.innerHTML=
+      '<button class="rain-event-toast-main" type="button" data-toast-rain-event="'+event.id+'">'+
+        '<span class="rain-event-toast-icon">'+meta.icon+'</span>'+
+        '<span><small>PLUVIA · '+meta.label+'</small><strong>'+rainEventTitle(event)+'</strong></span>'+
+        '<b>'+(event.type==='stop'?'OPEN ↗':'WATCH ↗')+'</b>'+
+      '</button>'+
+      '<button class="rain-event-toast-close" type="button" aria-label="Dismiss rain event">×</button>';
+    rainEventToast.classList.add('show');
+    clearTimeout(rainEventToastTimer);
+    rainEventToastTimer=setTimeout(()=>rainEventToast.classList.remove('show'),9000);
+  }
+
+  function processRainEvents(currentResults){
+    const now=Date.now();
+    const detected=detectRainEvents(rainEventSnapshot,currentResults,now);
+
+    if(detected.length){
+      const existing=new Set(rainEvents.map(event=>event.type+'|'+event.key+'|'+Math.floor(Number(event.time)/300000)));
+      const fresh=detected.filter(event=>!existing.has(event.type+'|'+event.key+'|'+Math.floor(Number(event.time)/300000)));
+      if(fresh.length){
+        rainEvents=[...fresh,...rainEvents]
+          .filter(event=>now-Number(event.time)<90*60*1000)
+          .slice(0,12);
+        saveRainEvents();
+        renderRainEvents();
+        showRainEventToast(fresh[0]);
+      }
+    }else{
+      renderRainEvents();
+    }
+
+    rainEventSnapshot={time:now,items:snapshotRainSignals(currentResults)};
+    try{localStorage.setItem(rainSnapshotStorageKey,JSON.stringify(rainEventSnapshot))}catch(_){}
+  }
+
+  async function openRainEvent(event){
+    if(!event)return;
+    rainEventToast.classList.remove('show');
+
+    const current=liveRainResults.find(result=>rainPlaceKey(result)===event.key);
+    if(current&&event.type!=='stop'){
+      await enterLiveRain(current);
+      return;
+    }
+
+    const place=liveRainScanPlaces.find(item=>rainPlaceKey(item)===event.key);
+    if(!place)return;
+
+    try{
+      const currentWeather=await fetchAnywhereWeather(place);
+      const signal=rainSignal(place,currentWeather);
+      if(signal){
+        await enterLiveRain(signal);
+        return;
+      }
+
+      atmosphereMode='live';
+      localStorage.setItem('pluvia-v83-atmosphere','live');
+      refreshAtmosphereMode();
+      const weatherObject=anywhereWeatherObject(currentWeather);
+
+      if(place.curatedId){
+        selectCity(place.curatedId,{enter:true,liveSignal:false,liveWeather:weatherObject});
+      }else{
+        const dynamicId=await registerWorldPlace(place,{liveRainFlag:false});
+        selectCity(dynamicId,{enter:true,liveSignal:false,liveWeather:weatherObject});
+      }
+    }catch(_){}
+  }
+
+  rainEventsList.addEventListener('click',event=>{
+    const card=event.target.closest('[data-rain-event-id]');
+    if(!card)return;
+    const item=rainEvents.find(entry=>entry.id===card.dataset.rainEventId);
+    if(item)void openRainEvent(item);
+  });
+
+  rainEventToast.addEventListener('pointerdown',event=>event.stopPropagation());
+  rainEventToast.addEventListener('click',event=>{
+    event.stopPropagation();
+    if(event.target.closest('.rain-event-toast-close')){
+      rainEventToast.classList.remove('show');
+      return;
+    }
+    const trigger=event.target.closest('[data-toast-rain-event]');
+    if(!trigger)return;
+    const item=rainEvents.find(entry=>entry.id===trigger.dataset.toastRainEvent);
+    if(item)void openRainEvent(item);
+  });
+
+  renderRainEvents();
+
   const rainyCodes=new Set([51,53,55,56,57,61,63,65,80,81,82,95,96,99]);
   const snowCodes=new Set([71,73,75,77,85,86]);
 
@@ -1801,6 +2074,7 @@
         });
       liveRainLastUpdated=Date.now();
       renderLiveRainWorld();
+      processRainEvents(liveRainResults);
       liveRainStatus.textContent=liveRainResults.length+' raining now · updated '+new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit'}).format(new Date());
     }catch(_){
       liveRainStatus.textContent=liveRainResults.length?'Live refresh failed · showing last signal':'Live rain signal unavailable · try refresh';
@@ -3493,7 +3767,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -3516,7 +3790,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -3553,7 +3827,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
