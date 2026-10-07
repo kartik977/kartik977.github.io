@@ -2094,3 +2094,33 @@ body.immersive.live-rain-session .live-signal-badge{
 @media(prefers-reduced-motion:reduce){
   .anywhere-search-shell.searching .anywhere-search-icon{animation:none!important}
 }
+
+
+/* PLUVIA 9.3 — Shareable Weather Experiences */
+.share-experience-btn{
+  position:fixed;z-index:66;top:max(18px,env(safe-area-inset-top));left:18px;
+  min-height:48px;padding:0 17px;border-radius:999px;
+  border:1px solid rgba(230,245,252,.24);background:rgba(4,13,19,.74);
+  color:#edf6fa;display:none;align-items:center;gap:9px;cursor:pointer;
+  box-shadow:0 16px 45px rgba(0,0,0,.28);backdrop-filter:blur(14px);
+  font:600 11px/1 "Manrope",sans-serif;letter-spacing:.02em;
+  transition:border-color .2s ease,background .2s ease,transform .2s ease,opacity .2s ease
+}
+.share-experience-btn:hover{border-color:rgba(134,207,255,.58);background:rgba(9,25,35,.88);transform:translateY(-1px)}
+.share-experience-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.immersive .share-experience-btn{display:inline-flex}
+body.focus-active .share-experience-btn{opacity:0;pointer-events:none}
+.share-experience-toast{
+  position:fixed;z-index:82;top:max(78px,calc(env(safe-area-inset-top) + 78px));left:18px;
+  max-width:min(360px,calc(100vw - 36px));padding:11px 14px;border-radius:14px;
+  border:1px solid rgba(224,242,250,.15);background:rgba(5,15,21,.92);
+  box-shadow:0 18px 50px rgba(0,0,0,.34);backdrop-filter:blur(16px);
+  color:#bcd0da;font-size:10px;line-height:1.45;opacity:0;transform:translateY(-8px);
+  pointer-events:none;transition:opacity .22s ease,transform .22s ease
+}
+.share-experience-toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){
+  .share-experience-btn{top:max(14px,env(safe-area-inset-top));left:14px;min-height:44px;padding:0 14px}
+  .share-experience-btn span{display:none}
+  .share-experience-toast{left:14px;top:max(68px,calc(env(safe-area-inset-top) + 68px));max-width:calc(100vw - 28px)}
+}
