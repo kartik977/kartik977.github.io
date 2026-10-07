@@ -1321,6 +1321,168 @@
   let liveRainLastUpdated=0;
   const liveImageCache=new Map();
 
+  // PLUVIA 9.5 — Storm Chaser 2.0
+  const stormChaserHud=document.createElement('aside');
+  stormChaserHud.className='storm-chaser-hud';
+  stormChaserHud.setAttribute('aria-live','polite');
+  stormChaserHud.innerHTML=
+    '<div class="storm-chaser-main">'+
+      '<span class="storm-chaser-kicker"><i></i> STORM CHASER 2.0</span>'+
+      '<strong id="stormChaserCity">Waiting for a storm…</strong>'+
+      '<small id="stormChaserMeta">Pluvia will follow the strongest active rain systems.</small>'+
+    '</div>'+
+    '<div class="storm-chaser-countdown"><span>NEXT SKY</span><b id="stormChaserCountdown">—</b></div>'+
+    '<button id="stormChaserNext" type="button">Next storm →</button>'+
+    '<button id="stormChaserStop" type="button">Stop chase</button>';
+  document.body.appendChild(stormChaserHud);
+
+  const stormChaserCity=$('#stormChaserCity');
+  const stormChaserMeta=$('#stormChaserMeta');
+  const stormChaserCountdown=$('#stormChaserCountdown');
+  const stormChaserNext=$('#stormChaserNext');
+  const stormChaserStop=$('#stormChaserStop');
+
+  let stormChaseActive=false;
+  let stormChaseTimer=null;
+  let stormChaseTick=null;
+  let stormChaseEndsAt=0;
+  let stormChaseCurrentKey='';
+  let stormChaseRecent=[];
+  const stormChaseDwellMs=18000;
+
+  const stormChaseKey=result=>String(result?.name||'').toLowerCase()+'|'+String(result?.country||'').toLowerCase();
+
+  function stormChasePool(){
+    const strong=liveRainResults.filter(result=>result.level==='storm'||result.level==='heavy');
+    const medium=liveRainResults.filter(result=>result.level==='steady');
+    const light=liveRainResults.filter(result=>result.level==='light');
+    return [...strong,...medium,...light].slice(0,10);
+  }
+
+  function stormChaseCandidate(){
+    const pool=stormChasePool();
+    if(!pool.length)return null;
+
+    const fresh=pool.find(result=>{
+      const key=stormChaseKey(result);
+      return key!==stormChaseCurrentKey&&!stormChaseRecent.includes(key);
+    });
+    if(fresh)return fresh;
+
+    const different=pool.find(result=>stormChaseKey(result)!==stormChaseCurrentKey);
+    return different||pool[0];
+  }
+
+  function updateStormChaserHud(result){
+    if(!result)return;
+    const condition=liveRainCondition(result);
+    stormChaserCity.textContent=result.name+' · '+condition;
+    stormChaserMeta.textContent=
+      result.country+' · '+result.amount.toFixed(1)+' mm · '+
+      Math.round(Number(result.current?.wind_speed_10m)||0)+' km/h wind';
+  }
+
+  function updateStormChaserCountdown(){
+    if(!stormChaseActive){
+      stormChaserCountdown.textContent='—';
+      return;
+    }
+    const seconds=Math.max(0,Math.ceil((stormChaseEndsAt-Date.now())/1000));
+    stormChaserCountdown.textContent=seconds+'s';
+  }
+
+  function scheduleStormChaseAdvance(){
+    clearTimeout(stormChaseTimer);
+    clearInterval(stormChaseTick);
+    stormChaseEndsAt=Date.now()+stormChaseDwellMs;
+    updateStormChaserCountdown();
+    stormChaseTick=setInterval(updateStormChaserCountdown,1000);
+    stormChaseTimer=setTimeout(()=>void advanceStormChase(),stormChaseDwellMs);
+  }
+
+  async function advanceStormChase({manual=false}={}){
+    if(!stormChaseActive)return;
+    clearTimeout(stormChaseTimer);
+    clearInterval(stormChaseTick);
+
+    if(!liveRainResults.length||Date.now()-liveRainLastUpdated>4.5*60*1000){
+      try{await refreshLiveRainWorld()}catch(_){}
+    }
+
+    const next=stormChaseCandidate();
+    if(!next){
+      stormChaserMeta.textContent='No active rain signal found. Waiting for the next scan…';
+      stormChaseEndsAt=Date.now()+10000;
+      stormChaseTick=setInterval(updateStormChaserCountdown,1000);
+      stormChaseTimer=setTimeout(()=>void advanceStormChase(),10000);
+      return;
+    }
+
+    const key=stormChaseKey(next);
+    stormChaseCurrentKey=key;
+    stormChaseRecent=[key,...stormChaseRecent.filter(item=>item!==key)].slice(0,4);
+
+    radarChase.classList.add('active');
+    radarChase.textContent='Stop auto chase';
+    body.classList.add('storm-chaser-active');
+    stormChaserHud.classList.add('show');
+    updateStormChaserHud(next);
+
+    try{
+      await enterLiveRain(next);
+      if(stormChaseActive)scheduleStormChaseAdvance();
+    }catch(_){
+      if(stormChaseActive){
+        stormChaserMeta.textContent='That sky could not open. Finding another storm…';
+        stormChaseEndsAt=Date.now()+3000;
+        stormChaseTick=setInterval(updateStormChaserCountdown,1000);
+        stormChaseTimer=setTimeout(()=>void advanceStormChase(),3000);
+      }
+    }
+  }
+
+  function startStormChase(){
+    if(stormChaseActive)return;
+    if(!liveRainResults.length){
+      liveRainStatus.textContent='Finding a storm to chase…';
+    }
+    stormChaseActive=true;
+    stormChaseRecent=[];
+    stormChaseCurrentKey='';
+    radarChase.classList.add('active');
+    radarChase.textContent='Stop auto chase';
+    stormChaserHud.classList.add('show');
+    stormChaserCity.textContent='Finding the strongest rain…';
+    stormChaserMeta.textContent='Scanning live rain signals around the world.';
+    body.classList.add('storm-chaser-active');
+    void advanceStormChase({manual:true});
+  }
+
+  function stopStormChase({keepScene=true}={}){
+    if(!stormChaseActive&&!body.classList.contains('storm-chaser-active'))return;
+    stormChaseActive=false;
+    clearTimeout(stormChaseTimer);
+    clearInterval(stormChaseTick);
+    stormChaseTimer=null;
+    stormChaseTick=null;
+    stormChaseEndsAt=0;
+    radarChase.classList.remove('active');
+    radarChase.textContent='Auto chase strongest ↗';
+    stormChaserHud.classList.remove('show');
+    body.classList.remove('storm-chaser-active');
+    if(!keepScene&&body.classList.contains('immersive'))exitImmersive();
+  }
+
+  stormChaserNext.addEventListener('click',event=>{
+    event.stopPropagation();
+    if(stormChaseActive)void advanceStormChase({manual:true});
+  });
+  stormChaserStop.addEventListener('click',event=>{
+    event.stopPropagation();
+    stopStormChase({keepScene:true});
+  });
+
+
 
 
   // PLUVIA 9.4 — Rain Events
@@ -2271,7 +2433,7 @@
   });
   radarChase.addEventListener('click',e=>{
     e.stopPropagation();
-    if(liveRainResults.length)void enterLiveRain(liveRainResults[0].id);
+    stormChaseActive?stopStormChase({keepScene:true}):startStormChase();
   });
   liveRainMap.addEventListener('click',e=>{
     if(e.target.closest('.live-rain-marker,.radar-inspect'))return;
@@ -3387,6 +3549,7 @@
     scheduleViewRotation(true);
   }
   function exitImmersive(){
+    if(stormChaseActive)stopStormChase({keepScene:true});
     clearTimeout(viewTimer);viewTimer=null;
     stopEnvironmentBehavior();
     clearInterval(refogTimer);refogTimer=null;wipeTrail=[];
@@ -3767,7 +3930,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -3790,7 +3953,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -3818,7 +3981,7 @@
       if (e.key === 'Escape' && passportPanel.classList.contains('open')) closePassport();
       return;
     }
-    if(e.key==='Escape') exitImmersive();
+    if(e.key==='Escape'){if(stormChaseActive)stopStormChase({keepScene:true});exitImmersive();}
     if(transitioning) return;
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
       const i=order.indexOf(active);
@@ -3827,7 +3990,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
