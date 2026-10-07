@@ -2292,17 +2292,3 @@ body.focus-active .live-camera-btn,body.focus-active .live-camera-panel{opacity:
   .live-camera-kicker i{animation:none!important}
   .live-camera-panel{transition:none!important}
 }
-
-
-/* PLUVIA 9.6.1 — camera availability clarity */
-body.immersive .live-camera-btn{display:inline-flex}
-.live-camera-btn.unavailable{
-  opacity:.48;
-  border-style:dashed;
-  cursor:not-allowed
-}
-.live-camera-btn.unavailable:hover{
-  border-color:rgba(230,245,252,.22);
-  background:rgba(4,13,19,.76);
-  transform:none
-}
