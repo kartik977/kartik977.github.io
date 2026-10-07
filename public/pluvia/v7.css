@@ -2180,3 +2180,57 @@ body.focus-active .rain-event-toast{opacity:0!important;pointer-events:none!impo
   .rain-event-toast-main{grid-template-columns:30px minmax(0,1fr);padding:11px}.rain-event-toast-main b{display:none}.rain-event-toast-icon{width:28px;height:28px}
 }
 @media(prefers-reduced-motion:reduce){.rain-events-live i{animation:none!important}.rain-event-card,.rain-event-toast{transition:none!important}}
+
+
+/* PLUVIA 9.5 — Storm Chaser 2.0 */
+#radarChase.active{
+  border-color:rgba(143,211,241,.45);
+  background:rgba(18,45,58,.82);
+  color:#cdefff;
+  box-shadow:0 0 0 1px rgba(134,207,255,.08),0 0 28px rgba(93,184,226,.12)
+}
+.storm-chaser-hud{
+  position:fixed;z-index:78;left:50%;bottom:max(22px,env(safe-area-inset-bottom));
+  transform:translate(-50%,18px);
+  width:min(720px,calc(100vw - 36px));
+  min-height:76px;padding:11px;
+  border:1px solid rgba(192,229,244,.17);border-radius:20px;
+  background:rgba(4,14,20,.93);box-shadow:0 28px 90px rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);
+  display:grid;grid-template-columns:minmax(0,1fr) 74px auto auto;gap:10px;align-items:center;
+  opacity:0;pointer-events:none;transition:opacity .28s ease,transform .28s ease
+}
+.storm-chaser-hud.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.storm-chaser-main{min-width:0;padding:2px 8px}
+.storm-chaser-kicker{display:flex;align-items:center;gap:7px;color:#82cbea;font:800 7px/1 "Manrope",sans-serif;letter-spacing:.14em}
+.storm-chaser-kicker i{width:6px;height:6px;border-radius:50%;background:#8bdcff;box-shadow:0 0 14px rgba(139,220,255,.72);animation:stormChaserPulse 1.6s ease-in-out infinite}
+.storm-chaser-main strong{display:block;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e1eff5;font:600 15px/1.15 "DM Sans",sans-serif}
+.storm-chaser-main small{display:block;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#76909d;font-size:9px}
+.storm-chaser-countdown{height:52px;border-left:1px solid rgba(220,239,248,.08);border-right:1px solid rgba(220,239,248,.08);display:grid;place-content:center;text-align:center}
+.storm-chaser-countdown span{color:#65808e;font:700 6px/1 "Manrope",sans-serif;letter-spacing:.13em}
+.storm-chaser-countdown b{margin-top:5px;color:#bfe5f5;font:700 18px/1 "Manrope",sans-serif}
+.storm-chaser-hud button{min-height:42px;padding:0 13px;border:1px solid rgba(220,239,248,.11);border-radius:999px;background:rgba(7,20,28,.82);color:#a9c8d6;cursor:pointer;font:700 8px/1 "Manrope",sans-serif;white-space:nowrap}
+.storm-chaser-hud button:hover{border-color:rgba(134,207,255,.32);color:#e0f2fa}
+#stormChaserStop{background:rgba(31,18,22,.66);color:#c7aab2}
+body.focus-active .storm-chaser-hud{opacity:0!important;pointer-events:none!important}
+@keyframes stormChaserPulse{50%{opacity:.45;transform:scale(.75)}}
+@media(max-width:700px){
+  .storm-chaser-hud{
+    left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));
+    width:auto;transform:translateY(18px);
+    grid-template-columns:minmax(0,1fr) 62px 44px;gap:7px;padding:9px;border-radius:17px
+  }
+  .storm-chaser-hud.show{transform:translateY(0)}
+  .storm-chaser-main{padding:1px 5px}
+  .storm-chaser-main strong{font-size:12px}
+  .storm-chaser-main small{font-size:8px}
+  .storm-chaser-countdown{height:46px}
+  .storm-chaser-countdown b{font-size:15px}
+  #stormChaserNext{width:44px;padding:0;font-size:0}
+  #stormChaserNext:after{content:'→';font-size:16px}
+  #stormChaserStop{grid-column:1/4;min-height:36px}
+}
+@media(prefers-reduced-motion:reduce){
+  .storm-chaser-kicker i{animation:none!important}
+  .storm-chaser-hud{transition:none!important}
+}
