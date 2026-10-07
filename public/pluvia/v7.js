@@ -1402,9 +1402,10 @@
 
   function updateLiveCameraAvailability(){
     const feed=activeLiveCameraFeed();
+    liveCameraBtn.hidden=false;
+    liveCameraBtn.removeAttribute('hidden');
     liveCameraBtn.classList.toggle('available',Boolean(feed));
     liveCameraBtn.classList.toggle('unavailable',!feed);
-    liveCameraBtn.hidden=false;
     liveCameraBtn.setAttribute('aria-disabled',String(!feed));
     liveCameraBtn.setAttribute('aria-label',feed?'Open live camera':'No verified live camera for this city yet');
     const label=liveCameraBtn.querySelector('span');
@@ -3619,6 +3620,7 @@
       layer.classList.add('active-view');
       active=id;
       applyCityTheme(id);
+      updateLiveCameraAvailability();
       rainStory.classList.remove('show');
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
@@ -3660,6 +3662,8 @@
 
   function enterImmersive(){
     body.classList.add('immersive');
+    updateLiveCameraAvailability();
+    requestAnimationFrame(()=>updateLiveCameraAvailability());
     resetGlassFog();
     recordExperience(active);
     if(pendingFocusStart){
