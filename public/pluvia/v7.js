@@ -996,6 +996,170 @@
   }).join('');
 
 
+  // PLUVIA 9.3 — Shareable Weather Experiences
+  const shareExperienceBtn=document.createElement('button');
+  shareExperienceBtn.id='shareExperienceBtn';
+  shareExperienceBtn.className='share-experience-btn';
+  shareExperienceBtn.type='button';
+  shareExperienceBtn.setAttribute('aria-label','Share this weather experience');
+  shareExperienceBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 13v6h14v-6"/></svg><span>Share this sky</span>';
+  document.body.appendChild(shareExperienceBtn);
+
+  const shareExperienceToast=document.createElement('div');
+  shareExperienceToast.className='share-experience-toast';
+  shareExperienceToast.setAttribute('role','status');
+  shareExperienceToast.setAttribute('aria-live','polite');
+  document.body.appendChild(shareExperienceToast);
+  let shareToastTimer=null;
+
+  function showShareToast(message){
+    clearTimeout(shareToastTimer);
+    shareExperienceToast.textContent=message;
+    shareExperienceToast.classList.add('show');
+    shareToastTimer=setTimeout(()=>shareExperienceToast.classList.remove('show'),2600);
+  }
+
+  function applySharedEnvironment(value){
+    if(!['cafe','apartment','hotel','train','car','rooftop'].includes(value))return;
+    env=value;
+    body.dataset.env=env;
+    localStorage.setItem('pluvia-v7-env',env);
+    envChoices.forEach(choice=>choice.classList.toggle('active',choice.dataset.envChoice===env));
+  }
+
+  function buildShareExperienceUrl(){
+    const c=cities[active];
+    const url=new URL(location.href);
+    url.search='';
+    url.hash='';
+    url.searchParams.set('pluvia','1');
+    url.searchParams.set('env',env);
+    url.searchParams.set('mode',atmosphereMode);
+
+    if(order.includes(active)){
+      url.searchParams.set('city',active);
+    }else if(c&&c.worldPlace){
+      url.searchParams.set('lat',Number(c.lat).toFixed(4));
+      url.searchParams.set('lon',Number(c.lon).toFixed(4));
+      url.searchParams.set('name',c.name||'Shared sky');
+      if(c.country)url.searchParams.set('country',c.country);
+      url.searchParams.set('cc',(cityMusicMarket[active]||'US').toUpperCase());
+      url.searchParams.set('tz',c.tz||'UTC');
+      url.searchParams.set('region',regionByCity[active]||anywhereRegion(c.lat,c.lon));
+    }else{
+      url.searchParams.set('city','tokyo');
+    }
+    return url.toString();
+  }
+
+  async function copyShareExperienceUrl(url){
+    try{
+      if(navigator.clipboard&&window.isSecureContext){
+        await navigator.clipboard.writeText(url);
+        return true;
+      }
+    }catch(_){}
+    const field=document.createElement('textarea');
+    field.value=url;
+    field.setAttribute('readonly','');
+    field.style.position='fixed';
+    field.style.opacity='0';
+    document.body.appendChild(field);
+    field.select();
+    let ok=false;
+    try{ok=document.execCommand('copy')}catch(_){}
+    field.remove();
+    return ok;
+  }
+
+  shareExperienceBtn.addEventListener('pointerdown',event=>event.stopPropagation());
+  shareExperienceBtn.addEventListener('click',async event=>{
+    event.stopPropagation();
+    const c=cities[active];
+    if(!c)return;
+    const url=buildShareExperienceUrl();
+    const liveDescription=atmosphereMode==='live'
+      ?(weather?weatherText(Number(weather.code))+' · '+Math.round(Number(weather.temp))+'°':'live weather')
+      :atmosphereLabels[atmosphereMode]+' atmosphere';
+    const payload={
+      title:'Pluvia · '+c.name,
+      text:'Experience '+c.name+' through '+(environmentLabels[env]||'a window')+' · '+liveDescription+'.',
+      url
+    };
+
+    if(navigator.share){
+      try{
+        await navigator.share(payload);
+        showShareToast('Sky shared · '+c.name);
+        return;
+      }catch(error){
+        if(error&&error.name==='AbortError')return;
+      }
+    }
+
+    const copied=await copyShareExperienceUrl(url);
+    showShareToast(copied?'Experience link copied · '+c.name:'Could not copy the link');
+  });
+
+  async function restoreSharedExperience(){
+    const params=new URLSearchParams(location.search);
+    if(params.get('pluvia')!=='1')return false;
+
+    applySharedEnvironment(params.get('env'));
+
+    const requestedMode=params.get('mode');
+    if(requestedMode&&atmosphereModes.includes(requestedMode)){
+      atmosphereMode=requestedMode;
+      localStorage.setItem('pluvia-v83-atmosphere',atmosphereMode);
+      refreshAtmosphereMode();
+    }
+
+    const curatedId=params.get('city');
+    if(curatedId&&order.includes(curatedId)){
+      selectCity(curatedId,{enter:true});
+      setTimeout(()=>showShareToast('Shared sky opened · '+cities[curatedId].name),900);
+      return true;
+    }
+
+    const lat=Number(params.get('lat'));
+    const lon=Number(params.get('lon'));
+    if(!Number.isFinite(lat)||!Number.isFinite(lon))return false;
+
+    const name=(params.get('name')||'Shared sky').slice(0,90);
+    const country=(params.get('country')||'').slice(0,90);
+    const countryCode=(params.get('cc')||'US').slice(0,3).toUpperCase();
+    const tz=(params.get('tz')||'UTC').slice(0,80);
+    const region=(params.get('region')||anywhereRegion(lat,lon)).slice(0,40);
+    const place={
+      id:'shared-'+lat.toFixed(4)+'-'+lon.toFixed(4),
+      name,country,countryCode,lat,lon,tz,region,imageName:name
+    };
+
+    try{
+      const current=await fetchAnywhereWeather(place);
+      const signal=rainSignal(place,current);
+      const isLiveRain=atmosphereMode==='live'&&Boolean(signal);
+      const dynamicId=await registerWorldPlace(place,{liveRainFlag:isLiveRain});
+      selectCity(dynamicId,{
+        enter:true,
+        liveSignal:isLiveRain,
+        liveWeather:anywhereWeatherObject(current)
+      });
+      setTimeout(()=>showShareToast('Shared sky opened · '+name),900);
+      return true;
+    }catch(_){
+      try{
+        const dynamicId=await registerWorldPlace(place,{liveRainFlag:false});
+        selectCity(dynamicId,{enter:true,liveSignal:false});
+        setTimeout(()=>showShareToast('Shared place opened · live weather unavailable'),900);
+        return true;
+      }catch(__){
+        return false;
+      }
+    }
+  }
+
+
   // PLUVIA 9.0 — Live Rain World
   const liveRainPlaces = [
     ['reykjavik','Reykjavík','Iceland',64.1466,-21.9426,'Atlantic/Reykjavik','Europe'],
@@ -3329,7 +3493,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -3352,7 +3516,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -3389,7 +3553,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
@@ -3449,5 +3613,5 @@
     selectedTime.textContent=localTime(c.tz)+' local';
   },60000);
 
-  selectCity('tokyo');
+  restoreSharedExperience().then(restored=>{if(!restored)selectCity('tokyo');}).catch(()=>selectCity('tokyo'));
 })();
