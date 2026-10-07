@@ -2325,3 +2325,30 @@ body.immersive.focus-active #liveCameraBtn{opacity:0!important;pointer-events:no
     bottom:max(72px,calc(env(safe-area-inset-bottom) + 72px))!important
   }
 }
+
+
+/* PLUVIA 9.6.3 — static camera control */
+#liveCameraBtn{z-index:96}
+body:not(.immersive) #liveCameraBtn{display:none!important}
+body.immersive #liveCameraBtn{display:inline-flex!important}
+
+
+/* PLUVIA 9.6.4 — resilient live camera playback */
+.live-camera-player{width:100%;height:100%;min-height:280px;background:#02070b}
+.live-camera-player iframe{width:100%;height:100%;min-height:280px;border:0}
+.live-camera-fallback{
+  position:absolute;inset:0;display:grid;place-items:center;align-content:center;
+  gap:9px;padding:28px;text-align:center;background:
+  radial-gradient(circle at 60% 45%,rgba(80,45,96,.22),transparent 36%),#05090d;
+  color:#8299a6
+}
+.live-camera-fallback[hidden]{display:none}
+.live-camera-fallback>span{font-size:26px;color:#8ed8f4}
+.live-camera-fallback strong{max-width:430px;color:#d7e8ef;font:600 18px/1.2 "DM Sans",sans-serif}
+.live-camera-fallback small{max-width:430px;color:#708895;font-size:10px;line-height:1.5}
+.live-camera-fallback a{
+  margin-top:7px;min-height:40px;padding:0 14px;border:1px solid rgba(134,207,255,.25);
+  border-radius:999px;display:inline-flex;align-items:center;justify-content:center;
+  color:#a9d8ec;background:rgba(9,25,35,.82);font:700 8px/1 "Manrope",sans-serif;
+  letter-spacing:.08em
+}

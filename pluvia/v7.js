@@ -1326,25 +1326,25 @@
     newyork:{
       label:'Times Square',
       provider:'EarthCam',
-      videoId:'z-jYdOIKcTQ',
-      source:'https://www.youtube.com/watch?v=z-jYdOIKcTQ'
+      videoIds:['Q0uLV52xGZE','Lr-u3vIZ3KE'],
+      source:'https://www.earthcam.com/usa/newyork/timessquare/?cam=tsstreet'
     },
     singapore:{
       label:'Singapore Marina Bay',
       provider:'Singapore City Live Cam',
-      videoId:'mUjXE5M7wgE',
-      source:'https://www.youtube.com/watch?v=mUjXE5M7wgE'
+      videoIds:['l5w5MQmESJE','LhsIlmvwEbc'],
+      source:'https://www.youtube.com/watch?v=l5w5MQmESJE'
     },
     london:{
       label:'Abbey Road Crossing',
       provider:'EarthCam',
-      videoId:'M3EYAY2MftI',
-      source:'https://www.youtube.com/watch?v=M3EYAY2MftI'
+      videoIds:['zMCea32gpmg','M3EYAY2MftI'],
+      source:'https://www.earthcam.com/world/england/london/abbeyroad/'
     },
     'world-dublin':{
       label:'Temple Bar',
       provider:'EarthCam',
-      videoId:'u4UZ4UvZXrg',
+      videoIds:['u4UZ4UvZXrg'],
       source:'https://www.youtube.com/watch?v=u4UZ4UvZXrg'
     }
   };
@@ -1385,6 +1385,110 @@
   const liveCameraProvider=$('#liveCameraProvider');
   const liveCameraSource=$('#liveCameraSource');
   const liveCameraClose=$('#liveCameraClose');
+  const liveCameraFrameWrap=liveCameraPanel.querySelector('.live-camera-frame-wrap');
+
+  const liveCameraFallback=document.createElement('div');
+  liveCameraFallback.className='live-camera-fallback';
+  liveCameraFallback.hidden=true;
+  liveCameraFallback.innerHTML=
+    '<span>◉</span><strong>Live video is unavailable here right now.</strong>'+
+    '<small>The camera provider may have ended or rotated the stream.</small>'+
+    '<a id="liveCameraFallbackLink" href="#" target="_blank" rel="noopener noreferrer">Open live source ↗</a>';
+  liveCameraFrameWrap.appendChild(liveCameraFallback);
+  const liveCameraFallbackLink=liveCameraFallback.querySelector('#liveCameraFallbackLink');
+
+  let liveCameraPlayer=null;
+  let liveCameraFeedToken=0;
+  let liveCameraCandidateIndex=0;
+  let liveCameraApiPromise=null;
+  let liveCameraReadyTimer=null;
+
+  function loadYouTubeIframeApi(){
+    if(window.YT&&window.YT.Player)return Promise.resolve(window.YT);
+    if(liveCameraApiPromise)return liveCameraApiPromise;
+    liveCameraApiPromise=new Promise((resolve,reject)=>{
+      const existing=document.querySelector('script[data-pluvia-youtube-api]');
+      const done=()=>window.YT&&window.YT.Player?resolve(window.YT):reject(new Error('YouTube player unavailable'));
+      const previous=window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady=()=>{
+        try{if(typeof previous==='function')previous()}catch(_){}
+        done();
+      };
+      if(existing){setTimeout(done,3000);return}
+      const script=document.createElement('script');
+      script.src='https://www.youtube.com/iframe_api';
+      script.async=true;
+      script.dataset.pluviaYoutubeApi='1';
+      script.onerror=()=>reject(new Error('YouTube API failed'));
+      document.head.appendChild(script);
+      setTimeout(()=>{if(!(window.YT&&window.YT.Player))reject(new Error('YouTube API timed out'))},9000);
+    });
+    return liveCameraApiPromise;
+  }
+
+  function destroyLiveCameraPlayer(){
+    clearTimeout(liveCameraReadyTimer);
+    liveCameraReadyTimer=null;
+    try{liveCameraPlayer?.destroy()}catch(_){}
+    liveCameraPlayer=null;
+    liveCameraFrame.removeAttribute('src');
+    liveCameraFrame.style.display='none';
+  }
+
+  function showLiveCameraFallback(feed){
+    destroyLiveCameraPlayer();
+    liveCameraFallback.hidden=false;
+    liveCameraFallbackLink.href=feed?.source||'#';
+    liveCameraProvider.textContent='Live embed unavailable · source can still be opened directly';
+  }
+
+  async function playLiveCameraCandidate(feed,index,token){
+    if(token!==liveCameraFeedToken)return;
+    const ids=Array.isArray(feed.videoIds)?feed.videoIds:[feed.videoId].filter(Boolean);
+    if(index>=ids.length){showLiveCameraFallback(feed);return}
+    liveCameraCandidateIndex=index;
+    liveCameraFallback.hidden=true;
+    liveCameraFrame.style.display='block';
+
+    try{
+      const YT=await loadYouTubeIframeApi();
+      if(token!==liveCameraFeedToken)return;
+      destroyLiveCameraPlayer();
+      liveCameraFrame.style.display='block';
+      const id=ids[index];
+
+      liveCameraPlayer=new YT.Player(liveCameraFrame,{
+        videoId:id,
+        playerVars:{autoplay:1,mute:1,playsinline:1,rel:0,modestbranding:1},
+        events:{
+          onReady:event=>{
+            if(token!==liveCameraFeedToken)return;
+            clearTimeout(liveCameraReadyTimer);
+            try{event.target.mute();event.target.playVideo()}catch(_){}
+          },
+          onStateChange:event=>{
+            if(token!==liveCameraFeedToken)return;
+            if(event.data===YT.PlayerState.PLAYING){
+              clearTimeout(liveCameraReadyTimer);
+              liveCameraProvider.textContent='Live feed by '+feed.provider+' · shown alongside Pluvia';
+            }
+          },
+          onError:()=>{
+            if(token!==liveCameraFeedToken)return;
+            void playLiveCameraCandidate(feed,index+1,token);
+          }
+        }
+      });
+
+      liveCameraReadyTimer=setTimeout(()=>{
+        if(token!==liveCameraFeedToken)return;
+        void playLiveCameraCandidate(feed,index+1,token);
+      },8500);
+    }catch(_){
+      if(token!==liveCameraFeedToken)return;
+      showLiveCameraFallback(feed);
+    }
+  }
 
   function liveCameraKeyForCity(id){
     if(liveCameraFeeds[id])return id;
@@ -1422,20 +1526,27 @@
       if(typeof showShareToast==='function')showShareToast('No verified live camera for '+(cities[active]?.name||'this place')+' yet');
       return;
     }
+    const token=++liveCameraFeedToken;
+    liveCameraCandidateIndex=0;
     liveCameraTitle.textContent=(cities[active]?.name||'Live city')+' · '+feed.label;
-    liveCameraProvider.textContent='Public feed by '+feed.provider+' · shown alongside Pluvia';
+    liveCameraProvider.textContent='Connecting to '+feed.provider+'…';
     liveCameraSource.href=feed.source;
-    liveCameraFrame.src='https://www.youtube.com/embed/'+encodeURIComponent(feed.videoId)+'?autoplay=1&mute=1&playsinline=1&rel=0';
+    liveCameraFallbackLink.href=feed.source;
+    liveCameraFallback.hidden=true;
     liveCameraPanel.classList.add('open');
     body.classList.add('live-camera-open');
     liveCameraBtn.classList.add('active');
+    void playLiveCameraCandidate(feed,0,token);
   }
 
   function closeLiveCamera(){
+    ++liveCameraFeedToken;
+    clearTimeout(liveCameraReadyTimer);
+    destroyLiveCameraPlayer();
+    liveCameraFallback.hidden=true;
     liveCameraPanel.classList.remove('open');
     body.classList.remove('live-camera-open');
     liveCameraBtn.classList.remove('active');
-    liveCameraFrame.src='about:blank';
   }
 
   liveCameraBtn.addEventListener('pointerdown',event=>event.stopPropagation());
