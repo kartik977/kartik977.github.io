@@ -3931,21 +3931,20 @@
   Object.keys(mix).forEach(k=>mix[k].addEventListener('input',()=>{initSound();applyMix()}));
 
 
-  // PLUVIA 9.7 — Personal Pluvia / My Rain Room
+  // PLUVIA 9.7.2 — Personal Pluvia / separate Rain Room page
   const personalRoomStorageKey='pluvia-v97-rain-rooms';
   let personalRooms=[];
   let pendingPersonalRoom=null;
+  const topRainRoomCount=$('#topRainRoomCount');
 
-  try{
-    const saved=JSON.parse(localStorage.getItem(personalRoomStorageKey)||'[]');
-    if(Array.isArray(saved))personalRooms=saved.filter(room=>room&&room.id).slice(0,8);
-  }catch(_){}
-
-  const personalRoomBtn=document.createElement('button');
-  personalRoomBtn.className='pill personal-room-main-btn';
-  personalRoomBtn.type='button';
-  personalRoomBtn.innerHTML='<span>My Rain Room</span><span class="personal-room-pill-count">0 saved</span>';
-  document.querySelector('.actions')?.appendChild(personalRoomBtn);
+  function reloadPersonalRooms(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(personalRoomStorageKey)||'[]');
+      personalRooms=Array.isArray(saved)?saved.filter(room=>room&&room.id).slice(0,8):[];
+    }catch(_){personalRooms=[]}
+    if(topRainRoomCount)topRainRoomCount.textContent=String(personalRooms.length);
+  }
+  reloadPersonalRooms();
 
   const saveRoomImmersiveBtn=document.createElement('button');
   saveRoomImmersiveBtn.id='saveRoomImmersiveBtn';
@@ -3954,36 +3953,13 @@
   saveRoomImmersiveBtn.innerHTML='<span>♡</span><b>Save to Rain Room</b>';
   document.body.appendChild(saveRoomImmersiveBtn);
 
-  const personalRoomScrim=document.createElement('div');
-  personalRoomScrim.className='personal-room-scrim';
-
-  const personalRoomPanel=document.createElement('section');
-  personalRoomPanel.className='personal-room-panel';
-  personalRoomPanel.setAttribute('role','dialog');
-  personalRoomPanel.setAttribute('aria-modal','true');
-  personalRoomPanel.setAttribute('aria-label','My Rain Room');
-  personalRoomPanel.innerHTML=
-    '<div class="personal-room-head">'+
-      '<div><span class="micro">09.7 / PERSONAL PLUVIA</span><h3>My Rain Room.</h3>'+
-      '<p>Keep your favorite skies exactly the way you like them — city, window, atmosphere and sound mix.</p></div>'+
-      '<button class="personal-room-close" type="button" aria-label="Close My Rain Room">×</button>'+
-    '</div>'+
-    '<div class="personal-room-summary"><span>FAVORITE SKIES</span><b id="personalRoomCount">0 saved rooms</b></div>'+
-    '<div class="personal-room-grid" id="personalRoomGrid"></div>'+
-    '<div class="personal-room-note">Enter any city, choose your window and atmosphere, then tap <b>Save to Rain Room</b> inside the immersive view.</div>';
-
   const personalRoomToast=document.createElement('div');
   personalRoomToast.className='personal-room-toast';
   personalRoomToast.setAttribute('role','status');
   personalRoomToast.setAttribute('aria-live','polite');
+  document.body.appendChild(personalRoomToast);
 
-  document.body.append(personalRoomScrim,personalRoomPanel,personalRoomToast);
-
-  const personalRoomGrid=personalRoomPanel.querySelector('#personalRoomGrid');
-  const personalRoomCount=personalRoomPanel.querySelector('#personalRoomCount');
-  const personalRoomPillCount=personalRoomBtn.querySelector('.personal-room-pill-count');
   let personalRoomToastTimer=null;
-
   function showPersonalRoomToast(message){
     clearTimeout(personalRoomToastTimer);
     personalRoomToast.textContent=message;
@@ -4018,50 +3994,7 @@
 
   function persistPersonalRooms(){
     try{localStorage.setItem(personalRoomStorageKey,JSON.stringify(personalRooms.slice(0,8)))}catch(_){}
-  }
-
-  function renderPersonalRooms(){
-    const count=personalRooms.length;
-    personalRoomPillCount.textContent=count+(count===1?' saved':' saved');
-    personalRoomCount.textContent=count+(count===1?' saved room':' saved rooms');
-
-    if(!count){
-      personalRoomGrid.innerHTML=
-        '<div class="personal-room-empty"><span>☂</span><strong>Your room is waiting.</strong>'+
-        '<p>Save a favorite city experience and it will appear here with your window, atmosphere and sound preferences.</p></div>';
-      return;
-    }
-
-    personalRoomGrid.innerHTML=personalRooms.map(room=>{
-      const name=personalRoomCityName(room);
-      const envLabel=environmentLabels[room.env]||room.env||'Window';
-      const mode=atmosphereLabels[room.atmosphere]||'Live';
-      const music=Math.round(Number(room.mix?.music??72))+'% music';
-      return '<article class="personal-room-card">'+
-        '<button class="personal-room-open" type="button" data-personal-room-open="'+room.id+'">'+
-          '<span class="personal-room-star">★</span>'+
-          '<small>FAVORITE SKY</small>'+
-          '<strong>'+name+'</strong>'+
-          '<em>'+envLabel+' · '+mode+'</em>'+
-          '<div><span>'+music+'</span><span>'+(room.trackTitle||'City radio')+'</span></div>'+
-          '<b>ENTER MY ROOM ↗</b>'+
-        '</button>'+
-        '<button class="personal-room-delete" type="button" data-personal-room-delete="'+room.id+'" aria-label="Remove '+name+' from My Rain Room">×</button>'+
-      '</article>';
-    }).join('');
-  }
-
-  function openPersonalRoomPanel(){
-    renderPersonalRooms();
-    personalRoomScrim.classList.add('open');
-    personalRoomPanel.classList.add('open');
-    body.classList.add('personal-room-open');
-  }
-
-  function closePersonalRoomPanel(){
-    personalRoomScrim.classList.remove('open');
-    personalRoomPanel.classList.remove('open');
-    body.classList.remove('personal-room-open');
+    if(topRainRoomCount)topRainRoomCount.textContent=String(personalRooms.length);
   }
 
   function saveCurrentPersonalRoom(){
@@ -4097,8 +4030,7 @@
     ].slice(0,8);
 
     persistPersonalRooms();
-    renderPersonalRooms();
-    showPersonalRoomToast(c.name+' saved to My Rain Room');
+    showPersonalRoomToast(c.name+' saved · open My Rain Room to revisit it');
   }
 
   function applyPersonalRoomPreferences(room){
@@ -4123,7 +4055,6 @@
     const room=pendingPersonalRoom;
     if(!room)return;
     pendingPersonalRoom=null;
-
     const songs=cities[active]?.songs||[];
     if(songs.length){
       const index=Math.max(0,Math.min(songs.length-1,Number(room.trackIndex)||0));
@@ -4133,14 +4064,13 @@
   }
 
   async function enterPersonalRoom(room){
-    if(!room)return;
-    closePersonalRoomPanel();
+    if(!room)return false;
     applyPersonalRoomPreferences(room);
     pendingPersonalRoom=room;
 
     if(room.cityId&&cities[room.cityId]){
       selectCity(room.cityId,{enter:true});
-      return;
+      return true;
     }
 
     if(room.place){
@@ -4153,41 +4083,47 @@
           liveSignal:atmosphereMode==='live'&&Boolean(signal),
           liveWeather:anywhereWeatherObject(current)
         });
+        return true;
       }catch(_){
         const dynamicId=await registerWorldPlace(room.place,{liveRainFlag:false});
         selectCity(dynamicId,{enter:true,liveSignal:false});
+        return true;
       }
     }
+    return false;
   }
 
-  personalRoomBtn.addEventListener('click',openPersonalRoomPanel);
-  personalRoomScrim.addEventListener('click',closePersonalRoomPanel);
-  personalRoomPanel.querySelector('.personal-room-close').addEventListener('click',closePersonalRoomPanel);
+  async function restorePersonalRoomRequest(){
+    const params=new URLSearchParams(location.search);
+    const requested=params.get('room')||sessionStorage.getItem('pluvia-v97-pending-room');
+    if(!requested)return false;
+    try{sessionStorage.removeItem('pluvia-v97-pending-room')}catch(_){}
+    reloadPersonalRooms();
+    const room=personalRooms.find(item=>item.id===requested);
+    if(!room){
+      showPersonalRoomToast('That saved room is no longer available');
+      return false;
+    }
+    const restored=await enterPersonalRoom(room);
+    if(restored){
+      try{
+        const clean=new URL(location.href);
+        clean.searchParams.delete('room');
+        history.replaceState({},'',clean.pathname+(clean.search||'')+(clean.hash||''));
+      }catch(_){}
+    }
+    return restored;
+  }
+
   saveRoomImmersiveBtn.addEventListener('pointerdown',event=>event.stopPropagation());
   saveRoomImmersiveBtn.addEventListener('click',event=>{
     event.stopPropagation();
     saveCurrentPersonalRoom();
   });
 
-  personalRoomGrid.addEventListener('click',event=>{
-    const remove=event.target.closest('[data-personal-room-delete]');
-    if(remove){
-      const id=remove.dataset.personalRoomDelete;
-      personalRooms=personalRooms.filter(room=>room.id!==id);
-      persistPersonalRooms();
-      renderPersonalRooms();
-      showPersonalRoomToast('Removed from My Rain Room');
-      return;
-    }
-
-    const open=event.target.closest('[data-personal-room-open]');
-    if(open){
-      const room=personalRooms.find(item=>item.id===open.dataset.personalRoomOpen);
-      if(room)void enterPersonalRoom(room);
-    }
+  window.addEventListener('storage',event=>{
+    if(event.key===personalRoomStorageKey)reloadPersonalRooms();
   });
-
-  renderPersonalRooms();
 
   function triggerWeatherLightning(){
     if(!body.classList.contains('immersive')||weatherAtmosphere.kind!=='storm')return;
@@ -4215,7 +4151,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -4238,7 +4174,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -4253,10 +4189,6 @@
   },true);
 
   window.addEventListener('keydown',e=>{
-    if(e.key==='Escape'&&personalRoomPanel.classList.contains('open')){
-      closePersonalRoomPanel();
-      return;
-    }
     if(e.key==='Escape'&&focusPanel.classList.contains('open')){
       closeFocusPanel();
       return;
@@ -4279,7 +4211,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.personal-room-panel,.personal-room-scrim,.personal-room-toast,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
@@ -4299,8 +4231,7 @@
     if(document.hidden||ts-last<frameGap)return;
     last=ts;
     ctx.clearRect(0,0,rw,rh);
-    const overlayOpen=body.classList.contains('personal-room-open');
-    const envBoost=immersive?(env==='rooftop'?1.22:env==='car'?1.04:1):(overlayOpen?.42:.62);
+    const envBoost=immersive?(env==='rooftop'?1.22:env==='car'?1.04:1):.62;
     const profile=weatherAtmosphere;
     const densityScale=immersive?1:.58;
     const count=Math.max(10,Math.min(drops.length,Math.round(drops.length*profile.density*densityScale)));
@@ -4343,5 +4274,8 @@
     selectedTime.textContent=localTime(c.tz)+' local';
   },60000);
 
-  restoreSharedExperience().then(restored=>{if(!restored)selectCity('tokyo');}).catch(()=>selectCity('tokyo'));
+  restorePersonalRoomRequest()
+    .then(restoredRoom=>restoredRoom?true:restoreSharedExperience())
+    .then(restored=>{if(!restored)selectCity('tokyo')})
+    .catch(()=>selectCity('tokyo'));
 })();
