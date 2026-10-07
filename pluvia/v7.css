@@ -2236,7 +2236,22 @@ body.focus-active .storm-chaser-hud{opacity:0!important;pointer-events:none!impo
 }
 
 
-/* PLUVIA 9.7 — Personal Pluvia / My Rain Room */
+/* PLUVIA 9.7.2 — Personal Pluvia navigation + save control */
+.topbar-right{display:flex;align-items:center;gap:14px}
+.pluvia-view-switch{
+  display:inline-flex;align-items:center;padding:4px;border:1px solid rgba(222,241,250,.12);
+  border-radius:999px;background:rgba(4,13,19,.58);backdrop-filter:blur(10px)
+}
+.pluvia-view-switch a{
+  min-height:32px;padding:0 11px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;
+  color:#738c99;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.08em;text-transform:uppercase
+}
+.pluvia-view-switch a.active{background:rgba(220,239,248,.11);color:#d9e9f0}
+.pluvia-view-switch a:hover{color:#c9e0ea}
+.pluvia-view-switch span{
+  min-width:18px;height:18px;padding:0 5px;border-radius:999px;display:grid;place-items:center;
+  background:rgba(134,207,255,.09);color:#94cae2;font-size:7px
+}
 .save-room-immersive-btn{
   position:fixed;z-index:66;left:18px;bottom:max(86px,calc(env(safe-area-inset-bottom) + 86px));
   min-height:44px;padding:0 15px;border:1px solid rgba(225,242,250,.19);border-radius:999px;
@@ -2244,69 +2259,25 @@ body.focus-active .storm-chaser-hud{opacity:0!important;pointer-events:none!impo
   box-shadow:0 16px 45px rgba(0,0,0,.28);backdrop-filter:blur(14px);cursor:pointer
 }
 body.immersive .save-room-immersive-btn{display:inline-flex}
-.save-room-immersive-btn span{font-size:15px;color:#a8dafa}.save-room-immersive-btn b{font:700 8px/1 "Manrope",sans-serif;letter-spacing:.08em}
+.save-room-immersive-btn span{font-size:15px;color:#a8dafa}
+.save-room-immersive-btn b{font:700 8px/1 "Manrope",sans-serif;letter-spacing:.08em}
 .save-room-immersive-btn:hover{border-color:rgba(134,207,255,.48);background:rgba(9,25,35,.9)}
 body.focus-active .save-room-immersive-btn{opacity:0;pointer-events:none}
-
-.personal-room-scrim{
-  position:fixed;inset:0;z-index:108;background:rgba(0,5,8,.68);backdrop-filter:blur(8px);
-  opacity:0;pointer-events:none;transition:opacity .22s ease
+.personal-room-toast{
+  position:fixed;z-index:120;left:50%;bottom:25px;transform:translate(-50%,12px);
+  padding:11px 15px;border:1px solid rgba(225,242,250,.13);border-radius:999px;
+  background:#07131a;color:#bfd4de;font:700 8px/1 "Manrope",sans-serif;
+  opacity:0;pointer-events:none;transition:.22s ease
 }
-.personal-room-scrim.open{opacity:1;pointer-events:auto}
-.personal-room-panel{
-  position:fixed;z-index:109;left:50%;top:50%;transform:translate(-50%,-46%);
-  width:min(920px,calc(100vw - 28px));max-height:calc(100svh - 28px);overflow:auto;
-  padding:24px;border:1px solid rgba(225,242,250,.14);border-radius:28px;background:#071219;
-  box-shadow:0 36px 120px rgba(0,0,0,.58);opacity:0;pointer-events:none;
-  transition:opacity .22s ease,transform .22s ease
-}
-.personal-room-panel.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
-.personal-room-head{display:flex;align-items:flex-start;justify-content:space-between;gap:26px}
-.personal-room-head h3{margin:7px 0 0;font:600 clamp(38px,6vw,62px)/.92 "Playfair Display",serif;letter-spacing:-.05em}
-.personal-room-head p{max-width:580px;margin:12px 0 0;color:#8097a3;font-size:11px;line-height:1.6}
-.personal-room-close{width:40px;height:40px;flex:0 0 auto;border:1px solid rgba(225,242,250,.12);border-radius:50%;background:#0a1720;color:#91a7b2;font-size:21px;cursor:pointer}
-.personal-room-summary{margin-top:22px;padding:13px 0;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;color:#6f8794;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.14em}
-.personal-room-summary b{color:#9bb0bb;font-size:8px}
-.personal-room-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
-.personal-room-card{position:relative;min-width:0}
-.personal-room-open{
-  width:100%;min-height:190px;padding:18px;border:1px solid rgba(225,242,250,.1);border-radius:20px;
-  background:linear-gradient(145deg,rgba(9,26,35,.88),rgba(5,14,20,.72));color:inherit;text-align:left;cursor:pointer;
-  position:relative;overflow:hidden;transition:transform .18s ease,border-color .18s ease
-}
-.personal-room-open:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 12%,rgba(134,207,255,.13),transparent 34%);pointer-events:none}
-.personal-room-open:hover{transform:translateY(-2px);border-color:rgba(134,207,255,.3)}
-.personal-room-open small,.personal-room-open strong,.personal-room-open em,.personal-room-open div,.personal-room-open b{position:relative;display:block}
-.personal-room-star{position:absolute;right:18px;top:15px;color:#b9dded;font-size:14px}
-.personal-room-open small{color:#688593;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.14em}
-.personal-room-open strong{margin-top:11px;padding-right:26px;font:600 27px/1 "Playfair Display",serif;color:#e1edf2}
-.personal-room-open em{margin-top:8px;color:#8ca2ad;font-size:10px;font-style:normal}
-.personal-room-open div{display:flex;gap:7px;flex-wrap:wrap;margin-top:25px}
-.personal-room-open div span{padding:6px 8px;border:1px solid rgba(225,242,250,.08);border-radius:999px;color:#78919d;font-size:7px}
-.personal-room-open b{margin-top:15px;color:#9ccfe6;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.1em}
-.personal-room-delete{position:absolute;right:11px;bottom:11px;width:31px;height:31px;border-radius:50%;border:1px solid rgba(225,242,250,.09);background:rgba(4,12,17,.84);color:#758d99;cursor:pointer;z-index:2}
-.personal-room-empty{grid-column:1/-1;min-height:250px;border:1px dashed rgba(225,242,250,.1);border-radius:20px;display:grid;place-items:center;align-content:center;text-align:center;padding:28px;color:#78909d}
-.personal-room-empty span{font-size:34px;color:#9bd8f1}.personal-room-empty strong{margin-top:10px;font:600 24px/1 "Playfair Display",serif;color:#cedde4}.personal-room-empty p{max-width:430px;margin:9px 0 0;font-size:10px;line-height:1.55}
-.personal-room-note{margin-top:16px;color:#667f8c;font-size:9px;line-height:1.5}.personal-room-note b{color:#9fbac6}
-.personal-room-toast{position:fixed;z-index:120;left:50%;bottom:25px;transform:translate(-50%,12px);padding:11px 15px;border:1px solid rgba(225,242,250,.13);border-radius:999px;background:#07131a;color:#bfd4de;font:700 8px/1 "Manrope",sans-serif;opacity:0;pointer-events:none;transition:.22s ease}
 .personal-room-toast.show{opacity:1;transform:translate(-50%,0)}
-body.personal-room-open{overflow:hidden}
-@media(max-width:700px){
+@media(max-width:760px){
+  .topbar{height:auto;min-height:72px;padding-top:10px;padding-bottom:10px}
+  .topbar-right{gap:8px}
+  .version{display:none}
+  .pluvia-view-switch a{padding:0 9px}
   .save-room-immersive-btn{left:12px;bottom:max(72px,calc(env(safe-area-inset-bottom) + 72px));padding:0 12px}
   .save-room-immersive-btn b{display:none}
-  .personal-room-panel{padding:17px;border-radius:22px}
-  .personal-room-head h3{font-size:42px}
-  .personal-room-grid{grid-template-columns:1fr}
-  .personal-room-open{min-height:165px}
 }
-@media(prefers-reduced-motion:reduce){.personal-room-panel,.personal-room-scrim,.personal-room-toast{transition:none!important}}
 
 
 /* PLUVIA 9.7.1 — Performance Pass */
-.personal-room-scrim{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-.personal-room-panel{will-change:opacity,transform;contain:layout paint}
-body.personal-room-open .living-glass-layer{animation-play-state:paused}
-body.personal-room-open .glass-condensation{opacity:.12}
-@media(max-width:900px){
-  .personal-room-scrim{backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-}
