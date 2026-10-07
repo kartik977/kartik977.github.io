@@ -2234,3 +2234,61 @@ body.focus-active .storm-chaser-hud{opacity:0!important;pointer-events:none!impo
   .storm-chaser-kicker i{animation:none!important}
   .storm-chaser-hud{transition:none!important}
 }
+
+
+/* PLUVIA 9.6 — Live Webcam Layer */
+.live-camera-btn{
+  position:fixed;z-index:67;top:max(82px,calc(env(safe-area-inset-top) + 82px));right:18px;
+  min-height:44px;padding:0 14px;border-radius:999px;
+  border:1px solid rgba(230,245,252,.22);background:rgba(4,13,19,.76);
+  color:#edf6fa;display:none;align-items:center;gap:8px;cursor:pointer;
+  box-shadow:0 14px 42px rgba(0,0,0,.28);backdrop-filter:blur(14px);
+  font:600 10px/1 "Manrope",sans-serif
+}
+body.immersive .live-camera-btn.available{display:inline-flex}
+.live-camera-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.live-camera-btn:hover,.live-camera-btn.active{border-color:rgba(134,207,255,.5);background:rgba(9,25,35,.9)}
+.live-camera-panel{
+  position:fixed;z-index:77;top:18px;right:18px;bottom:18px;
+  width:min(46vw,680px);min-width:420px;
+  border:1px solid rgba(220,239,248,.14);border-radius:24px;
+  background:rgba(4,13,19,.96);box-shadow:0 30px 100px rgba(0,0,0,.52);
+  backdrop-filter:blur(18px);overflow:hidden;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  opacity:0;transform:translateX(28px);pointer-events:none;
+  transition:opacity .28s ease,transform .28s ease
+}
+.live-camera-panel.open{opacity:1;transform:translateX(0);pointer-events:auto}
+.live-camera-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:17px 18px 14px;border-bottom:1px solid rgba(220,239,248,.08)}
+.live-camera-kicker{display:flex;align-items:center;gap:7px;color:#84c9e8;font:800 7px/1 "Manrope",sans-serif;letter-spacing:.14em}
+.live-camera-kicker i{width:6px;height:6px;border-radius:50%;background:#8bdcff;box-shadow:0 0 14px rgba(139,220,255,.7);animation:liveCameraPulse 1.8s ease-in-out infinite}
+.live-camera-head strong{display:block;margin-top:7px;color:#e3f0f5;font:600 18px/1.1 "DM Sans",sans-serif}
+.live-camera-head small{display:block;margin-top:5px;color:#708a97;font-size:9px}
+#liveCameraClose{width:36px;height:36px;border-radius:50%;border:1px solid rgba(220,239,248,.11);background:rgba(8,20,27,.76);color:#9bb0bb;cursor:pointer;font-size:20px}
+.live-camera-frame-wrap{position:relative;min-height:0;background:#02070b}
+.live-camera-frame-wrap iframe{width:100%;height:100%;min-height:280px;border:0;background:#02070b}
+.live-camera-note{position:absolute;left:12px;bottom:12px;max-width:70%;padding:7px 9px;border-radius:10px;background:rgba(2,9,13,.78);color:#8198a4;font-size:8px;line-height:1.4;pointer-events:none}
+.live-camera-foot{min-height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid rgba(220,239,248,.08);color:#667f8c;font:700 7px/1 "Manrope",sans-serif;letter-spacing:.11em}
+.live-camera-foot a{color:#9acfe7;white-space:nowrap}
+body.live-camera-open .city-photo{filter:brightness(.46) saturate(.85) contrast(1.1)}
+body.focus-active .live-camera-btn,body.focus-active .live-camera-panel{opacity:0!important;pointer-events:none!important}
+@keyframes liveCameraPulse{50%{opacity:.45;transform:scale(.78)}}
+@media(max-width:900px){
+  .live-camera-panel{left:12px;right:12px;top:12px;bottom:12px;width:auto;min-width:0;border-radius:20px}
+  .live-camera-btn{top:max(74px,calc(env(safe-area-inset-top) + 74px));right:14px;min-height:42px}
+}
+@media(max-width:600px){
+  .live-camera-btn{right:12px;padding:0 12px}
+  .live-camera-btn span{display:none}
+  .live-camera-panel{grid-template-rows:auto minmax(0,1fr) auto}
+  .live-camera-head{padding:14px}
+  .live-camera-head strong{font-size:15px}
+  .live-camera-frame-wrap iframe{min-height:0}
+  .live-camera-note{max-width:80%;font-size:7px}
+  .live-camera-foot span{display:none}
+  .live-camera-foot{justify-content:flex-end}
+}
+@media(prefers-reduced-motion:reduce){
+  .live-camera-kicker i{animation:none!important}
+  .live-camera-panel{transition:none!important}
+}

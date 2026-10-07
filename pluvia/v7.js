@@ -1321,6 +1321,114 @@
   let liveRainLastUpdated=0;
   const liveImageCache=new Map();
 
+  // PLUVIA 9.6 — Live Webcam Layer
+  const liveCameraFeeds={
+    newyork:{
+      label:'Times Square',
+      provider:'EarthCam',
+      videoId:'z-jYdOIKcTQ',
+      source:'https://www.youtube.com/watch?v=z-jYdOIKcTQ'
+    },
+    london:{
+      label:'Abbey Road Crossing',
+      provider:'EarthCam',
+      videoId:'M3EYAY2MftI',
+      source:'https://www.youtube.com/watch?v=M3EYAY2MftI'
+    },
+    'world-dublin':{
+      label:'Temple Bar',
+      provider:'EarthCam',
+      videoId:'u4UZ4UvZXrg',
+      source:'https://www.youtube.com/watch?v=u4UZ4UvZXrg'
+    }
+  };
+
+  const liveCameraBtn=document.createElement('button');
+  liveCameraBtn.id='liveCameraBtn';
+  liveCameraBtn.className='live-camera-btn';
+  liveCameraBtn.type='button';
+  liveCameraBtn.setAttribute('aria-label','Open live camera');
+  liveCameraBtn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="12" height="12" rx="2"/><path d="m15.5 10 5-2.8v9.6l-5-2.8z"/></svg><span>Live camera</span>';
+  document.body.appendChild(liveCameraBtn);
+
+  const liveCameraPanel=document.createElement('aside');
+  liveCameraPanel.className='live-camera-panel';
+  liveCameraPanel.setAttribute('role','dialog');
+  liveCameraPanel.setAttribute('aria-modal','false');
+  liveCameraPanel.setAttribute('aria-label','Live city camera');
+  liveCameraPanel.innerHTML=
+    '<div class="live-camera-head">'+
+      '<div><span class="live-camera-kicker"><i></i> LIVE CAMERA / REAL WORLD</span><strong id="liveCameraTitle">Live view</strong><small id="liveCameraProvider">Public source</small></div>'+
+      '<button id="liveCameraClose" type="button" aria-label="Close live camera">×</button>'+
+    '</div>'+
+    '<div class="live-camera-frame-wrap">'+
+      '<iframe id="liveCameraFrame" title="Live city camera" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>'+
+      '<div class="live-camera-note">Feed availability and timing are controlled by the source provider.</div>'+
+    '</div>'+
+    '<div class="live-camera-foot">'+
+      '<span>PLUVIA INTERPRETATION ↔ REAL CAMERA</span>'+
+      '<a id="liveCameraSource" href="#" target="_blank" rel="noopener noreferrer">Open source ↗</a>'+
+    '</div>';
+  document.body.appendChild(liveCameraPanel);
+
+  const liveCameraFrame=$('#liveCameraFrame');
+  const liveCameraTitle=$('#liveCameraTitle');
+  const liveCameraProvider=$('#liveCameraProvider');
+  const liveCameraSource=$('#liveCameraSource');
+  const liveCameraClose=$('#liveCameraClose');
+
+  function liveCameraKeyForCity(id){
+    if(liveCameraFeeds[id])return id;
+    const c=cities[id];
+    if(!c)return null;
+    const name=String(c.name||'').toLowerCase();
+    if(name.includes('new york'))return 'newyork';
+    if(name==='london')return 'london';
+    if(name==='dublin')return 'world-dublin';
+    return null;
+  }
+
+  function activeLiveCameraFeed(){
+    const key=liveCameraKeyForCity(active);
+    return key?liveCameraFeeds[key]:null;
+  }
+
+  function updateLiveCameraAvailability(){
+    const feed=activeLiveCameraFeed();
+    liveCameraBtn.classList.toggle('available',Boolean(feed));
+    liveCameraBtn.hidden=!feed;
+    if(!feed&&liveCameraPanel.classList.contains('open'))closeLiveCamera();
+  }
+
+  function openLiveCamera(){
+    const feed=activeLiveCameraFeed();
+    if(!feed)return;
+    liveCameraTitle.textContent=(cities[active]?.name||'Live city')+' · '+feed.label;
+    liveCameraProvider.textContent='Public feed by '+feed.provider+' · shown alongside Pluvia';
+    liveCameraSource.href=feed.source;
+    liveCameraFrame.src='https://www.youtube.com/embed/'+encodeURIComponent(feed.videoId)+'?autoplay=1&mute=1&playsinline=1&rel=0';
+    liveCameraPanel.classList.add('open');
+    body.classList.add('live-camera-open');
+    liveCameraBtn.classList.add('active');
+  }
+
+  function closeLiveCamera(){
+    liveCameraPanel.classList.remove('open');
+    body.classList.remove('live-camera-open');
+    liveCameraBtn.classList.remove('active');
+    liveCameraFrame.src='about:blank';
+  }
+
+  liveCameraBtn.addEventListener('pointerdown',event=>event.stopPropagation());
+  liveCameraBtn.addEventListener('click',event=>{
+    event.stopPropagation();
+    liveCameraPanel.classList.contains('open')?closeLiveCamera():openLiveCamera();
+  });
+  liveCameraPanel.addEventListener('pointerdown',event=>event.stopPropagation());
+  liveCameraPanel.addEventListener('click',event=>event.stopPropagation());
+  liveCameraClose.addEventListener('click',closeLiveCamera);
+
+
   // PLUVIA 9.5 — Storm Chaser 2.0
   const stormChaserHud=document.createElement('aside');
   stormChaserHud.className='storm-chaser-hud';
@@ -3437,6 +3545,7 @@
       clearTimeout(viewTimer);viewTimer=null;
       active=id;
       applyCityTheme(id);
+      updateLiveCameraAvailability();
       rainStory.classList.remove('show');
       rainStoryBtn.classList.remove('active');
       rainStoryBtn.setAttribute('aria-expanded','false');
@@ -3556,6 +3665,7 @@
     if(focusSession) finishFocusSession({manual:true});
     body.classList.remove('immersive','live-rain-session');
     soundPanel.classList.remove('open');
+    closeLiveCamera();
     body.style.overflow = '';
     const hadStamp=Boolean(pendingStamp);
     if (pendingStamp){
@@ -3930,7 +4040,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -3953,7 +4063,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -3981,6 +4091,7 @@
       if (e.key === 'Escape' && passportPanel.classList.contains('open')) closePassport();
       return;
     }
+    if(e.key==='Escape'&&liveCameraPanel.classList.contains('open')){closeLiveCamera();return}
     if(e.key==='Escape'){if(stormChaseActive)stopStormChase({keepScene:true});exitImmersive();}
     if(transitioning) return;
     if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
@@ -3990,7 +4101,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#liveCameraBtn,.live-camera-panel,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
