@@ -1,0 +1,34 @@
+{
+  "name": "PLUVIA — Experience the Rain",
+  "short_name": "PLUVIA",
+  "description": "Choose a city, step behind the glass, and experience rain from around the world.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#050b10",
+  "theme_color": "#050b10",
+  "orientation": "any",
+  "categories": ["lifestyle", "weather", "entertainment"],
+  "icons": [
+    {
+      "src": "./pluvia-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore the Rain",
+      "short_name": "Explore",
+      "url": "./"
+    },
+    {
+      "name": "My Rain Room",
+      "short_name": "Rain Room",
+      "url": "./rain-room.html"
+    }
+  ]
+}
