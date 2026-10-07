@@ -1406,7 +1406,7 @@
     clearInterval(stormChaseTick);
 
     if(!liveRainResults.length||Date.now()-liveRainLastUpdated>4.5*60*1000){
-      try{await refreshLiveRainWorld()}catch(_){}
+      try{await ensureLiveSystemsLoaded()}catch(_){}
     }
 
     const next=stormChaseCandidate();
@@ -2445,15 +2445,39 @@
     const target=e.target.closest('[data-live-rain-id]');
     if(target)void enterLiveRain(target.dataset.liveRainId);
   });
-  refreshLiveRain.addEventListener('click',refreshLiveRainWorld);
+  refreshLiveRain.addEventListener('click',()=>void ensureLiveSystemsLoaded());
+
+  // PLUVIA 9.7.1 — Performance Pass
+  let liveSystemsStarted=false;
+  let liveSystemsPromise=null;
+
+  function ensureLiveSystemsLoaded(){
+    if(liveSystemsStarted)return liveSystemsPromise||Promise.resolve();
+    liveSystemsStarted=true;
+    liveSystemsPromise=Promise.allSettled([
+      refreshLiveRainWorld(),
+      refreshRadarFrames()
+    ]).then(()=>undefined);
+    return liveSystemsPromise;
+  }
+
+  if('IntersectionObserver' in window){
+    const liveSectionObserver=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)){
+        liveSectionObserver.disconnect();
+        void ensureLiveSystemsLoaded();
+      }
+    },{rootMargin:'700px 0px'});
+    liveSectionObserver.observe(liveRainSection);
+  }else{
+    setTimeout(()=>void ensureLiveSystemsLoaded(),6000);
+  }
 
   setInterval(()=>{
-    if(document.hidden)return;
+    if(document.hidden||!liveSystemsStarted)return;
     if(Date.now()-liveRainLastUpdated>4.5*60*1000)void refreshLiveRainWorld();
     if(Date.now()-radarLastUpdated>4.5*60*1000)void refreshRadarFrames();
   },60000);
-  void refreshLiveRainWorld();
-  void refreshRadarFrames();
 
   let liveRainResizeRaf=0;
   window.addEventListener('resize',()=>{
@@ -3520,7 +3544,7 @@
   takeMe.addEventListener('click', async ()=>{
     takeMe.disabled=true; takeMe.textContent='Scanning the world…';
     try{
-      if(!liveRainResults.length||Date.now()-liveRainLastUpdated>4.5*60*1000)await refreshLiveRainWorld();
+      if(!liveRainResults.length||Date.now()-liveRainLastUpdated>4.5*60*1000)await ensureLiveSystemsLoaded();
       if(liveRainResults.length){
         const pool=liveRainResults.slice(0,Math.min(18,liveRainResults.length));
         const result=pool[Math.floor(Math.random()*pool.length)];
@@ -4270,12 +4294,16 @@
   }
   function draw(ts){
     requestAnimationFrame(draw);
-    if(document.hidden||ts-last<33)return;last=ts;
-    ctx.clearRect(0,0,rw,rh);
     const immersive=body.classList.contains('immersive');
-    const envBoost=immersive?(env==='rooftop'?1.22:env==='car'?1.04:1):.68;
+    const frameGap=immersive?33:78;
+    if(document.hidden||ts-last<frameGap)return;
+    last=ts;
+    ctx.clearRect(0,0,rw,rh);
+    const overlayOpen=body.classList.contains('personal-room-open');
+    const envBoost=immersive?(env==='rooftop'?1.22:env==='car'?1.04:1):(overlayOpen?.42:.62);
     const profile=weatherAtmosphere;
-    const count=Math.max(14,Math.min(drops.length,Math.round(drops.length*profile.density)));
+    const densityScale=immersive?1:.58;
+    const count=Math.max(10,Math.min(drops.length,Math.round(drops.length*profile.density*densityScale)));
     const speed=envBoost*profile.speed;
     const wind=(profile.windX+(immersive&&env==='rooftop'?profile.windX*.32:0))*envBoost;
     const lean=profile.lean+(immersive&&env==='rooftop'?profile.lean*.22:0);
