@@ -1158,11 +1158,13 @@
   const liveImageCache=new Map();
 
   const rainyCodes=new Set([51,53,55,56,57,61,63,65,80,81,82,95,96,99]);
+  const snowCodes=new Set([71,73,75,77,85,86]);
 
   function rainSignal(entry,current){
     const rain=Math.max(0,Number(current?.rain)||0);
     const precipitation=Math.max(0,Number(current?.precipitation)||0);
     const code=Number(current?.weather_code);
+    if(snowCodes.has(code))return null;
     if(!(rain>.01||precipitation>.01||rainyCodes.has(code)))return null;
     const amount=Math.max(rain,precipitation);
     const score=amount*12+([95,96,99].includes(code)?24:0)+([80,81,82].includes(code)?5:0);
@@ -2684,8 +2686,7 @@
   }
 
   function refreshAtmosphereMode(){
-    weatherAtmosphere=atmosphereMode==='live'?weatherProfile(weather):presetWeatherProfile(atmosphereMode);
-    applyWeatherAtmosphereProfile(weatherAtmosphere);
+    applyWeatherAtmosphere(weather);
     atmosphereMainBtn.querySelector('.atmosphere-pill-state').textContent=atmosphereLabels[atmosphereMode];
     atmospherePicker.querySelectorAll('[data-atmosphere-mode]').forEach(btn=>{
       btn.classList.toggle('active',btn.dataset.atmosphereMode===atmosphereMode);
@@ -2759,8 +2760,8 @@
     if(atmosphereMode==='live'&&cities[active]?.strictLiveDry&&w){
       const code=Number(w.code);
       const actualRain=Math.max(0,Number(w.rain)||0);
-      const reportingRain=actualRain>.01||[51,53,55,56,57,61,63,65,80,81,82,95,96,99].includes(code);
-      if(!reportingRain){
+      const reportingPrecip=actualRain>.01||[51,53,55,56,57,61,63,65,71,73,75,77,80,81,82,85,86,95,96,99].includes(code);
+      if(!reportingPrecip){
         const base=weatherProfile(w);
         weatherAtmosphere={...base,density:0,alpha:0,wetness:.08};
         applyWeatherAtmosphereProfile(weatherAtmosphere);
