@@ -2300,3 +2300,13 @@ body.personal-room-open{overflow:hidden}
   .personal-room-open{min-height:165px}
 }
 @media(prefers-reduced-motion:reduce){.personal-room-panel,.personal-room-scrim,.personal-room-toast{transition:none!important}}
+
+
+/* PLUVIA 9.7.1 — Performance Pass */
+.personal-room-scrim{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.personal-room-panel{will-change:opacity,transform;contain:layout paint}
+body.personal-room-open .living-glass-layer{animation-play-state:paused}
+body.personal-room-open .glass-condensation{opacity:.12}
+@media(max-width:900px){
+  .personal-room-scrim{backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+}
