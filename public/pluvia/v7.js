@@ -1076,7 +1076,16 @@
   liveRainSection.id='live-rain-world';
   liveRainSection.innerHTML=
     '<div class="section-head live-rain-head"><div><span class="micro">LIVE / GLOBAL RAIN RADAR</span><h2>Watch the rain moving.</h2></div>'+
-    '<p>Observed radar shows where precipitation is moving now. Play the recent timeline, click a rain cell, or jump into a confirmed rainy city through Pluvia.</p></div>'+
+    '<p>Observed radar shows where precipitation is moving now. Search any place on Earth, play the recent timeline, or click a rain cell and step into it through Pluvia.</p></div>'+
+    '<div class="anywhere-search-shell" id="anywhereSearchShell">'+
+      '<form class="anywhere-search" id="anywhereSearchForm" autocomplete="off">'+
+        '<span class="anywhere-search-icon">⌕</span>'+
+        '<input id="anywhereSearchInput" type="search" placeholder="Search any city or place on Earth…" aria-label="Search any city or place on Earth" spellcheck="false">'+
+        '<button type="submit">Search</button>'+
+      '</form>'+
+      '<div class="anywhere-search-results" id="anywhereSearchResults" hidden></div>'+
+      '<div class="anywhere-place-card" id="anywherePlaceCard" hidden></div>'+
+    '</div>'+
     '<div class="live-rain-shell">'+
       '<div class="live-rain-map-wrap">'+
         '<div class="live-rain-map radar-enabled" id="liveRainMap" aria-label="Global rain radar. Click a rain cell to inspect it.">'+
@@ -1125,6 +1134,15 @@
   const radarLatest=$('#radarLatest');
   const radarChase=$('#radarChase');
   const radarInspect=$('#radarInspect');
+  const anywhereSearchShell=$('#anywhereSearchShell');
+  const anywhereSearchForm=$('#anywhereSearchForm');
+  const anywhereSearchInput=$('#anywhereSearchInput');
+  const anywhereSearchResults=$('#anywhereSearchResults');
+  const anywherePlaceCard=$('#anywherePlaceCard');
+  let anywhereSearchTimer=null;
+  let anywhereSearchSeq=0;
+  let anywhereSelected=null;
+
   let radarFrames=[];
   let radarHost='';
   let radarFrameIndex=0;
@@ -1184,6 +1202,202 @@
     return {lat,lon};
   }
 
+
+
+  // PLUVIA 9.2 — Anywhere on Earth
+  function anywhereRegion(lat,lon){
+    lat=Number(lat);lon=Number(lon);
+    if(lon<-30)return lat<12?'South America':'North America';
+    if(lon<60)return lat<34?'Africa':'Europe';
+    if(lat<-10&&lon>105)return 'Oceania';
+    return 'Asia';
+  }
+
+  function normalizePlaceResult(place){
+    return {
+      id:'geo-'+place.id,
+      geoId:place.id,
+      name:place.name,
+      country:place.country||place.country_code||'',
+      countryCode:(place.country_code||'US').toUpperCase(),
+      admin1:place.admin1||'',
+      lat:Number(place.latitude),
+      lon:Number(place.longitude),
+      tz:place.timezone||'UTC',
+      region:anywhereRegion(place.latitude,place.longitude),
+      imageName:place.name
+    };
+  }
+
+  function anywhereWeatherObject(current){
+    return {
+      temp:Number(current.temperature_2m),
+      rain:Number(current.rain??current.precipitation??0),
+      wind:Number(current.wind_speed_10m??0),
+      direction:Number(current.wind_direction_10m??105),
+      code:Number(current.weather_code)
+    };
+  }
+
+  async function fetchAnywhereWeather(place){
+    const current='temperature_2m,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m';
+    const url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(place.lat)+'&longitude='+encodeURIComponent(place.lon)+'&current='+current+'&timezone=auto';
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok)throw new Error('Weather unavailable');
+    const data=await res.json();
+    return data.current||{};
+  }
+
+  function clearAnywhereResults(){
+    anywhereSearchResults.hidden=true;
+    anywhereSearchResults.replaceChildren();
+  }
+
+  function renderAnywhereResults(results){
+    anywhereSearchResults.replaceChildren();
+    if(!results.length){
+      const empty=document.createElement('div');
+      empty.className='anywhere-search-empty';
+      empty.textContent='No matching place found.';
+      anywhereSearchResults.appendChild(empty);
+      anywhereSearchResults.hidden=false;
+      return;
+    }
+
+    results.forEach(raw=>{
+      const place=normalizePlaceResult(raw);
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='anywhere-result';
+      button.dataset.geoId=String(raw.id);
+      const main=document.createElement('span');
+      main.className='anywhere-result-main';
+      const strong=document.createElement('strong');
+      strong.textContent=place.name;
+      const small=document.createElement('small');
+      small.textContent=[place.admin1,place.country].filter(Boolean).join(' · ');
+      main.append(strong,small);
+      const meta=document.createElement('span');
+      meta.className='anywhere-result-meta';
+      meta.textContent=place.tz.replaceAll('_',' ');
+      button.append(main,meta);
+      button.addEventListener('click',()=>void inspectAnywherePlace(place));
+      anywhereSearchResults.appendChild(button);
+    });
+    anywhereSearchResults.hidden=false;
+  }
+
+  async function searchAnywhere(query){
+    query=String(query||'').trim();
+    if(query.length<2){clearAnywhereResults();return}
+    const seq=++anywhereSearchSeq;
+    anywhereSearchShell.classList.add('searching');
+    try{
+      const url='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(query)+'&count=7&language=en&format=json';
+      const res=await fetch(url,{cache:'no-store'});
+      if(!res.ok)throw new Error('Search unavailable');
+      const data=await res.json();
+      if(seq!==anywhereSearchSeq)return;
+      renderAnywhereResults(Array.isArray(data.results)?data.results:[]);
+    }catch(_){
+      if(seq!==anywhereSearchSeq)return;
+      anywhereSearchResults.innerHTML='<div class="anywhere-search-empty">Place search is temporarily unavailable.</div>';
+      anywhereSearchResults.hidden=false;
+    }finally{
+      if(seq===anywhereSearchSeq)anywhereSearchShell.classList.remove('searching');
+    }
+  }
+
+  function anywhereWeatherLabel(current){
+    const code=Number(current.weather_code);
+    const amount=Math.max(Number(current.rain)||0,Number(current.precipitation)||0);
+    return {
+      condition:weatherText(code),
+      amount,
+      temp:Number(current.temperature_2m),
+      wind:Number(current.wind_speed_10m)||0
+    };
+  }
+
+  async function inspectAnywherePlace(place){
+    clearAnywhereResults();
+    anywhereSelected=null;
+    anywherePlaceCard.hidden=false;
+    anywherePlaceCard.className='anywhere-place-card loading';
+    anywherePlaceCard.innerHTML='<div class="anywhere-place-loading">Reading the sky over '+place.name+'…</div>';
+
+    try{
+      const current=await fetchAnywhereWeather(place);
+      const signal=rainSignal(place,current);
+      anywhereSelected={place,current,signal};
+      const w=anywhereWeatherLabel(current);
+      const local=localTime(place.tz);
+
+      const top=document.createElement('div');
+      top.className='anywhere-place-top';
+      const identity=document.createElement('div');
+      const micro=document.createElement('span');
+      micro.className='micro';
+      micro.textContent=signal?'LIVE RAIN CONFIRMED':'ANYWHERE ON EARTH';
+      const title=document.createElement('h3');
+      title.textContent=place.name;
+      const sub=document.createElement('small');
+      sub.textContent=[place.admin1,place.country,local+' local'].filter(Boolean).join(' · ');
+      identity.append(micro,title,sub);
+
+      const weatherBox=document.createElement('div');
+      weatherBox.className='anywhere-place-weather';
+      const temp=document.createElement('strong');
+      temp.textContent=Number.isFinite(w.temp)?Math.round(w.temp)+'°':'—°';
+      const cond=document.createElement('span');
+      cond.textContent=w.condition;
+      const met=document.createElement('small');
+      met.textContent=w.amount.toFixed(1)+' mm · '+Math.round(w.wind)+' km/h wind';
+      weatherBox.append(temp,cond,met);
+      top.append(identity,weatherBox);
+
+      const message=document.createElement('p');
+      message.textContent=signal
+        ?'Rain is being reported here right now. Enter with the real weather signal driving the Pluvia atmosphere.'
+        :'It is not raining here right now. You can enter the real current weather, or deliberately switch on a simulated Pluvia rain atmosphere.';
+
+      const actions=document.createElement('div');
+      actions.className='anywhere-place-actions';
+
+      const primary=document.createElement('button');
+      primary.type='button';
+      primary.className='anywhere-action primary';
+      primary.textContent=signal?'Watch live rain ↗':'Enter live weather ↗';
+      primary.addEventListener('click',()=>void enterAnywhereSelection({simulate:false}));
+
+      actions.appendChild(primary);
+
+      if(!signal){
+        const rainBtn=document.createElement('button');
+        rainBtn.type='button';
+        rainBtn.className='anywhere-action';
+        rainBtn.textContent='Make it rain';
+        rainBtn.addEventListener('click',()=>void enterAnywhereSelection({simulate:true}));
+        actions.appendChild(rainBtn);
+      }
+
+      const close=document.createElement('button');
+      close.type='button';
+      close.className='anywhere-place-close';
+      close.setAttribute('aria-label','Close place details');
+      close.textContent='×';
+      close.addEventListener('click',()=>{
+        anywherePlaceCard.hidden=true;
+        anywhereSelected=null;
+      });
+
+      anywherePlaceCard.replaceChildren(top,message,actions,close);
+      anywherePlaceCard.className='anywhere-place-card '+(signal?'wet':'dry');
+    }catch(_){
+      anywherePlaceCard.className='anywhere-place-card dry';
+      anywherePlaceCard.innerHTML='<strong>Could not read this sky</strong><p>Live weather for this place is temporarily unavailable. Try again shortly.</p>';
+    }
+  }
 
   function populateRadarBase(){
     if(radarBaseLayer.childElementCount)return;
@@ -1481,6 +1695,63 @@
     return 'london';
   }
 
+
+  async function registerWorldPlace(result,{liveRainFlag=false}={}){
+    const view=await resolveLiveCityImage(result);
+    const anchorId=liveRainAnchor(result);
+    const anchorCity=cities[anchorId];
+    const anchorSoul=citySoul[anchorId]||citySoul.tokyo;
+    const dynamicId='world-'+String(result.id).replace(/[^a-z0-9-]/gi,'-').toLowerCase();
+
+    const genericLiveSvg='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">'+
+      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06131a"/><stop offset=".52" stop-color="#17303b"/><stop offset="1" stop-color="#071017"/></linearGradient>'+
+      '<radialGradient id="r"><stop stop-color="#6baac4" stop-opacity=".28"/><stop offset="1" stop-color="#06131a" stop-opacity="0"/></radialGradient></defs>'+
+      '<rect width="1600" height="1000" fill="url(#g)"/><ellipse cx="1090" cy="190" rx="620" ry="400" fill="url(#r)"/></svg>'
+    );
+    const worldView=view||{src:genericLiveSvg,pos:'50% 50%',label:result.name+' · world view'};
+
+    cities[dynamicId]={
+      name:result.name,country:result.country,landmark:worldView.label,
+      lat:result.lat,lon:result.lon,tz:result.tz,pos:worldView.pos||'50% 50%',
+      image:worldView.src,songs:(anchorCity.songs||[]).map(track=>[...track]),
+      liveRain:Boolean(liveRainFlag),worldPlace:true
+    };
+    cityViews[dynamicId]=[worldView];
+    citySoul[dynamicId]={
+      ...anchorSoul,
+      ambient:liveRainFlag?'live world rain':'world ambience',
+      story:liveRainFlag
+        ?'Live rain is moving through '+result.name+' right now.'
+        :result.name+' is open through a Pluvia window.'
+    };
+    regionByCity[dynamicId]=result.region;
+    originalSongCounts[dynamicId]=cities[dynamicId].songs.length;
+    cityMusicMarket[dynamicId]=(result.countryCode||cityMusicMarket[anchorId]||'US').toUpperCase();
+    return dynamicId;
+  }
+
+  async function enterAnywhereSelection({simulate=false}={}){
+    if(!anywhereSelected)return;
+    const {place,current,signal}=anywhereSelected;
+
+    if(signal&&!simulate){
+      await enterLiveRain(signal);
+      return;
+    }
+
+    anywherePlaceCard.classList.add('opening');
+    const dynamicId=await registerWorldPlace(place,{liveRainFlag:false});
+    const w=anywhereWeatherObject(current);
+
+    atmosphereMode=simulate?'rain':'live';
+    localStorage.setItem('pluvia-v83-atmosphere',atmosphereMode);
+    refreshAtmosphereMode();
+
+    selectCity(dynamicId,{enter:true,liveSignal:false,liveWeather:w});
+    anywherePlaceCard.classList.remove('opening');
+  }
+
   async function enterLiveRain(placeRef){
     const result=typeof placeRef==='string'?liveRainResults.find(x=>x.id===placeRef):placeRef;
     if(!result)return;
@@ -1501,33 +1772,7 @@
       return;
     }
 
-    const view=await resolveLiveCityImage(result);
-    const anchorId=liveRainAnchor(result);
-    const anchorCity=cities[anchorId];
-    const anchorSoul=citySoul[anchorId]||citySoul.tokyo;
-    const dynamicId='live-'+result.id;
-
-    const genericLiveSvg='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">'+
-      '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#06131a"/><stop offset=".52" stop-color="#17303b"/><stop offset="1" stop-color="#071017"/></linearGradient>'+
-      '<radialGradient id="r"><stop stop-color="#6baac4" stop-opacity=".28"/><stop offset="1" stop-color="#06131a" stop-opacity="0"/></radialGradient></defs>'+
-      '<rect width="1600" height="1000" fill="url(#g)"/><ellipse cx="1090" cy="190" rx="620" ry="400" fill="url(#r)"/></svg>'
-    );
-    const liveView=view||{src:genericLiveSvg,pos:'50% 50%',label:result.name+' · live rain'};
-    cities[dynamicId]={
-      name:result.name,country:result.country,landmark:liveView.label,
-      lat:result.lat,lon:result.lon,tz:result.tz,pos:liveView.pos||'50% 50%',
-      image:liveView.src,songs:(anchorCity.songs||[]).map(track=>[...track]),liveRain:true
-    };
-    cityViews[dynamicId]=[liveView];
-    citySoul[dynamicId]={
-      ...anchorSoul,
-      ambient:'live world rain',
-      story:'Live rain is moving through '+result.name+' right now.'
-    };
-    regionByCity[dynamicId]=result.region;
-    originalSongCounts[dynamicId]=cities[dynamicId].songs.length;
-    cityMusicMarket[dynamicId]=cityMusicMarket[anchorId]||'US';
+    const dynamicId=await registerWorldPlace(result,{liveRainFlag:true});
 
     atmosphereMode='live';
     localStorage.setItem('pluvia-v83-atmosphere','live');
@@ -1542,6 +1787,32 @@
       }});
   }
 
+
+
+  anywhereSearchForm.addEventListener('submit',e=>{
+    e.preventDefault();
+    clearTimeout(anywhereSearchTimer);
+    void searchAnywhere(anywhereSearchInput.value);
+  });
+  anywhereSearchInput.addEventListener('input',()=>{
+    clearTimeout(anywhereSearchTimer);
+    anywherePlaceCard.hidden=true;
+    anywhereSelected=null;
+    const q=anywhereSearchInput.value.trim();
+    if(q.length<2){clearAnywhereResults();return}
+    anywhereSearchTimer=setTimeout(()=>void searchAnywhere(q),280);
+  });
+  anywhereSearchInput.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      clearAnywhereResults();
+      anywherePlaceCard.hidden=true;
+      anywhereSelected=null;
+      anywhereSearchInput.blur();
+    }
+  });
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#anywhereSearchShell'))clearAnywhereResults();
+  });
 
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopRadarPlayback()});
 
@@ -2751,10 +3022,10 @@
   function updatePlaylist(){
     if(!currentTrack)return;
     playlistTitle.textContent=currentTrack[0];
-    playlistArtist.textContent=currentTrack[1]+' · '+(cities[active].liveRain?'Pluvia World Radio':cities[active].name);
+    playlistArtist.textContent=currentTrack[1]+' · '+((cities[active].liveRain||cities[active].worldPlace)?'Pluvia World Radio':cities[active].name);
     playlistCount.textContent=(trackIndex+1)+' / '+cities[active].songs.length;
     appleTrackLink.href=currentTrack[4]||appleSearchUrl(currentTrack);
-    playlistNote.textContent=cities[active].liveRain?'Regional Pluvia mix · Apple Music preview':(currentTrack[2]?'Apple Music preview · tap Next to explore':'Preview available on request');
+    playlistNote.textContent=(cities[active].liveRain||cities[active].worldPlace)?'Regional Pluvia mix · Apple Music preview':(currentTrack[2]?'Apple Music preview · tap Next to explore':'Preview available on request');
     if(!cityPlaylistTracks.hidden)renderPlaylistTracks();
   }
 
@@ -2893,7 +3164,7 @@
     if(token!==musicRequestId||city!==active||track!==currentTrack)return;
     if(!url){fail();return}
     audio.src=url;
-    playlistNote.textContent=cities[active].liveRain?'Regional Pluvia mix · short preview':'Apple Music preview · short clip';
+    playlistNote.textContent=(cities[active].liveRain||cities[active].worldPlace)?'Regional Pluvia mix · short preview':'Apple Music preview · short clip';
     appleTrackLink.href=track[4]||appleSearchUrl(track,city);
     try{await audio.play();}
     catch(_){
