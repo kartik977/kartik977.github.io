@@ -2109,6 +2109,7 @@ body.immersive.live-rain-session .live-signal-badge{
 .share-experience-btn:hover{border-color:rgba(134,207,255,.58);background:rgba(9,25,35,.88);transform:translateY(-1px)}
 .share-experience-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 body.immersive .share-experience-btn{display:inline-flex}
+body.immersive.live-rain-session .share-experience-btn{top:max(70px,calc(env(safe-area-inset-top) + 70px))}
 body.focus-active .share-experience-btn{opacity:0;pointer-events:none}
 .share-experience-toast{
   position:fixed;z-index:82;top:max(78px,calc(env(safe-area-inset-top) + 78px));left:18px;
@@ -2121,6 +2122,7 @@ body.focus-active .share-experience-btn{opacity:0;pointer-events:none}
 .share-experience-toast.show{opacity:1;transform:translateY(0)}
 @media(max-width:600px){
   .share-experience-btn{top:max(14px,env(safe-area-inset-top));left:14px;min-height:44px;padding:0 14px}
+  body.immersive.live-rain-session .share-experience-btn{top:max(60px,calc(env(safe-area-inset-top) + 60px))}
   .share-experience-btn span{display:none}
   .share-experience-toast{left:14px;top:max(68px,calc(env(safe-area-inset-top) + 68px));max-width:calc(100vw - 28px)}
 }
