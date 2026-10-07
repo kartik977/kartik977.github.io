@@ -1324,10 +1324,10 @@
   // PLUVIA 9.6 — Live Webcam Layer
   const liveCameraFeeds={
     newyork:{
-      label:'Times Square',
-      provider:'EarthCam',
-      videoIds:['Q0uLV52xGZE','Lr-u3vIZ3KE'],
-      source:'https://www.earthcam.com/usa/newyork/timessquare/?cam=tsstreet'
+      label:'Times Square · 1515 Broadway',
+      provider:'CouchTourist',
+      embedUrl:'https://couchtourist.com/embed/cam/10641/',
+      source:'https://couchtourist.com/cams/united-states/new-york/times-square-1515-broadway-live-view/'
     },
     singapore:{
       label:'Singapore Marina Bay',
@@ -1337,9 +1337,9 @@
     },
     london:{
       label:'Abbey Road Crossing',
-      provider:'EarthCam',
-      videoIds:['zMCea32gpmg','M3EYAY2MftI'],
-      source:'https://www.earthcam.com/world/england/london/abbeyroad/'
+      provider:'CouchTourist',
+      embedUrl:'https://couchtourist.com/embed/cam/288/',
+      source:'https://couchtourist.com/cams/united-kingdom/london/beatles-abbey-road-crossing/'
     },
     'world-dublin':{
       label:'Temple Bar',
@@ -1431,7 +1431,7 @@
     liveCameraReadyTimer=null;
     try{liveCameraPlayer?.destroy()}catch(_){}
     liveCameraPlayer=null;
-    liveCameraFrame.removeAttribute('src');
+    liveCameraFrame.replaceChildren();
     liveCameraFrame.style.display='none';
   }
 
@@ -1439,11 +1439,41 @@
     destroyLiveCameraPlayer();
     liveCameraFallback.hidden=false;
     liveCameraFallbackLink.href=feed?.source||'#';
-    liveCameraProvider.textContent='Live embed unavailable · source can still be opened directly';
+    liveCameraProvider.textContent='Embedded view unavailable · source can still be opened directly';
+  }
+
+  function playDirectLiveCameraEmbed(feed,token){
+    if(token!==liveCameraFeedToken)return;
+    destroyLiveCameraPlayer();
+    liveCameraFallback.hidden=true;
+    liveCameraFrame.style.display='block';
+
+    const frame=document.createElement('iframe');
+    frame.src=feed.embedUrl;
+    frame.title=(cities[active]?.name||'Live city')+' live camera';
+    frame.allow='autoplay; fullscreen; picture-in-picture';
+    frame.allowFullscreen=true;
+    frame.loading='eager';
+    frame.referrerPolicy='strict-origin-when-cross-origin';
+    frame.style.width='100%';
+    frame.style.height='100%';
+    frame.style.border='0';
+
+    frame.addEventListener('load',()=>{
+      if(token!==liveCameraFeedToken)return;
+      liveCameraProvider.textContent='Live embed via '+feed.provider+' · shown alongside Pluvia';
+    });
+
+    liveCameraFrame.appendChild(frame);
+    liveCameraProvider.textContent='Connecting to '+feed.provider+'…';
   }
 
   async function playLiveCameraCandidate(feed,index,token){
     if(token!==liveCameraFeedToken)return;
+    if(feed.embedUrl){
+      playDirectLiveCameraEmbed(feed,token);
+      return;
+    }
     const ids=Array.isArray(feed.videoIds)?feed.videoIds:[feed.videoId].filter(Boolean);
     if(index>=ids.length){showLiveCameraFallback(feed);return}
     liveCameraCandidateIndex=index;
