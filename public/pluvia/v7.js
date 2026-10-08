@@ -1321,6 +1321,306 @@
   let liveRainLastUpdated=0;
   const liveImageCache=new Map();
 
+  // PLUVIA 9.9 — Rain Journey
+  const rainJourneyBtn=document.createElement('button');
+  rainJourneyBtn.className='pill rain-journey-launch';
+  rainJourneyBtn.type='button';
+  rainJourneyBtn.innerHTML='<span>Rain Journey</span><b>LIVE ROUTE ↗</b>';
+  document.querySelector('.actions')?.appendChild(rainJourneyBtn);
+
+  const rainJourneyHud=document.createElement('aside');
+  rainJourneyHud.className='rain-journey-hud';
+  rainJourneyHud.setAttribute('aria-live','polite');
+  rainJourneyHud.innerHTML=
+    '<div class="rain-journey-progress"><span id="rainJourneyStep">RAIN JOURNEY</span><div id="rainJourneyDots" class="rain-journey-dots"></div></div>'+
+    '<div class="rain-journey-now"><small id="rainJourneyKicker">FOLLOWING LIVE RAIN</small><strong id="rainJourneyCity">Finding a route…</strong><em id="rainJourneyMeta">Scanning the world for rain.</em></div>'+
+    '<div class="rain-journey-next"><span>NEXT SKY</span><b id="rainJourneyCountdown">—</b><small id="rainJourneyNextCity">—</small></div>'+
+    '<div class="rain-journey-controls">'+
+      '<button id="rainJourneyPause" type="button">Pause</button>'+
+      '<button id="rainJourneyNext" type="button">Next →</button>'+
+      '<button id="rainJourneyEnd" type="button">End</button>'+
+    '</div>';
+  document.body.appendChild(rainJourneyHud);
+
+  const rainJourneyCurtain=document.createElement('div');
+  rainJourneyCurtain.className='rain-journey-curtain';
+  rainJourneyCurtain.innerHTML='<span>PLUVIA / RAIN JOURNEY</span><strong id="rainJourneyCurtainCity">Crossing the rain…</strong><small id="rainJourneyCurtainMeta">Following the weather around the world.</small>';
+  document.body.appendChild(rainJourneyCurtain);
+
+  const rainJourneyToast=document.createElement('div');
+  rainJourneyToast.className='rain-journey-toast';
+  rainJourneyToast.setAttribute('role','status');
+  rainJourneyToast.setAttribute('aria-live','polite');
+  document.body.appendChild(rainJourneyToast);
+
+  const rainJourneyStep=$('#rainJourneyStep');
+  const rainJourneyDots=$('#rainJourneyDots');
+  const rainJourneyKicker=$('#rainJourneyKicker');
+  const rainJourneyCity=$('#rainJourneyCity');
+  const rainJourneyMeta=$('#rainJourneyMeta');
+  const rainJourneyCountdown=$('#rainJourneyCountdown');
+  const rainJourneyNextCity=$('#rainJourneyNextCity');
+  const rainJourneyPause=$('#rainJourneyPause');
+  const rainJourneyNext=$('#rainJourneyNext');
+  const rainJourneyEnd=$('#rainJourneyEnd');
+  const rainJourneyCurtainCity=$('#rainJourneyCurtainCity');
+  const rainJourneyCurtainMeta=$('#rainJourneyCurtainMeta');
+
+  let rainJourneyActive=false;
+  let rainJourneyPaused=false;
+  let rainJourneyRoute=[];
+  let rainJourneyIndex=-1;
+  let rainJourneyTimer=null;
+  let rainJourneyTick=null;
+  let rainJourneyEndsAt=0;
+  let rainJourneyRemaining=0;
+  let rainJourneyToastTimer=null;
+  const rainJourneyDwellMs=19000;
+
+  function rainJourneyShowToast(message){
+    clearTimeout(rainJourneyToastTimer);
+    rainJourneyToast.textContent=message;
+    rainJourneyToast.classList.add('show');
+    rainJourneyToastTimer=setTimeout(()=>rainJourneyToast.classList.remove('show'),3200);
+  }
+
+  function rainJourneyRegion(result){
+    return result.region||anywhereRegion(result.lat,result.lon)||'World';
+  }
+
+  function buildRainJourneyRoute(){
+    const candidates=liveRainResults
+      .slice()
+      .sort((a,b)=>b.score-a.score)
+      .slice(0,36);
+
+    if(!candidates.length)return [];
+
+    const route=[];
+    const usedKeys=new Set();
+    const usedRegions=new Set();
+
+    const add=result=>{
+      if(!result)return false;
+      const key=stormChaseKey(result);
+      if(usedKeys.has(key))return false;
+      route.push(result);
+      usedKeys.add(key);
+      usedRegions.add(rainJourneyRegion(result));
+      return true;
+    };
+
+    add(candidates[0]);
+
+    while(route.length<5){
+      const diverse=candidates.find(result=>!usedKeys.has(stormChaseKey(result))&&!usedRegions.has(rainJourneyRegion(result)));
+      if(diverse){add(diverse);continue}
+      const next=candidates.find(result=>!usedKeys.has(stormChaseKey(result)));
+      if(!next)break;
+      add(next);
+    }
+
+    return route;
+  }
+
+  function renderRainJourneyProgress(){
+    const total=rainJourneyRoute.length;
+    rainJourneyStep.textContent='RAIN JOURNEY · '+Math.max(1,rainJourneyIndex+1)+' / '+Math.max(1,total);
+    rainJourneyDots.innerHTML=rainJourneyRoute.map((place,index)=>
+      '<i class="'+(index<rainJourneyIndex?'done':index===rainJourneyIndex?'active':'')+'" title="'+place.name+'"></i>'
+    ).join('');
+  }
+
+  function updateRainJourneyHud(result){
+    if(!result)return;
+    renderRainJourneyProgress();
+    rainJourneyKicker.textContent='LIVE RAIN · '+rainJourneyRegion(result).toUpperCase();
+    rainJourneyCity.textContent=result.name+' · '+liveRainCondition(result);
+    rainJourneyMeta.textContent=
+      result.country+' · '+result.amount.toFixed(1)+' mm · '+
+      Math.round(Number(result.current?.wind_speed_10m)||0)+' km/h wind';
+
+    const next=rainJourneyRoute[rainJourneyIndex+1];
+    rainJourneyNextCity.textContent=next?next.name:'Journey complete';
+  }
+
+  function updateRainJourneyCountdown(){
+    if(!rainJourneyActive){
+      rainJourneyCountdown.textContent='—';
+      return;
+    }
+    if(rainJourneyPaused){
+      rainJourneyCountdown.textContent='PAUSED';
+      return;
+    }
+    const seconds=Math.max(0,Math.ceil((rainJourneyEndsAt-Date.now())/1000));
+    rainJourneyCountdown.textContent=seconds+'s';
+  }
+
+  function clearRainJourneyClock(){
+    clearTimeout(rainJourneyTimer);
+    clearInterval(rainJourneyTick);
+    rainJourneyTimer=null;
+    rainJourneyTick=null;
+  }
+
+  function scheduleRainJourneyAdvance(delay=rainJourneyDwellMs){
+    clearRainJourneyClock();
+    rainJourneyRemaining=delay;
+    rainJourneyEndsAt=Date.now()+delay;
+    updateRainJourneyCountdown();
+    rainJourneyTick=setInterval(updateRainJourneyCountdown,1000);
+    rainJourneyTimer=setTimeout(()=>void advanceRainJourney(),delay);
+  }
+
+  function showRainJourneyCurtain(result,index){
+    rainJourneyCurtainCity.textContent=result.name;
+    rainJourneyCurtainMeta.textContent=
+      'Stop '+(index+1)+' of '+rainJourneyRoute.length+' · '+rainJourneyRegion(result)+' · '+liveRainCondition(result);
+    rainJourneyCurtain.classList.add('show');
+    setTimeout(()=>rainJourneyCurtain.classList.remove('show'),1050);
+  }
+
+  async function prewarmRainJourneyNext(){
+    const next=rainJourneyRoute[rainJourneyIndex+1];
+    if(!next||next.curatedId)return;
+    try{await resolveLiveCityImage(next)}catch(_){}
+  }
+
+  function completeRainJourney(){
+    if(!rainJourneyActive)return;
+    clearRainJourneyClock();
+    rainJourneyActive=false;
+    rainJourneyPaused=false;
+    body.classList.remove('rain-journey-active');
+    rainJourneyHud.classList.remove('show');
+    rainJourneyBtn.classList.remove('active');
+    rainJourneyBtn.innerHTML='<span>Rain Journey</span><b>LIVE ROUTE ↗</b>';
+    rainJourneyCurtain.classList.remove('show');
+    rainJourneyShowToast('Rain Journey complete · '+rainJourneyRoute.length+' live skies visited');
+  }
+
+  function stopRainJourney({keepScene=true,silent=false}={}){
+    if(!rainJourneyActive&&!body.classList.contains('rain-journey-active'))return;
+    clearRainJourneyClock();
+    rainJourneyActive=false;
+    rainJourneyPaused=false;
+    rainJourneyRemaining=0;
+    body.classList.remove('rain-journey-active');
+    rainJourneyHud.classList.remove('show');
+    rainJourneyCurtain.classList.remove('show');
+    rainJourneyBtn.classList.remove('active');
+    rainJourneyBtn.innerHTML='<span>Rain Journey</span><b>LIVE ROUTE ↗</b>';
+    if(!silent)rainJourneyShowToast('Rain Journey ended');
+    if(!keepScene&&body.classList.contains('immersive'))exitImmersive();
+  }
+
+  async function advanceRainJourney({manual=false}={}){
+    if(!rainJourneyActive)return;
+    clearRainJourneyClock();
+
+    const nextIndex=rainJourneyIndex+1;
+    if(nextIndex>=rainJourneyRoute.length){
+      completeRainJourney();
+      return;
+    }
+
+    rainJourneyIndex=nextIndex;
+    const result=rainJourneyRoute[rainJourneyIndex];
+    showRainJourneyCurtain(result,rainJourneyIndex);
+    updateRainJourneyHud(result);
+
+    try{
+      await enterLiveRain(result);
+      if(!rainJourneyActive)return;
+      void prewarmRainJourneyNext();
+      if(!rainJourneyPaused)scheduleRainJourneyAdvance();
+      else{
+        rainJourneyRemaining=rainJourneyDwellMs;
+        updateRainJourneyCountdown();
+      }
+    }catch(_){
+      if(!rainJourneyActive)return;
+      rainJourneyShowToast('Skipping '+result.name+' · sky could not open');
+      setTimeout(()=>void advanceRainJourney({manual:true}),900);
+    }
+  }
+
+  async function startRainJourney(){
+    if(rainJourneyActive)return;
+    rainJourneyBtn.disabled=true;
+    rainJourneyBtn.innerHTML='<span>Building route…</span><b>LIVE</b>';
+    try{
+      if(stormChaseActive)stopStormChase({keepScene:true});
+      await ensureLiveSystemsLoaded();
+
+      rainJourneyRoute=buildRainJourneyRoute();
+      if(!rainJourneyRoute.length){
+        rainJourneyShowToast('No verified rain route is available right now');
+        return;
+      }
+
+      rainJourneyActive=true;
+      rainJourneyPaused=false;
+      rainJourneyIndex=-1;
+      rainJourneyRemaining=rainJourneyDwellMs;
+      body.classList.add('rain-journey-active');
+      rainJourneyHud.classList.add('show');
+      rainJourneyBtn.classList.add('active');
+      rainJourneyBtn.innerHTML='<span>Rain Journey active</span><b>'+rainJourneyRoute.length+' STOPS</b>';
+      renderRainJourneyProgress();
+      rainJourneyCity.textContent='Your route is ready.';
+      rainJourneyMeta.textContent=rainJourneyRoute.map(place=>place.name).join(' → ');
+      rainJourneyNextCity.textContent=rainJourneyRoute[0]?.name||'—';
+      rainJourneyCountdown.textContent='GO';
+
+      await advanceRainJourney({manual:true});
+    }finally{
+      rainJourneyBtn.disabled=false;
+      if(!rainJourneyActive)rainJourneyBtn.innerHTML='<span>Rain Journey</span><b>LIVE ROUTE ↗</b>';
+    }
+  }
+
+  function toggleRainJourneyPause(){
+    if(!rainJourneyActive)return;
+    rainJourneyPaused=!rainJourneyPaused;
+
+    if(rainJourneyPaused){
+      rainJourneyRemaining=Math.max(1000,rainJourneyEndsAt-Date.now());
+      clearRainJourneyClock();
+      rainJourneyPause.textContent='Resume';
+      updateRainJourneyCountdown();
+      rainJourneyShowToast('Journey paused in '+(rainJourneyRoute[rainJourneyIndex]?.name||'this sky'));
+    }else{
+      rainJourneyPause.textContent='Pause';
+      scheduleRainJourneyAdvance(rainJourneyRemaining||rainJourneyDwellMs);
+    }
+  }
+
+  rainJourneyBtn.addEventListener('click',()=>{
+    if(rainJourneyActive)stopRainJourney({keepScene:true});
+    else void startRainJourney();
+  });
+
+  rainJourneyPause.addEventListener('click',event=>{
+    event.stopPropagation();
+    toggleRainJourneyPause();
+  });
+
+  rainJourneyNext.addEventListener('click',event=>{
+    event.stopPropagation();
+    if(!rainJourneyActive)return;
+    rainJourneyPaused=false;
+    rainJourneyPause.textContent='Pause';
+    void advanceRainJourney({manual:true});
+  });
+
+  rainJourneyEnd.addEventListener('click',event=>{
+    event.stopPropagation();
+    stopRainJourney({keepScene:true});
+  });
+
+
   // PLUVIA 9.5 — Storm Chaser 2.0
   const stormChaserHud=document.createElement('aside');
   stormChaserHud.className='storm-chaser-hud';
@@ -1443,6 +1743,7 @@
 
   function startStormChase(){
     if(stormChaseActive)return;
+    if(rainJourneyActive)stopRainJourney({keepScene:true,silent:true});
     if(!liveRainResults.length){
       liveRainStatus.textContent='Finding a storm to chase…';
     }
@@ -3574,6 +3875,7 @@
     scheduleViewRotation(true);
   }
   function exitImmersive(){
+    if(rainJourneyActive)stopRainJourney({keepScene:true,silent:true});
     if(stormChaseActive)stopStormChase({keepScene:true});
     clearTimeout(viewTimer);viewTimer=null;
     stopEnvironmentBehavior();
@@ -4151,7 +4453,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -4174,7 +4476,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -4211,7 +4513,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,#saveRoomImmersiveBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
