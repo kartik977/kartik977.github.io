@@ -2311,3 +2311,74 @@ body.focus-active .save-room-immersive-btn{opacity:0;pointer-events:none}
 @media(display-mode:standalone){
   .pwa-install-btn{display:none!important}
 }
+
+
+/* PLUVIA 9.9 — Rain Journey */
+.rain-journey-launch{position:relative}
+.rain-journey-launch b{font:700 7px/1 "Manrope",sans-serif;letter-spacing:.1em;color:#82bcd6}
+.rain-journey-launch.active{border-color:rgba(139,216,246,.35);background:rgba(11,31,41,.88)}
+.rain-journey-launch.active:before{content:"";width:6px;height:6px;border-radius:50%;background:#8bd8f6;box-shadow:0 0 14px rgba(139,216,246,.62)}
+
+.rain-journey-hud{
+  position:fixed;z-index:80;left:50%;bottom:max(20px,env(safe-area-inset-bottom));
+  transform:translate(-50%,18px);width:min(900px,calc(100vw - 34px));min-height:88px;
+  display:grid;grid-template-columns:160px minmax(0,1fr) 112px auto;gap:14px;align-items:center;
+  padding:12px 13px;border:1px solid rgba(197,230,244,.17);border-radius:22px;
+  background:rgba(4,14,20,.94);box-shadow:0 30px 95px rgba(0,0,0,.48);backdrop-filter:blur(18px);
+  opacity:0;pointer-events:none;transition:opacity .28s ease,transform .28s ease
+}
+.rain-journey-hud.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.rain-journey-progress{padding-left:4px}
+.rain-journey-progress>span{color:#7ca9bc;font:800 7px/1 "Manrope",sans-serif;letter-spacing:.13em}
+.rain-journey-dots{display:flex;gap:6px;margin-top:11px}
+.rain-journey-dots i{width:20px;height:3px;border-radius:999px;background:rgba(183,216,230,.12);transition:.2s ease}
+.rain-journey-dots i.done{background:rgba(139,216,246,.35)}
+.rain-journey-dots i.active{width:30px;background:#8bd8f6;box-shadow:0 0 15px rgba(139,216,246,.34)}
+.rain-journey-now{min-width:0;padding-left:14px;border-left:1px solid rgba(225,242,250,.08)}
+.rain-journey-now small,.rain-journey-now strong,.rain-journey-now em{display:block}
+.rain-journey-now small{color:#6d92a2;font:800 7px/1 "Manrope",sans-serif;letter-spacing:.13em}
+.rain-journey-now strong{margin-top:6px;color:#e0edf3;font:600 15px/1.12 "DM Sans",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rain-journey-now em{margin-top:5px;color:#78919d;font:400 9px/1.2 "DM Sans",sans-serif;font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rain-journey-next{height:58px;padding:0 10px;border-left:1px solid rgba(225,242,250,.08);border-right:1px solid rgba(225,242,250,.08);display:grid;place-content:center;text-align:center}
+.rain-journey-next span{color:#66818f;font:700 6px/1 "Manrope",sans-serif;letter-spacing:.12em}
+.rain-journey-next b{margin-top:5px;color:#c4e8f6;font:700 17px/1 "Manrope",sans-serif}
+.rain-journey-next small{max-width:95px;margin-top:4px;color:#6f8995;font-size:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rain-journey-controls{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.rain-journey-controls button{min-height:38px;padding:0 11px;border:1px solid rgba(225,242,250,.11);border-radius:999px;background:rgba(8,22,29,.82);color:#9ebdca;cursor:pointer;font:700 7px/1 "Manrope",sans-serif;white-space:nowrap}
+.rain-journey-controls button:hover{border-color:rgba(139,216,246,.32);color:#def1f8}
+#rainJourneyEnd{color:#ae959d;background:rgba(28,17,21,.55)}
+.rain-journey-curtain{
+  position:fixed;z-index:79;inset:0;display:grid;place-items:center;align-content:center;text-align:center;
+  background:radial-gradient(circle at 50% 45%,rgba(19,50,63,.26),transparent 35%),rgba(2,8,12,.82);
+  backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .34s ease
+}
+.rain-journey-curtain.show{opacity:1}
+.rain-journey-curtain span{color:#78acc2;font:800 7px/1 "Manrope",sans-serif;letter-spacing:.18em}
+.rain-journey-curtain strong{margin-top:13px;color:#e5f0f4;font:600 clamp(46px,8vw,96px)/.88 "Playfair Display",serif;letter-spacing:-.055em}
+.rain-journey-curtain small{margin-top:15px;color:#78909c;font-size:10px}
+.rain-journey-toast{
+  position:fixed;z-index:121;left:50%;top:88px;transform:translate(-50%,-8px);padding:10px 14px;
+  border:1px solid rgba(225,242,250,.12);border-radius:999px;background:rgba(5,16,22,.94);
+  color:#abc8d5;font:700 8px/1 "Manrope",sans-serif;opacity:0;pointer-events:none;transition:.2s ease
+}
+.rain-journey-toast.show{opacity:1;transform:translate(-50%,0)}
+body.focus-active .rain-journey-hud,body.focus-active .rain-journey-toast{opacity:0!important;pointer-events:none!important}
+@media(max-width:760px){
+  .rain-journey-hud{
+    left:10px;right:10px;bottom:max(10px,env(safe-area-inset-bottom));width:auto;transform:translateY(18px);
+    grid-template-columns:minmax(0,1fr) 68px;gap:8px;padding:10px;border-radius:18px
+  }
+  .rain-journey-hud.show{transform:translateY(0)}
+  .rain-journey-progress{grid-column:1/3;display:flex;align-items:center;gap:10px;padding:0}
+  .rain-journey-dots{margin:0}
+  .rain-journey-now{padding-left:0;border-left:0}
+  .rain-journey-now strong{font-size:12px}.rain-journey-now em{font-size:8px}
+  .rain-journey-next{height:48px;padding:0 6px;border-right:0}
+  .rain-journey-next small{display:none}.rain-journey-next b{font-size:14px}
+  .rain-journey-controls{grid-column:1/3;justify-content:stretch}
+  .rain-journey-controls button{flex:1}
+  .rain-journey-curtain strong{font-size:54px}
+}
+@media(prefers-reduced-motion:reduce){
+  .rain-journey-hud,.rain-journey-curtain,.rain-journey-toast,.rain-journey-dots i{transition:none!important}
+}
