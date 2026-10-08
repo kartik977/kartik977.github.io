@@ -2382,3 +2382,129 @@ body.focus-active .rain-journey-hud,body.focus-active .rain-journey-toast{opacit
 @media(prefers-reduced-motion:reduce){
   .rain-journey-hud,.rain-journey-curtain,.rain-journey-toast,.rain-journey-dots i{transition:none!important}
 }
+
+
+/* PLUVIA 10.3 — Real Day / Night / Sunrise / Sunset */
+:root{--sun-x:50%;--sun-y:32%}
+.city-tone{
+  transition:background 1.8s ease,opacity 1.8s ease;
+}
+body[data-phase="night"] .city-photo{
+  filter:brightness(.40) saturate(.94) contrast(1.13) hue-rotate(-4deg)
+}
+body[data-phase="dawn"] .city-photo{
+  filter:brightness(.53) saturate(.86) sepia(.06) contrast(1.08) hue-rotate(-8deg)
+}
+body[data-phase="sunrise"] .city-photo{
+  filter:brightness(.64) saturate(1.03) sepia(.18) contrast(1.04)
+}
+body[data-phase="golden"] .city-photo{
+  filter:brightness(.69) saturate(1.06) sepia(.12) contrast(1.03)
+}
+body[data-phase="day"] .city-photo{
+  filter:brightness(.66) saturate(.92) contrast(1.035)
+}
+body[data-phase="sunset"] .city-photo{
+  filter:brightness(.60) saturate(1.09) sepia(.19) contrast(1.06)
+}
+body[data-phase="dusk"] .city-photo{
+  filter:brightness(.49) saturate(1.02) sepia(.08) contrast(1.1) hue-rotate(-6deg)
+}
+
+body[data-phase="night"] .city-tone{
+  background:
+    radial-gradient(circle at 72% 18%,rgba(80,118,156,.09),transparent 28%),
+    linear-gradient(180deg,rgba(5,12,25,.18),rgba(1,4,9,.62)),
+    radial-gradient(circle at 50% 40%,transparent 0 22%,rgba(0,5,10,.16) 53%,rgba(0,2,5,.76) 100%)
+}
+body[data-phase="dawn"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(151,180,213,.22),rgba(115,135,173,.08) 21%,transparent 42%),
+    linear-gradient(180deg,rgba(31,43,72,.12),rgba(9,13,28,.42)),
+    radial-gradient(circle at 50% 40%,transparent 0 24%,rgba(1,5,10,.11) 58%,rgba(0,3,6,.62) 100%)
+}
+body[data-phase="sunrise"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(255,204,143,.42),rgba(240,139,105,.17) 20%,transparent 43%),
+    linear-gradient(180deg,rgba(111,106,146,.07),rgba(42,18,14,.29)),
+    radial-gradient(circle at 50% 40%,transparent 0 26%,rgba(16,7,6,.08) 60%,rgba(4,2,2,.48) 100%)
+}
+body[data-phase="golden"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(255,210,138,.32),rgba(232,151,80,.10) 22%,transparent 45%),
+    linear-gradient(180deg,rgba(122,96,54,.04),rgba(24,13,6,.24)),
+    radial-gradient(circle at 50% 42%,transparent 0 28%,rgba(9,5,2,.06) 62%,rgba(3,2,1,.42) 100%)
+}
+body[data-phase="day"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(218,239,248,.14),transparent 34%),
+    linear-gradient(180deg,rgba(18,36,45,.02),rgba(2,8,12,.32)),
+    radial-gradient(circle at 50% 42%,transparent 0 30%,rgba(2,8,12,.05) 62%,rgba(1,4,7,.43) 100%)
+}
+body[data-phase="sunset"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(255,175,106,.42),rgba(227,103,93,.18) 21%,transparent 45%),
+    linear-gradient(180deg,rgba(86,67,107,.07),rgba(42,11,10,.35)),
+    radial-gradient(circle at 50% 42%,transparent 0 24%,rgba(10,4,5,.11) 58%,rgba(3,2,4,.56) 100%)
+}
+body[data-phase="dusk"] .city-tone{
+  background:
+    radial-gradient(circle at var(--sun-x) var(--sun-y),rgba(170,123,151,.19),rgba(86,93,144,.11) 23%,transparent 43%),
+    linear-gradient(180deg,rgba(34,38,75,.12),rgba(4,7,19,.5)),
+    radial-gradient(circle at 50% 42%,transparent 0 23%,rgba(2,5,12,.13) 57%,rgba(0,2,7,.68) 100%)
+}
+
+body[data-phase="sunrise"] .glass-mist,body[data-phase="golden"] .glass-mist{
+  opacity:.21;filter:sepia(.10) saturate(1.08)
+}
+body[data-phase="sunset"] .glass-mist{
+  opacity:.23;filter:sepia(.16) saturate(1.12)
+}
+body[data-phase="night"] .glass-mist{opacity:.16;filter:none}
+
+body[data-phase="sunrise"][data-env="cafe"] .env-a:after,
+body[data-phase="sunrise"][data-env="cafe"] .env-b:after,
+body[data-phase="golden"][data-env="cafe"] .env-a:after,
+body[data-phase="golden"][data-env="cafe"] .env-b:after{
+  opacity:.58
+}
+body[data-phase="day"][data-env="cafe"] .env-a:after,
+body[data-phase="day"][data-env="cafe"] .env-b:after{
+  opacity:.32
+}
+body[data-phase="night"][data-env="cafe"] .env-a:after,
+body[data-phase="night"][data-env="cafe"] .env-b:after,
+body[data-phase="dusk"][data-env="cafe"] .env-a:after,
+body[data-phase="dusk"][data-env="cafe"] .env-b:after{
+  opacity:1
+}
+
+.solar-phase-badge{
+  position:fixed;z-index:64;left:50%;top:max(18px,env(safe-area-inset-top));
+  transform:translate(-50%,-8px);display:none;align-items:center;gap:7px;
+  min-height:34px;padding:0 12px;border:1px solid rgba(220,239,248,.12);border-radius:999px;
+  background:rgba(4,13,19,.67);backdrop-filter:blur(13px);color:#7f9aa7;
+  opacity:0;transition:opacity .25s ease,transform .25s ease;
+  font:700 7px/1 "Manrope",sans-serif;letter-spacing:.09em
+}
+body.immersive .solar-phase-badge{display:flex;opacity:1;transform:translate(-50%,0)}
+.solar-phase-badge i{width:6px;height:6px;border-radius:50%;background:#a9d8eb;box-shadow:0 0 12px rgba(169,216,235,.42)}
+.solar-phase-badge b{color:#cde4ee;font-weight:700}
+body[data-phase="sunrise"] .solar-phase-badge i,body[data-phase="golden"] .solar-phase-badge i{
+  background:#ffd08b;box-shadow:0 0 14px rgba(255,184,102,.56)
+}
+body[data-phase="sunset"] .solar-phase-badge i{
+  background:#ffae78;box-shadow:0 0 14px rgba(255,127,90,.55)
+}
+body[data-phase="night"] .solar-phase-badge i{
+  background:#779cc2;box-shadow:0 0 14px rgba(99,143,190,.42)
+}
+body.focus-active .solar-phase-badge{opacity:0!important;pointer-events:none!important}
+
+@media(max-width:700px){
+  .solar-phase-badge{top:max(12px,env(safe-area-inset-top));font-size:6.5px}
+  .solar-phase-badge>span{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .city-tone,.solar-phase-badge{transition:none!important}
+}
