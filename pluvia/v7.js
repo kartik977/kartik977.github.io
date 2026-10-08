@@ -753,7 +753,7 @@
   function beginPassage(id){
     const c=cities[id], soul=citySoul[id]||citySoul.tokyo;
     passageCity.textContent=c.name.toUpperCase();
-    passageMeta.textContent=c.landmark+' · '+localTime(c.tz)+' local';
+    passageMeta.textContent=c.landmark+' · '+localTime(c.tz)+' · '+solarState(c).label.toUpperCase();
     cityPassage.style.setProperty('--passage-accent',soul.accent);
     cityPassage.style.setProperty('--passage-accent2',soul.accent2);
     cityPassage.classList.remove('reveal');
@@ -2244,7 +2244,7 @@
       const title=document.createElement('h3');
       title.textContent=place.name;
       const sub=document.createElement('small');
-      sub.textContent=[place.admin1,place.country,local+' local'].filter(Boolean).join(' · ');
+      sub.textContent=[place.admin1,place.country,local+' local',solarState(place).label].filter(Boolean).join(' · ');
       identity.append(micro,title,sub);
 
       const weatherBox=document.createElement('div');
@@ -2786,12 +2786,87 @@
     liveRainResizeRaf=requestAnimationFrame(()=>{if(liveRainResults.length)renderLiveRainWorld()});
   },{passive:true});
 
-  const phaseFor = tz => {
-    const parts = new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',hour12:false}).formatToParts(new Date());
-    let h = Number(parts.find(p=>p.type==='hour')?.value || 0); if(h===24) h=0;
-    return h>=5&&h<7?'dawn':h>=7&&h<17?'day':h>=17&&h<20?'dusk':'night';
+  // PLUVIA 10.3 — Real Solar Light
+  const toRad=value=>value*Math.PI/180;
+  const toDeg=value=>value*180/Math.PI;
+  const normalizeDegrees=value=>((value%360)+360)%360;
+  const normalizeSignedDegrees=value=>{
+    const normalized=normalizeDegrees(value);
+    return normalized>180?normalized-360:normalized;
   };
+
+  function solarPosition(city,date=new Date()){
+    const lat=Number(city?.lat),lon=Number(city?.lon);
+    if(!Number.isFinite(lat)||!Number.isFinite(lon))return {elevation:-18,hourAngle:180,azimuth:180};
+
+    const jd=date.getTime()/86400000+2440587.5;
+    const n=jd-2451545.0;
+    const meanLongitude=normalizeDegrees(280.460+0.9856474*n);
+    const meanAnomaly=normalizeDegrees(357.528+0.9856003*n);
+    const g=toRad(meanAnomaly);
+    const eclipticLongitude=normalizeDegrees(meanLongitude+1.915*Math.sin(g)+0.020*Math.sin(2*g));
+    const lambda=toRad(eclipticLongitude);
+    const obliquity=toRad(23.439-0.0000004*n);
+
+    const rightAscension=normalizeDegrees(toDeg(Math.atan2(Math.cos(obliquity)*Math.sin(lambda),Math.cos(lambda))));
+    const declination=Math.asin(Math.sin(obliquity)*Math.sin(lambda));
+    const gmst=normalizeDegrees(280.46061837+360.98564736629*n);
+    const hourAngle=normalizeSignedDegrees(gmst+lon-rightAscension);
+    const h=toRad(hourAngle);
+    const phi=toRad(lat);
+
+    const elevation=toDeg(Math.asin(
+      Math.sin(phi)*Math.sin(declination)+Math.cos(phi)*Math.cos(declination)*Math.cos(h)
+    ));
+
+    const azimuth=normalizeDegrees(toDeg(Math.atan2(
+      -Math.sin(h),
+      Math.tan(declination)*Math.cos(phi)-Math.sin(phi)*Math.cos(h)
+    )));
+
+    return {elevation,hourAngle,azimuth};
+  }
+
+  function solarState(city,date=new Date()){
+    const pos=solarPosition(city,date);
+    const morning=pos.hourAngle<0;
+    let phase,label;
+
+    if(pos.elevation<-12){
+      phase='night'; label='Night';
+    }else if(pos.elevation<-4){
+      phase=morning?'dawn':'dusk'; label=morning?'Dawn':'Dusk';
+    }else if(pos.elevation<4){
+      phase=morning?'sunrise':'sunset'; label=morning?'Sunrise':'Sunset';
+    }else if(pos.elevation<12){
+      phase='golden'; label='Golden hour';
+    }else{
+      phase='day'; label='Daylight';
+    }
+
+    // Map the sun's astronomical position to a subtle screen-space glow.
+    const sunX=Math.max(8,Math.min(92,50+pos.hourAngle/2.25));
+    const sunY=Math.max(8,Math.min(72,62-pos.elevation*.72));
+
+    return {...pos,phase,label,sunX,sunY,morning};
+  }
+
+  function applySolarLighting(city,date=new Date()){
+    const solar=solarState(city,date);
+    body.dataset.phase=solar.phase;
+    body.dataset.solar=solar.label.toLowerCase().replace(/\s+/g,'-');
+    document.documentElement.style.setProperty('--sun-x',solar.sunX.toFixed(1)+'%');
+    document.documentElement.style.setProperty('--sun-y',solar.sunY.toFixed(1)+'%');
+    document.documentElement.style.setProperty('--solar-elevation',solar.elevation.toFixed(2));
+    return solar;
+  }
+
+  const phaseFor = city => solarState(city).phase;
   const localTime = tz => new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true}).format(new Date());
+  const solarTimeLabel = city => {
+    const solar=applySolarLighting(city);
+    return localTime(city.tz)+' · '+solar.label.toUpperCase();
+  };
 
 
   // PLUVIA 7.4 — Atmosphere Memories
@@ -3115,7 +3190,7 @@
       viewLabel:currentView?.label||c.landmark,
       accent:soul.accent,
       accent2:soul.accent2,
-      phase:phaseFor(c.tz),
+      phase:phaseFor(c),
       capturedAt:now.toISOString()
     };
   }
@@ -3529,8 +3604,11 @@
   function buildRainStory(){
     const c=cities[active], soul=citySoul[active]||citySoul.tokyo;
     const time=localTime(c.tz);
-    const h=localHour(c.tz);
-    const timeMood=h<5?'deep night':h<8?'early morning':h<17?'daylight':h<21?'evening':'late night';
+    const solar=solarState(c);
+    const timeMood={
+      night:'deep night',dawn:'blue-hour dawn',sunrise:'sunrise',
+      day:'daylight',golden:'golden hour',sunset:'sunset',dusk:'blue-hour evening'
+    }[solar.phase]||'daylight';
     const rain=Number(weather?.rain||0);
     let signal;
     if(!weather) signal='The live weather signal is quiet for a moment.';
@@ -3779,8 +3857,8 @@
       photoLayers[1-activePhotoLayer].classList.remove('active-view');
 
       selectedCity.textContent=c.name;
-      selectedTime.textContent=localTime(c.tz)+' local';
-      body.dataset.phase=phaseFor(c.tz);
+      selectedTime.textContent=solarTimeLabel(c);
+      updateSolarPhaseBadge();
       if(weather){
         selectedTemp.textContent=Math.round(Number(weather.temp))+'°';
         selectedCondition.textContent=weatherText(Number(weather.code));
@@ -3827,8 +3905,8 @@
       weather=liveWeather?{...liveWeather}:null;
       applyWeatherAtmosphere(weather);
       selectedCity.textContent=c.name;
-      selectedTime.textContent=localTime(c.tz)+' local';
-      body.dataset.phase=phaseFor(c.tz);
+      selectedTime.textContent=solarTimeLabel(c);
+      updateSolarPhaseBadge();
       chooseTrack();
       fetchWeather(id);
       if(enter){enterImmersive();earnStamp(id);}
@@ -3859,8 +3937,23 @@
     }
   });
 
+  const solarPhaseBadge=document.createElement('div');
+  solarPhaseBadge.className='solar-phase-badge';
+  solarPhaseBadge.setAttribute('aria-live','polite');
+  solarPhaseBadge.innerHTML='<i></i><span>REAL SOLAR LIGHT</span><b id="solarPhaseBadgeText">SYNCING</b>';
+  document.body.appendChild(solarPhaseBadge);
+  const solarPhaseBadgeText=$('#solarPhaseBadgeText');
+
+  function updateSolarPhaseBadge(){
+    const c=cities[active];
+    if(!c)return;
+    const solar=applySolarLighting(c);
+    solarPhaseBadgeText.textContent=solar.label.toUpperCase()+' · '+localTime(c.tz);
+  }
+
   function enterImmersive(){
     body.classList.add('immersive');
+    updateSolarPhaseBadge();
     resetGlassFog();
     recordExperience(active);
     if(pendingPersonalRoom)setTimeout(()=>finishPersonalRoomRestore(),520);
@@ -4453,7 +4546,7 @@
   body.addEventListener('pointerdown',e=>{
     if(transitioning) return;
     if(!body.classList.contains('immersive')) return;
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,.solar-phase-badge,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')) return;
     pointerStart={x:e.clientX,y:e.clientY,t:performance.now()};
     holdShown=false;
     if(focusSession) return;
@@ -4461,7 +4554,7 @@
       holdShown=true;
       const c=cities[active];
       $('#infoTitle').textContent=c.name+' · '+c.landmark;
-      $('#infoMeta').textContent=(weather?Math.round(weather.temp)+'° · '+weatherText(weather.code)+' · '+Number(weather.rain).toFixed(1)+' mm rain':'Live weather')+' · '+localTime(c.tz);
+      $('#infoMeta').textContent=(weather?Math.round(weather.temp)+'° · '+weatherText(weather.code)+' · '+Number(weather.rain).toFixed(1)+' mm rain':'Live weather')+' · '+localTime(c.tz)+' · '+solarState(c).label;
       $('#infoTrack').textContent=currentTrack?currentTrack[0]+' — '+currentTrack[1]:'City rain radio';
       infoCard.classList.add('show');
       setTimeout(()=>infoCard.classList.remove('show'),4200);
@@ -4476,7 +4569,7 @@
   body.addEventListener('pointerup',e=>{
     if(!body.classList.contains('immersive')||!pointerStart)return;
     clearTimeout(holdTimer);
-    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
+    if(e.target.closest('#musicBtn,#soundPanel,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,.solar-phase-badge,#saveRoomImmersiveBtn,.memory-preview,.memory-gallery,.memory-scrim,#focusImmersiveBtn,.focus-panel,.focus-scrim,.focus-hud')){pointerStart=null;return}
     const dx=e.clientX-pointerStart.x,dy=e.clientY-pointerStart.y;
     const dist=Math.hypot(dx,dy);
     if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.3){
@@ -4513,7 +4606,7 @@
   });
 
   document.addEventListener('click',e=>{
-    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,#saveRoomImmersiveBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
+    if(body.classList.contains('immersive')&&!e.target.closest('#musicBtn,#soundPanel,.memory-preview,.memory-gallery,#captureMemoryBtn,#shareExperienceBtn,.share-experience-toast,.rain-event-toast,.storm-chaser-hud,.rain-journey-hud,.rain-journey-toast,.solar-phase-badge,#saveRoomImmersiveBtn,#focusImmersiveBtn,.focus-panel,.focus-hud')) soundPanel.classList.remove('open');
   });
 
   // Lightweight rain: single 30 FPS canvas, ~40 drops on mobile / ~65 desktop.
@@ -4569,11 +4662,12 @@
   window.addEventListener('resize',resizeRain,{passive:true});
   resizeRain();requestAnimationFrame(draw);
 
-  // Keep local time phase fresh without additional observers.
+  // Keep local solar lighting and local time fresh.
   setInterval(()=>{
     const c=cities[active];
-    body.dataset.phase=phaseFor(c.tz);
-    selectedTime.textContent=localTime(c.tz)+' local';
+    if(!c)return;
+    selectedTime.textContent=solarTimeLabel(c);
+    if(body.classList.contains('immersive'))updateSolarPhaseBadge();
   },60000);
 
   restorePersonalRoomRequest()
