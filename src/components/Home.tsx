@@ -25,7 +25,8 @@ import {
 import SystemArchitecture from './SystemArchitecture';
 import { RuntimeView } from './RuntimeViewSelector';
 
-const portrait = "/WhatsApp%20Image%202025-08-07%20at%2010.48.20%20AM.jpeg";
+const portrait = "/assets/kartik-runtime-3d.webp";
+const fallbackPortrait = "/WhatsApp%20Image%202025-08-07%20at%2010.48.20%20AM.jpeg";
 
 type HomeProps = {
   runtimeView: RuntimeView;
@@ -139,10 +140,16 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
   const px = useSpring(pointerX, { stiffness: 80, damping: 22, mass: 0.5 });
   const py = useSpring(pointerY, { stiffness: 80, damping: 22, mass: 0.5 });
 
-  const portraitX = useTransform(px, [-1, 1], reduced ? [0, 0] : [-18, 18]);
-  const portraitY = useTransform(py, [-1, 1], reduced ? [0, 0] : [-10, 10]);
-  const chipX = useTransform(px, [-1, 1], reduced ? [0, 0] : [16, -16]);
-  const chipY = useTransform(py, [-1, 1], reduced ? [0, 0] : [10, -10]);
+  const portraitX = useTransform(px, [-1, 1], reduced ? [0, 0] : [-22, 22]);
+  const portraitY = useTransform(py, [-1, 1], reduced ? [0, 0] : [-12, 12]);
+  const portraitRotateY = useTransform(px, [-1, 1], reduced ? [0, 0] : [-5, 5]);
+  const portraitRotateX = useTransform(py, [-1, 1], reduced ? [0, 0] : [4, -4]);
+  const chipX = useTransform(px, [-1, 1], reduced ? [0, 0] : [18, -18]);
+  const chipY = useTransform(py, [-1, 1], reduced ? [0, 0] : [11, -11]);
+  const chipDeepX = useTransform(px, [-1, 1], reduced ? [0, 0] : [30, -30]);
+  const chipDeepY = useTransform(py, [-1, 1], reduced ? [0, 0] : [18, -18]);
+  const chipNearX = useTransform(px, [-1, 1], reduced ? [0, 0] : [10, -10]);
+  const chipNearY = useTransform(py, [-1, 1], reduced ? [0, 0] : [6, -6]);
 
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroFade = useTransform(scrollYProgress, [0, 0.82], [1, 0]);
@@ -174,10 +181,19 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
 
         <motion.div
           className="runtime-billboard-portrait"
-          style={{ x: portraitX, y: portraitY, scale: heroImageScale, opacity: heroFade }}
+          style={{ x: portraitX, y: portraitY, rotateY: portraitRotateY, rotateX: portraitRotateX, scale: heroImageScale, opacity: heroFade, transformPerspective: 1200 }}
           aria-hidden="true"
         >
-          <img src={portrait} alt="" />
+          <div className="runtime-billboard-portrait-halo" aria-hidden="true" />
+          <div className="runtime-billboard-portrait-ring" aria-hidden="true" />
+          <img
+            src={portrait}
+            alt=""
+            onError={(event) => {
+              event.currentTarget.onerror = null;
+              event.currentTarget.src = fallbackPortrait;
+            }}
+          />
         </motion.div>
 
         <motion.div className="runtime-billboard-copy" style={{ y: heroTextY, opacity: heroFade }}>
@@ -262,12 +278,12 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
           <strong>~72 ms</strong>
           <span>core API response</span>
         </motion.div>
-        <motion.div className="runtime-floating-proof runtime-proof-two" style={{ x: chipX, y: chipY }}>
+        <motion.div className="runtime-floating-proof runtime-proof-two" style={{ x: chipDeepX, y: chipDeepY }}>
           <ShieldCheck size={15} />
           <strong>100+</strong>
           <span>security fixes</span>
         </motion.div>
-        <motion.div className="runtime-floating-proof runtime-proof-three" style={{ x: chipX, y: chipY }}>
+        <motion.div className="runtime-floating-proof runtime-proof-three" style={{ x: chipNearX, y: chipNearY }}>
           <Gauge size={15} />
           <strong>35%</strong>
           <span>faster detection</span>
