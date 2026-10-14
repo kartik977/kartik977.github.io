@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - portfolio-motion-v2
+      - kartik-runtime-series
   workflow_dispatch:
 
 jobs:
