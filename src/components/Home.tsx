@@ -25,7 +25,7 @@ import {
 import SystemArchitecture from './SystemArchitecture';
 import { RuntimeView } from './RuntimeViewSelector';
 
-const portrait = "/assets/kartik-runtime-3d.webp";
+const portrait = "/assets/kartik-runtime-3d.png";
 const fallbackPortrait = "/WhatsApp%20Image%202025-08-07%20at%2010.48.20%20AM.jpeg";
 
 type HomeProps = {
