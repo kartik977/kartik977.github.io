@@ -1,142 +1,240 @@
-import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   Bot,
   Cloud,
   Code2,
   Database,
   Eye,
-  Layers3,
-  Network,
+  ShieldCheck,
   TestTube2
 } from 'lucide-react';
 
-const skillCategories = [
+type Skill = {
+  name: string;
+  mono: string;
+  evidence: string[];
+  note?: string;
+};
+
+type Category = {
+  id: string;
+  title: string;
+  subtitle: string;
+  icon: React.ElementType;
+  hue: string;
+  skills: Skill[];
+};
+
+const categories: Category[] = [
   {
-    title: 'Languages',
+    id: 'backend',
+    title: 'Backend Core',
+    subtitle: 'APIs, services and distributed application logic',
     icon: Code2,
-    skills: ['Java', 'TypeScript', 'JavaScript', 'Python', 'SQL']
+    hue: '#fb7185',
+    skills: [
+      { name: 'Java', mono: 'J', evidence: ['Capital One debit-card APIs', 'Spring Boot services', 'production backend delivery'], note: 'core' },
+      { name: 'Spring Boot', mono: 'SB', evidence: ['banking APIs', 'service integrations', 'Grocery Ordering backend'], note: 'core' },
+      { name: 'TypeScript', mono: 'TS', evidence: ['Node/NestJS services', 'Java-to-TypeScript modernization', 'AI Job Hunter'] },
+      { name: 'Node.js', mono: 'N', evidence: ['backend services', 'API development', 'AI Image Generator'] },
+      { name: 'REST APIs', mono: 'API', evidence: ['card servicing endpoints', 'payment integrations', 'project backends'] },
+      { name: 'GraphQL', mono: 'GQL', evidence: ['service integration work', 'backend API delivery'] },
+      { name: 'Microservices', mono: 'µS', evidence: ['distributed banking services', 'production integrations', 'service ownership'] }
+    ]
   },
   {
-    title: 'Frameworks & APIs',
-    icon: Network,
-    skills: ['Spring Boot', 'Node.js', 'NestJS', 'Express.js', 'REST APIs', 'GraphQL', 'React.js', 'Next.js', 'Flask', 'Microservices']
-  },
-  {
-    title: 'Cloud & DevOps',
+    id: 'cloud',
+    title: 'Cloud Delivery',
+    subtitle: 'Ship, automate and operate workloads on AWS',
     icon: Cloud,
-    skills: ['AWS Lambda', 'AWS CloudFormation', 'Docker', 'Kubernetes', 'Jenkins', 'GitHub Actions', 'CI/CD']
+    hue: '#38bdf8',
+    skills: [
+      { name: 'AWS Lambda', mono: 'λ', evidence: ['serverless service delivery', 'production workloads'], note: 'AWS' },
+      { name: 'API Gateway', mono: 'GW', evidence: ['API exposure', 'AWS service integration'] },
+      { name: 'CloudFormation', mono: 'CF', evidence: ['infrastructure delivery', 'repeatable environment setup'] },
+      { name: 'Docker', mono: 'D', evidence: ['containerized delivery', 'development workflows'] },
+      { name: 'Kubernetes', mono: 'K8s', evidence: ['container orchestration exposure', 'cloud-native stack'] },
+      { name: 'Jenkins', mono: 'JNK', evidence: ['CI/CD pipelines', 'deployment automation'] },
+      { name: 'GitHub Actions', mono: 'GH', evidence: ['portfolio deployment', 'automated validation', 'project CI'] }
+    ]
   },
   {
-    title: 'Databases & Messaging',
+    id: 'data',
+    title: 'Data & Messaging',
+    subtitle: 'Persistence, event flow and service data',
     icon: Database,
-    skills: ['Cassandra', 'PostgreSQL', 'MySQL', 'MongoDB', 'SQL Server', 'Oracle', 'Apache Kafka']
+    hue: '#a78bfa',
+    skills: [
+      { name: 'Cassandra', mono: 'C', evidence: ['enterprise backend stack', 'distributed data workloads'] },
+      { name: 'PostgreSQL', mono: 'PG', evidence: ['AI Job Hunter data model', 'application persistence'] },
+      { name: 'MySQL', mono: 'MY', evidence: ['relational application data', 'backend development'] },
+      { name: 'MongoDB', mono: 'MDB', evidence: ['document data experience', 'application development'] },
+      { name: 'Oracle', mono: 'ORA', evidence: ['enterprise database exposure'] },
+      { name: 'Kafka', mono: 'K', evidence: ['event-driven systems', 'distributed messaging experience'] }
+    ]
   },
   {
-    title: 'Testing & Observability',
+    id: 'quality',
+    title: 'Quality & Performance',
+    subtitle: 'Test behavior, throughput and release confidence',
     icon: TestTube2,
-    skills: ['JUnit', 'Rest Assured', 'Karate BDD', 'JMeter', 'k6', 'New Relic', 'Postman']
+    hue: '#34d399',
+    skills: [
+      { name: 'JUnit', mono: 'JU', evidence: ['Java unit testing', 'service validation'] },
+      { name: 'REST Assured', mono: 'RA', evidence: ['API automation', 'backend regression coverage'], note: '+40%' },
+      { name: 'Karate BDD', mono: 'KB', evidence: ['API behavior testing', 'automated scenarios'] },
+      { name: 'JMeter', mono: 'JM', evidence: ['performance testing', 'latency validation'] },
+      { name: 'k6', mono: 'k6', evidence: ['load testing', 'service performance checks'] },
+      { name: 'Postman', mono: 'PM', evidence: ['API validation', 'integration testing'] }
+    ]
   },
   {
-    title: 'AI & Developer Tools',
+    id: 'ops',
+    title: 'Observe & Secure',
+    subtitle: 'Production visibility, triage and remediation',
+    icon: ShieldCheck,
+    hue: '#f59e0b',
+    skills: [
+      { name: 'New Relic', mono: 'NR', evidence: ['production monitoring', '35% faster incident detection'], note: '35%' },
+      { name: 'CloudWatch', mono: 'CW', evidence: ['AWS logs and metrics', 'runtime monitoring'] },
+      { name: 'Splunk', mono: 'SP', evidence: ['production log analysis', 'incident investigation'] },
+      { name: 'AWS IAM', mono: 'IAM', evidence: ['access configuration', 'cloud security controls'] },
+      { name: 'Security Remediation', mono: 'SEC', evidence: ['100+ vulnerabilities remediated', 'estimated 400+ hours saved'], note: '100+' }
+    ]
+  },
+  {
+    id: 'ai',
+    title: 'AI Tooling',
+    subtitle: 'Developer acceleration and product intelligence',
     icon: Bot,
-    skills: ['Claude Code', 'Claude Skills', 'GitHub Copilot', 'OpenAI API', 'Prompt Engineering', 'Agentic AI Workflows']
+    hue: '#f472b6',
+    skills: [
+      { name: 'Claude Code', mono: 'CC', evidence: ['custom security remediation skill', 'developer workflows'], note: 'AI' },
+      { name: 'Claude Skills', mono: 'CS', evidence: ['VulnHunter-Fix workflow', 'repeatable AI tooling'] },
+      { name: 'GitHub Copilot', mono: 'CP', evidence: ['developer assistance', 'coding workflows'] },
+      { name: 'OpenAI API', mono: 'AI', evidence: ['AI Image Generator', 'AI Job Hunter provider support'] },
+      { name: 'Prompt Engineering', mono: 'PE', evidence: ['AI-assisted development', 'tool orchestration'] },
+      { name: 'Agentic Workflows', mono: 'AG', evidence: ['developer automation', 'AI-assisted engineering workflows'] }
+    ]
   }
 ];
 
-const coreStack = ['Java', 'Spring Boot', 'Node.js', 'TypeScript', 'AWS', 'GraphQL', 'REST APIs', 'New Relic'];
-
 const Skills: React.FC = () => {
-  const prefersReducedMotion = useReducedMotion();
+  const [activeCategory, setActiveCategory] = useState(0);
+  const [activeSkill, setActiveSkill] = useState<string | null>(null);
+  const category = categories[activeCategory];
 
   return (
-    <section className="portfolio-page min-h-screen">
-      <div className="page-grid absolute inset-0" aria-hidden="true" />
+    <section className="runtime-skills-page">
+      <div className="runtime-skills-hero">
+        <p>CAPABILITY GENRES</p>
+        <h1>My skill universe.</h1>
+        <span>Don’t measure the bar. Follow the evidence.</span>
+      </div>
 
-      <div className="container relative z-10 mx-auto px-4 py-20 sm:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mb-14 max-w-3xl text-center"
-        >
-          <div className="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border border-cyan-400/15 bg-cyan-400/[0.05] px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
-            <Layers3 size={14} />
-            Technical stack
-          </div>
-          <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-            Backend depth,
-            <span className="block text-slate-400">cloud delivery and AI tooling.</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-400 sm:text-lg">
-            The stack from my current resume, organized around how I actually build, ship, test and operate software.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.12 }}
-          className="mx-auto mb-8 flex max-w-5xl flex-wrap justify-center gap-2 rounded-2xl border border-white/[0.065] bg-white/[0.02] p-4 backdrop-blur-xl"
-        >
-          {coreStack.map((skill, index) => (
-            <motion.span
-              key={skill}
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.16 + index * 0.035 }}
-              className="rounded-xl border border-cyan-300/10 bg-cyan-300/[0.04] px-3 py-2 text-xs font-semibold text-cyan-100"
-            >
-              {skill}
-            </motion.span>
-          ))}
-        </motion.div>
-
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {skillCategories.map((category, index) => {
-            const Icon = category.icon;
+      <div className="runtime-skills-layout">
+        <div className="runtime-skill-tabs" role="tablist" aria-label="Skill categories">
+          {categories.map((item, index) => {
+            const Icon = item.icon;
+            const active = index === activeCategory;
             return (
-              <motion.article
-                key={category.title}
-                initial={{ opacity: 0, y: 25 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : 0.55,
-                  delay: prefersReducedMotion ? 0 : (index % 3) * 0.05
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => {
+                  setActiveCategory(index);
+                  setActiveSkill(null);
                 }}
-                whileHover={prefersReducedMotion ? undefined : { y: -5 }}
-                className="group rounded-[1.6rem] border border-white/[0.07] bg-slate-950/42 p-5 backdrop-blur-xl transition-colors duration-300 hover:border-cyan-300/15 sm:p-6"
+                className={active ? 'runtime-skill-tab runtime-skill-tab-active' : 'runtime-skill-tab'}
+                style={{ '--skill-hue': item.hue } as React.CSSProperties}
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/[0.075] bg-white/[0.035] text-cyan-300 transition group-hover:bg-cyan-300/[0.055]">
-                  <Icon size={20} />
-                </div>
-                <h2 className="mt-5 text-lg font-semibold text-white">{category.title}</h2>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {category.skills.map((skill) => (
-                    <span key={skill} className="rounded-lg border border-white/[0.055] bg-white/[0.02] px-2.5 py-1.5 text-[11px] font-medium text-slate-400 transition-colors duration-300 group-hover:text-slate-300">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </motion.article>
+                {active && <motion.span layoutId="runtime-skill-active" className="runtime-skill-tab-bg" />}
+                <span className="runtime-skill-tab-icon"><Icon size={17} /></span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <small>{item.skills.length} skills · {item.subtitle}</small>
+                </span>
+              </button>
             );
           })}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mx-auto mt-10 flex max-w-4xl items-start gap-4 rounded-2xl border border-violet-400/10 bg-violet-400/[0.03] p-5"
-        >
-          <Eye size={18} className="mt-1 shrink-0 text-violet-300" />
-          <p className="text-sm leading-6 text-slate-400">
-            The portfolio intentionally avoids percentage-style skill bars. The stronger signal is where each technology appears in real work:
-            APIs, migrations, deployments, testing, observability, security remediation and production support.
-          </p>
-        </motion.div>
+        <div className="runtime-skill-stage">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, y: 16, filter: 'blur(7px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className="runtime-skill-stage-heading">
+                <div>
+                  <p style={{ color: category.hue }}>{category.title}</p>
+                  <h2>{category.subtitle}</h2>
+                </div>
+                <span>Hover or tap a skill</span>
+              </div>
+
+              <div className="runtime-skill-grid">
+                {category.skills.map((skill, index) => {
+                  const open = activeSkill === skill.name;
+                  return (
+                    <motion.button
+                      key={skill.name}
+                      type="button"
+                      className={open ? 'runtime-skill-card runtime-skill-card-open' : 'runtime-skill-card'}
+                      style={{ '--skill-hue': category.hue } as React.CSSProperties}
+                      onMouseEnter={() => setActiveSkill(skill.name)}
+                      onMouseLeave={() => setActiveSkill(null)}
+                      onClick={() => setActiveSkill(open ? null : skill.name)}
+                      initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: index * 0.035, duration: 0.42 }}
+                      whileHover={{ y: -6 }}
+                    >
+                      <span className="runtime-skill-mono">{skill.mono}</span>
+                      <span className="runtime-skill-name">
+                        {skill.name}
+                        {skill.note && <em>{skill.note}</em>}
+                      </span>
+                      <AnimatePresence initial={false}>
+                        {open && (
+                          <motion.span
+                            className="runtime-skill-evidence"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                          >
+                            {skill.evidence.map((item) => (
+                              <span key={item}>• {item}</span>
+                            ))}
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
+
+      <motion.div
+        className="runtime-skill-note"
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        <Eye size={18} />
+        <p>
+          Every item here is tied to work already represented elsewhere in the portfolio. The goal is to show context and evidence rather than invent a proficiency percentage.
+        </p>
+      </motion.div>
     </section>
   );
 };
