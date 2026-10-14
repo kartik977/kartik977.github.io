@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Bot,
   Boxes,
-  Code2,
   Download,
   Gauge,
   Layers3,
