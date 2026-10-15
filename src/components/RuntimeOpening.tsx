@@ -80,7 +80,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
           animate={beat >= 2 ? { opacity: 1, letterSpacing: '0.48em', y: beat >= 3 ? '-21vh' : 0 } : {}}
           transition={{ duration: 0.95, delay: 0.15 }}
         >
-          THE RUNTIME
+          BACKEND ENGINEER
         </motion.p>
       </div>
 
@@ -100,7 +100,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
           transition={{ duration: 0.55 }}
         >
           <Play size={16} fill="currentColor" />
-          ENTER RUNTIME
+          ENTER PORTFOLIO
         </motion.button>
       </motion.div>
 
