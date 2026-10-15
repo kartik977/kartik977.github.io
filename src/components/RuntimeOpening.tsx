@@ -53,7 +53,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         animate={beat >= 1 ? { opacity: beat === 1 ? 1 : 0, letterSpacing: '0.55em' } : {}}
         transition={{ duration: 0.8 }}
       >
-        A PRODUCTION ENGINEERING ORIGINAL
+        BACKEND ENGINEERING • CLOUD • AI
       </motion.p>
 
       <motion.div
@@ -100,7 +100,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
           transition={{ duration: 0.55 }}
         >
           <Play size={16} fill="currentColor" />
-          ENTER PORTFOLIO
+          VIEW PORTFOLIO
         </motion.button>
       </motion.div>
 
