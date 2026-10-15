@@ -128,9 +128,9 @@ const Skills: React.FC = () => {
   return (
     <section className="runtime-skills-page">
       <div className="runtime-skills-hero">
-        <p>CAPABILITY GENRES</p>
-        <h1>My skill universe.</h1>
-        <span>Don’t measure the bar. Follow the evidence.</span>
+        <p>SKILLS & TOOLS</p>
+        <h1>Engineering toolkit.</h1>
+        <span>Explore the technologies behind my production work.</span>
       </div>
 
       <div className="runtime-skills-layout">
