@@ -2627,7 +2627,7 @@ body {
 
 @media (max-width: 640px) {
   .runtime-project-image-shell {
-    inset-bottom: 36%;
+    inset: 0 0 36%;
   }
 
   .runtime-project-image {
