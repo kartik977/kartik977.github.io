@@ -22,11 +22,11 @@ const Navbar: React.FC = () => {
 
   const navItems = [
     { name: 'Home', path: '/' },
-    { name: 'Story', path: '/about' },
-    { name: 'Seasons', path: '/experience' },
-    { name: 'Originals', path: '/projects' },
+    { name: 'About', path: '/about' },
+    { name: 'Experience', path: '/experience' },
+    { name: 'Projects', path: '/projects' },
     { name: 'Lab', path: '/lab' },
-    { name: 'Genres', path: '/skills' },
+    { name: 'Skills', path: '/skills' },
     { name: 'Contact', path: '/contact' }
   ];
 
@@ -101,7 +101,7 @@ const Navbar: React.FC = () => {
               <Link key={item.path} to={item.path}>{item.name}</Link>
             ))}
             <button type="button" onClick={() => window.dispatchEvent(new Event('portfolio:choose-view'))}>
-              Change viewer mode
+              Change view
             </button>
           </motion.div>
         )}
