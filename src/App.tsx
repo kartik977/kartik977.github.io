@@ -113,7 +113,9 @@ const RuntimeApp: React.FC = () => {
   const location = useLocation();
   const stored = readStoredView();
   const [runtimeView, setRuntimeView] = useState<RuntimeView>(stored ?? 'full');
-  const [stage, setStage] = useState<'opening' | 'viewer' | 'home'>('home');
+  const [stage, setStage] = useState<'opening' | 'viewer' | 'home'>(() =>
+    window.location.pathname === '/' ? 'opening' : 'home'
+  );
 
   useEffect(() => {
     const openViewer = () => setStage('viewer');
