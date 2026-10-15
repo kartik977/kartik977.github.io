@@ -1797,7 +1797,7 @@ body {
     linear-gradient(155deg, #07130f, #0b1412);
 }
 
-.runtime-project-image {
+.runtime-project-imagegen {
   background:
     radial-gradient(circle at 26% 22%, rgba(217,70,239,.34), transparent 30%),
     radial-gradient(circle at 78% 56%, rgba(244,63,94,.2), transparent 34%),
@@ -2632,5 +2632,41 @@ body {
 
   .runtime-project-image {
     object-position: center 14%;
+  }
+}
+
+
+/* Featured project card layout correction */
+.runtime-project-card {
+  min-height: 540px;
+  padding-top: 0;
+}
+
+.runtime-project-image-shell {
+  inset: 0 0 auto;
+  height: 64%;
+}
+
+.runtime-project-copy {
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+.runtime-project-copy h3 {
+  line-height: 1.05;
+}
+
+.runtime-project-open {
+  padding-bottom: .05rem;
+}
+
+@media (max-width: 640px) {
+  .runtime-project-card {
+    min-height: 500px;
+  }
+
+  .runtime-project-image-shell {
+    height: 61%;
+    inset: 0 0 auto;
   }
 }
