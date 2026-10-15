@@ -113,10 +113,7 @@ const RuntimeApp: React.FC = () => {
   const location = useLocation();
   const stored = readStoredView();
   const [runtimeView, setRuntimeView] = useState<RuntimeView>(stored ?? 'full');
-  const [stage, setStage] = useState<'opening' | 'viewer' | 'home'>(() => {
-    if (window.location.pathname !== '/') return 'home';
-    return stored ? 'home' : 'opening';
-  });
+  const [stage, setStage] = useState<'opening' | 'viewer' | 'home'>('home');
 
   useEffect(() => {
     const openViewer = () => setStage('viewer');
@@ -170,7 +167,7 @@ const RuntimeApp: React.FC = () => {
 
       <AnimatePresence>
         {stage === 'opening' && (
-          <RuntimeOpening key="runtime-opening" onDone={() => setStage('viewer')} />
+          <RuntimeOpening key="runtime-opening" onDone={() => setStage('home')} />
         )}
         {stage === 'viewer' && (
           <RuntimeViewSelector key="runtime-viewer" onPick={pickView} />
