@@ -34,7 +34,7 @@ const views: Array<{
   },
   {
     id: 'full',
-    name: 'Full Runtime',
+    name: 'Full Portfolio',
     blurb: 'The complete portfolio in its intended order.',
     icon: Layers3,
     accent: '#34d399'
@@ -59,7 +59,7 @@ const RuntimeViewSelector: React.FC<{ onPick: (view: RuntimeView) => void }> = (
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.7 }}
       >
-        <p>KARTIK / RUNTIME</p>
+        <p>KARTIK KATARIA</p>
         <h2>Choose your view</h2>
         <span>Same experience. Different signal first.</span>
       </motion.div>
