@@ -104,7 +104,8 @@ const projects = [
     copy: 'Resume parsing, ATS scoring, AI-assisted optimization and job tracking.',
     stack: 'Next.js · TypeScript · Supabase',
     path: '/projects/ai-job-hunter',
-    accent: 'runtime-project-ai'
+    accent: 'runtime-project-ai',
+    image: '/assets/ai-jobhunter.png'
   },
   {
     title: 'Grocery Ordering',
@@ -112,7 +113,8 @@ const projects = [
     copy: 'Full-stack commerce flow with auth, cart, checkout, orders and role-based access.',
     stack: 'Angular · Spring Boot · Java',
     path: '/projects/grocery-ordering',
-    accent: 'runtime-project-grocery'
+    accent: 'runtime-project-grocery',
+    image: '/assets/grocery.png'
   },
   {
     title: 'AI Image Generator',
@@ -120,7 +122,8 @@ const projects = [
     copy: 'Prompt-to-image workflow with a lightweight Express API and generated image delivery.',
     stack: 'Node.js · Express · OpenAI',
     path: '/projects/ai-image-generator',
-    accent: 'runtime-project-image'
+    accent: 'runtime-project-image',
+    image: '/assets/image-gen.png'
   }
 ];
 
@@ -386,10 +389,14 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
               <Link to={project.path} className={`runtime-project-card ${project.accent}`}>
                 <div className="runtime-project-no">0{index + 1}</div>
                 <div className="runtime-project-label">{project.label}</div>
-                <div className="runtime-project-art" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
+                <div className="runtime-project-image-shell">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="runtime-project-image"
+                    loading="lazy"
+                  />
+                  <div className="runtime-project-image-shade" aria-hidden="true" />
                 </div>
                 <div className="runtime-project-copy">
                   <h3>{project.title}</h3>
