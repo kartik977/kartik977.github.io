@@ -18,8 +18,8 @@ const Contact: React.FC = () => {
     {
       icon: Mail,
       title: 'Email',
-      value: 'kartikkataria0697@gmail.com',
-      link: 'mailto:kartikkataria0697@gmail.com'
+      value: 'kartik.kataria266@gmail.com',
+      link: 'mailto:kartik.kataria266@gmail.com'
     },
     {
       icon: Phone,
@@ -120,7 +120,7 @@ const Contact: React.FC = () => {
               <p className="mt-4 max-w-xl text-sm leading-7 text-slate-400">
                 Share the role, system or problem you&apos;re working on, and I&apos;ll have the context I need when we connect.
               </p>
-              <a href="mailto:kartikkataria0697@gmail.com" className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5">
+              <a href="mailto:kartik.kataria266@gmail.com" className="group mt-7 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition duration-300 hover:-translate-y-0.5">
                 Send an email
                 <ArrowUpRight size={17} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
