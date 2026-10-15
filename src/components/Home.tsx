@@ -46,7 +46,7 @@ const viewCopy: Record<RuntimeView, { label: string; line: string }> = {
     line: 'Case studies and shipped product work first.'
   },
   full: {
-    label: 'Full runtime',
+    label: 'Full portfolio',
     line: 'The complete portfolio experience.'
   }
 };
@@ -204,7 +204,7 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
             className="runtime-billboard-kicker"
           >
             <span className="runtime-live-dot" />
-            KARTIK / RUNTIME
+            KARTIK KATARIA
           </motion.div>
 
           <motion.h1
@@ -406,7 +406,7 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
       <section className="runtime-section runtime-architecture-feature">
         <div className="runtime-section-heading">
           <div>
-            <p>Inside the Runtime</p>
+            <p>Engineering in Action</p>
             <h2>Don’t just read the stack. Run a request through it.</h2>
           </div>
           <Link to="/lab">Open Engineering Lab <ArrowRight size={14} /></Link>
