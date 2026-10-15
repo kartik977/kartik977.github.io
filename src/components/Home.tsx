@@ -34,15 +34,15 @@ type HomeProps = {
 
 const viewCopy: Record<RuntimeView, { label: string; line: string }> = {
   recruiter: {
-    label: 'Recruiter cut',
+    label: 'Recruiter view',
     line: 'Impact, production experience and evidence first.'
   },
   engineer: {
-    label: 'Engineer cut',
+    label: 'Engineer view',
     line: 'Architecture, backend depth and production operations first.'
   },
   projects: {
-    label: 'Projects cut',
+    label: 'Projects view',
     line: 'Case studies and shipped product work first.'
   },
   full: {
@@ -55,7 +55,7 @@ const exploreItems = [
   {
     id: 'experience',
     title: 'Production Experience',
-    eyebrow: 'Season 01',
+    eyebrow: 'Experience',
     copy: 'Capital One, Verizon, APIs, cloud delivery and production support.',
     path: '/experience',
     icon: Workflow,
@@ -63,7 +63,7 @@ const exploreItems = [
   },
   {
     id: 'projects',
-    title: 'Production Originals',
+    title: 'Featured Projects',
     eyebrow: '3 case studies',
     copy: 'AI Job Hunter, Grocery Ordering and AI Image Generator.',
     path: '/projects',
@@ -81,7 +81,7 @@ const exploreItems = [
   },
   {
     id: 'skills',
-    title: 'Capability Genres',
+    title: 'Skills & Tools',
     eyebrow: 'Stack evidence',
     copy: 'See where each technology appears in real work.',
     path: '/skills',
@@ -100,7 +100,7 @@ const orderByView: Record<RuntimeView, string[]> = {
 const projects = [
   {
     title: 'AI Job Hunter',
-    label: 'Original 01',
+    label: 'Project 01',
     copy: 'Resume parsing, ATS scoring, AI-assisted optimization and job tracking.',
     stack: 'Next.js · TypeScript · Supabase',
     path: '/projects/ai-job-hunter',
@@ -108,7 +108,7 @@ const projects = [
   },
   {
     title: 'Grocery Ordering',
-    label: 'Original 02',
+    label: 'Project 02',
     copy: 'Full-stack commerce flow with auth, cart, checkout, orders and role-based access.',
     stack: 'Angular · Spring Boot · Java',
     path: '/projects/grocery-ordering',
@@ -116,7 +116,7 @@ const projects = [
   },
   {
     title: 'AI Image Generator',
-    label: 'Original 03',
+    label: 'Project 03',
     copy: 'Prompt-to-image workflow with a lightweight Express API and generated image delivery.',
     stack: 'Node.js · Express · OpenAI',
     path: '/projects/ai-image-generator',
@@ -262,7 +262,7 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
           >
             <Link to="/experience" className="runtime-primary-button">
               <Play size={16} fill="currentColor" />
-              Play career
+              View experience
             </Link>
             <Link to="/projects" className="runtime-secondary-button">
               <span>＋</span>
@@ -295,8 +295,8 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
       <section className="runtime-section">
         <div className="runtime-section-heading">
           <div>
-            <p>Continue Exploring</p>
-            <h2>Pick up where your role starts.</h2>
+            <p>Explore Portfolio</p>
+            <h2>Choose where you want to dive in.</h2>
           </div>
           <button type="button" onClick={() => window.dispatchEvent(new Event('portfolio:choose-view'))}>
             <Search size={14} />
@@ -342,8 +342,8 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
       <section className="runtime-section runtime-impact-section">
         <div className="runtime-section-heading">
           <div>
-            <p>Top Production Wins</p>
-            <h2>Impact you can scan in ten seconds.</h2>
+            <p>Engineering Impact</p>
+            <h2>Results backed by production work.</h2>
           </div>
         </div>
         <div className="runtime-impact-grid">
@@ -367,8 +367,8 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
       <section className="runtime-section runtime-originals">
         <div className="runtime-section-heading">
           <div>
-            <p>Production Originals</p>
-            <h2>Three builds. Three different engineering stories.</h2>
+            <p>Featured Projects</p>
+            <h2>Three projects. Three different engineering challenges.</h2>
           </div>
           <Link to="/projects">View all projects <ArrowRight size={14} /></Link>
         </div>
@@ -423,8 +423,8 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.75 }}
         >
-          <p>THE NEXT DEPLOYMENT</p>
-          <h2>Could be with your team.</h2>
+          <p>LET’S BUILD WHAT’S NEXT</p>
+          <h2>Ready for the next challenge.</h2>
           <span>Backend engineering · cloud delivery · production systems</span>
           <div>
             <Link to="/contact" className="runtime-primary-button">Let’s connect <ArrowRight size={15} /></Link>
