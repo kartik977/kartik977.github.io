@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
         <span>K</span>
         <div>
           <strong>KARTIK</strong>
-          <small>RUNTIME</small>
+          <small>PORTFOLIO</small>
         </div>
       </Link>
 
