@@ -122,7 +122,7 @@ const projects = [
     copy: 'Prompt-to-image workflow with a lightweight Express API and generated image delivery.',
     stack: 'Node.js · Express · OpenAI',
     path: '/projects/ai-image-generator',
-    accent: 'runtime-project-image',
+    accent: 'runtime-project-imagegen',
     image: '/assets/image-gen.png'
   }
 ];
