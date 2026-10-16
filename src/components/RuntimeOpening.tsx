@@ -69,7 +69,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         <motion.h1
           className="runtime-opening-name"
           initial={{ opacity: 0, scale: 1.18, filter: 'blur(16px)', letterSpacing: '0.35em' }}
-          animate={beat >= 2 ? { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.02em', y: beat >= 3 ? '-21vh' : 0 } : {}}
+          animate={beat >= 2 ? { opacity: 1, scale: 1, filter: 'blur(0px)', letterSpacing: '0.02em', y: beat >= 3 ? 'var(--opening-title-shift)' : 0 } : {}}
           transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
         >
           KARTIK
@@ -77,7 +77,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         <motion.p
           className="runtime-opening-series"
           initial={{ opacity: 0, letterSpacing: '0.9em' }}
-          animate={beat >= 2 ? { opacity: 1, letterSpacing: '0.48em', y: beat >= 3 ? '-21vh' : 0 } : {}}
+          animate={beat >= 2 ? { opacity: 1, letterSpacing: '0.48em', y: beat >= 3 ? 'var(--opening-title-shift)' : 0 } : {}}
           transition={{ duration: 0.95, delay: 0.15 }}
         >
           BACKEND ENGINEER
@@ -90,7 +90,7 @@ const RuntimeOpening: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         animate={beat >= 4 ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.75 }}
       >
-        <p>BACKEND SYSTEMS&nbsp;&nbsp;•&nbsp;&nbsp;CLOUD DELIVERY&nbsp;&nbsp;•&nbsp;&nbsp;AI TOOLING</p>
+        <p>BACKEND SYSTEMS • CLOUD DELIVERY • AI TOOLING</p>
         <motion.button
           type="button"
           onClick={onDone}
