@@ -766,6 +766,11 @@ body {
   color: var(--runtime-bone);
 }
 
+.runtime-opening {
+  --opening-title-shift: -21vh;
+  min-height: 100dvh;
+}
+
 .runtime-opening-glow,
 .runtime-viewer-glow {
   position: absolute;
@@ -803,12 +808,13 @@ body {
 
 .runtime-opening-portrait {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   bottom: -6vh;
   z-index: 2;
   width: min(56vw, 720px);
   height: 76vh;
-  transform: translateX(-50%);
+  margin-inline: auto;
 }
 
 .runtime-opening-portrait img {
@@ -2342,26 +2348,64 @@ body {
     display: none;
   }
 
+  .runtime-opening {
+    --opening-title-shift: -14dvh;
+  }
+
+  .runtime-opening-title-wrap {
+    padding-inline: 1rem;
+  }
+
   .runtime-opening-portrait {
-    width: 102vw;
-    height: 66vh;
+    left: 0;
+    right: 0;
+    bottom: 12dvh;
+    width: min(92vw, 430px);
+    height: 52dvh;
+    margin-inline: auto;
   }
 
   .runtime-opening-name {
-    font-size: clamp(4.4rem, 25vw, 7rem);
+    max-width: calc(100vw - 1.5rem);
+    font-size: clamp(3.4rem, 19vw, 4.9rem);
+    line-height: .84;
   }
 
   .runtime-opening-series {
-    font-size: .62rem;
+    margin-top: .65rem;
+    max-width: calc(100vw - 2rem);
+    font-size: .58rem;
+    line-height: 1.4;
   }
 
   .runtime-opening-bottom {
-    bottom: 5vh;
+    left: 1rem;
+    right: 1rem;
+    bottom: calc(max(1rem, env(safe-area-inset-bottom)) + .25rem);
+    width: auto;
+    transform: none;
+    gap: .85rem;
   }
 
   .runtime-opening-bottom p {
-    max-width: 320px;
-    line-height: 1.7;
+    max-width: 290px;
+    font-size: .56rem;
+    line-height: 1.55;
+    letter-spacing: .13em;
+    white-space: normal;
+  }
+
+  .runtime-play-button {
+    width: min(100%, 290px);
+    min-height: 48px;
+    padding-inline: 1rem;
+  }
+
+  .runtime-skip {
+    top: max(.9rem, env(safe-area-inset-top));
+    right: .85rem;
+    padding: .5rem .68rem;
+    font-size: .56rem;
   }
 
   .runtime-viewer {
