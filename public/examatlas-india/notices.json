@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T05:36:50Z",
+  "generatedAt": "2026-10-20T18:32:17Z",
   "about": "Best-effort discovery of links on official agency pages. First seen is not the publication date. Exam dates and registration windows are not inferred.",
   "sources": [
     {
@@ -9,7 +9,7 @@
       "category": "Civil services",
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T05:36:50Z",
+      "checkedAt": "2026-10-20T18:32:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "message": "Site is unavailable or blocks automated checks; use its official link."
@@ -20,7 +20,7 @@
       "category": "Central recruitment",
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-20T05:36:50Z",
+      "checkedAt": "2026-10-20T18:32:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "message": "No individual notices could be safely identified. Visit the official source."
@@ -31,7 +31,7 @@
       "category": "Banking",
       "url": "https://www.ibps.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T05:36:50Z",
+      "checkedAt": "2026-10-20T18:32:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "message": "Site is unavailable or blocks automated checks; use its official link."
@@ -42,7 +42,7 @@
       "category": "Railways",
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T05:36:50Z",
+      "checkedAt": "2026-10-20T18:32:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "message": "Site is unavailable or blocks automated checks; use its official link."
@@ -53,8 +53,8 @@
       "category": "National entrance",
       "url": "https://www.nta.ac.in/",
       "status": "ok",
-      "checkedAt": "2026-10-20T05:36:50Z",
-      "lastSuccessfulAt": "2026-10-20T05:36:50Z",
+      "checkedAt": "2026-10-20T18:32:17Z",
+      "lastSuccessfulAt": "2026-10-20T18:32:17Z",
       "count": 18
     },
     {
@@ -62,10 +62,11 @@
       "name": "SBI Careers",
       "category": "Banking",
       "url": "https://sbi.co.in/web/careers/current-openings",
-      "status": "ok",
-      "checkedAt": "2026-10-20T05:36:50Z",
+      "status": "limited",
+      "checkedAt": "2026-10-20T18:32:17Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
-      "count": 18
+      "count": 0,
+      "message": "No individual notices could be safely identified. Visit the official source."
     }
   ],
   "items": [
@@ -75,7 +76,7 @@
       "title": "Inviting Online Application Form for Rashtriya Military School Common Entrance Test (RMS CET) - 2026",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260924163325.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "f9ccf00d8ac08ebdad",
@@ -83,7 +84,7 @@
       "title": "Correction in Particulars of the Online Application Form of Rashtriya Indian Military College Entrance Examination (RIMCEE)",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261007203421.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "f57e6fc0742fedeb3f",
@@ -99,7 +100,7 @@
       "title": "Inviting Online Application for Joint CSIR UGC-NET December 2026",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261008083141.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "e07c1054331117f397",
@@ -107,7 +108,7 @@
       "title": "Issuance of Certificates for Joint CSIR-UGC NET June 2026, Examination.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260925215817.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "d635b2ec743afb66bf",
@@ -123,7 +124,7 @@
       "title": "Announcement of Date(s) for Study Webs of Active Learning for Young Aspiring Minds (SWAYAM) (July 2026 Semester) Exam-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917165604.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "d0d9051874ddc58cb3",
@@ -131,7 +132,7 @@
       "title": "Declaration of results of UGC-NET June 2026 Exam conducted on 09th and 10th September 2026 for English, Commerce and Sociology-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260918000302.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "cefe6b4bd29a156543",
@@ -147,7 +148,7 @@
       "title": "UGC-NET Exam June-2026, (3) Subjects Category Wise Cut off Marks",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917235839.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "c8a373327715ad13e8",
@@ -163,7 +164,7 @@
       "title": "EoI for Translation Reviewers and Corrigendum",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260915213027.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "c07b85833311224f01",
@@ -171,7 +172,7 @@
       "title": "Display of Final Answer Keys of UGC-NET June 2026 Exam conducted on 09th and 10th September 2026 for English, Commerce and Sociology – reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917231934.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "bba8906248af345a44",
@@ -179,7 +180,7 @@
       "title": "Public Notice regarding Issuance of e-Certificates for UGC-NET June 2026 Examination",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260924172919.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "b9c16c8f862112a04a",
@@ -195,7 +196,7 @@
       "title": "Vacancy Notification for Librarian - Administration",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261007204855.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "a1963f1a0fe3103443",
@@ -227,7 +228,7 @@
       "title": "Inviting Online Application Form for Study Webs of Active Learning for Young Aspiring Minds [SWAYAM-2026 (July Semester)] -reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261009123259.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "58be310ce8a903e7fd",
@@ -235,7 +236,7 @@
       "title": "EoI for Subject Matter Expert and Corrigendum",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260915212856.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "56d5465987345e2898",
@@ -283,7 +284,7 @@
       "title": "Publication of the Examination Calendar of the National Testing Agency (NTA) up to March 2027 - reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260916195948.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "1a64303371bcc83267",
@@ -291,7 +292,7 @@
       "title": "Opening of the online registration portal for submission of Online Application Form for UGC-NET December 2026 examination – reg",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261008212430.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "1841034b0346638da5",
@@ -323,7 +324,7 @@
       "title": "Inviting Online Applications for the National Institute of Fashion Technology Entrance Examination (NIFTEE)–2027 for Admissions to UG, PG, NLEA, Artisans and Ph.D. Programmes-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261016183525.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "0e7d25f4ed26567ea2",
@@ -339,7 +340,7 @@
       "title": "Declaration of the results of the National Initiative for Technical Teachers Training (NITTT) Examination held in July - August 2026-reg",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261005203634.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "0c9707ce830a7e5b3f",
@@ -347,7 +348,7 @@
       "title": "NOTICE INVITING QUOTATION (NIQ) FOR EMPANELMENT OF HOTELS IN THE VICINITY OF MINTO ROAD, NEW DELHI",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917131651.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z"
     },
     {
       "id": "03f6e49e6d45ac4d69",
