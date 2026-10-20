@@ -1,6 +1,6 @@
 # ExamAtlas India
 
-A responsive, zero-dependency static dashboard for central / all-India competitive examinations. This starter intentionally separates government job recruitment from national entrance/eligibility exams.
+A responsive static dashboard for central / all-India competitive examinations. This starter intentionally separates government job recruitment from national entrance/eligibility exams.
 
 ## Run locally
 
@@ -39,6 +39,23 @@ Independent informational project; not affiliated with UPSC, SSC, IBPS, NTA, IIM
 3. Wait for GitHub Pages to publish. Share the Pages URL; no API keys or server are needed.
 
 **Maintenance:** Re-check official notices frequently. The dashboard status badges update based on the current Indian date, but the underlying dates and links do not update until `data.js` is edited and republished.
-## GitHub Pages deployment
 
-This initial version is deployed as an independent static page under the portfolio repository’s `public/examatlas-india/` directory. The existing React build copies the folder unchanged into `gh-pages` on master pushes. Public URL: https://kartik977.github.io/examatlas-india/. Future standalone repository migration requires copying this directory to a new repository and enabling Pages there.
+## Phase 02 — official notice tracker (2026-10-20)
+
+`Official notices` is a new UI page. Six official sources are monitored: UPSC, SSC, IBPS, Railway Recruitment Board Chandigarh, NTA and SBI Careers. Each entry contains the agency, headline, original agency link, and **first-detected date** (not the notice's publication date). The website clearly displays scan health per source and never suggests a blocked site is current.
+
+### Automated updater
+
+- `scripts/sync_notices.py` fetches the official agencies, extracts candidate links, screens out other domains, records `firstSeenAt` and `lastSeenAt`, and retains past entries when a source is temporarily unavailable. Uses `beautifulsoup4` in GitHub Actions; no credentials or proprietary APIs.
+- `.github/workflows/examatlas-notices.yml` belongs in **the repository-wide `.github/workflows/`**, not inside the published static site folder. GitHub Actions refreshes `notices.json` twice a day, at 02:25 and 14:25 UTC, and supports manual runs. It triggers once at first publication of the workflow/script.
+- The watcher rebuilds the hosting portfolio and redeploys `gh-pages` after updating the JSON. This is needed because pushes made with a GitHub workflow token do not trigger other workflows.
+- It intentionally does **not** overwrite the manually verified dates or registration links in `data.js`. Those need individual validation against PDFs and subsequent approval.
+- Sources can be inaccessible, block bots, render data in JavaScript, or change HTML. The `sources[].status` value reflects whether individual notices could be extracted. Do not label this as complete real-time national exam coverage.
+
+### Local development
+
+`python -m pip install beautifulsoup4`
+`python -m unittest discover -s scripts -p "test_*.py"`
+`python scripts/sync_notices.py` (requires public internet access)
+
+Deploy the source files in this directory under `public/examatlas-india/` and the watcher workflow at repository root `.github/workflows/examatlas-notices.yml`.

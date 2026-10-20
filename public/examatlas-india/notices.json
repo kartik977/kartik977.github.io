@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": null,
+  "about": "Waiting for initial official-source scan. First seen is not the publication date. Dates and registration windows are not inferred.",
+  "sources": [
+    {
+      "id": "upsc",
+      "name": "UPSC",
+      "category": "Civil services",
+      "url": "https://www.upsc.gov.in/",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    },
+    {
+      "id": "ssc",
+      "name": "SSC",
+      "category": "Central recruitment",
+      "url": "https://ssc.gov.in/",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    },
+    {
+      "id": "ibps",
+      "name": "IBPS",
+      "category": "Banking",
+      "url": "https://www.ibps.in/",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    },
+    {
+      "id": "rrb",
+      "name": "RRB Chandigarh",
+      "category": "Railways",
+      "url": "https://www.rrbcdg.gov.in/",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    },
+    {
+      "id": "nta",
+      "name": "NTA",
+      "category": "National entrance",
+      "url": "https://www.nta.ac.in/",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    },
+    {
+      "id": "sbi",
+      "name": "SBI Careers",
+      "category": "Banking",
+      "url": "https://sbi.co.in/web/careers/current-openings",
+      "status": "pending",
+      "checkedAt": null,
+      "lastSuccessfulAt": null,
+      "count": 0
+    }
+  ],
+  "items": []
+}
