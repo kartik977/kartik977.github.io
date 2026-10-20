@@ -19,7 +19,21 @@
   try { saved = new Set(JSON.parse(localStorage.getItem(storeKey) || '[]')); } catch(e) { saved = new Set(); }
   const now = new Date();
   const state = {page:(location.hash.replace('#','') || 'overview'),query:'',track:'all',category:'all',status:'all',sort:'soonest',layout:'grid',calYear:Number(today.slice(0,4)),calMonth:Number(today.slice(5,7))-1,selectedDate:today};
-  const validPages=['overview','explore','calendar','saved','sources'];
+  const validPages=['overview','explore','calendar','notices','saved','sources'];
+  const noticeSources = [
+    ['upsc','UPSC','Civil services','https://www.upsc.gov.in/'],
+    ['ssc','SSC','Central recruitment','https://ssc.gov.in/'],
+    ['ibps','IBPS','Banking','https://www.ibps.in/'],
+    ['rrb','RRB Chandigarh','Railways','https://www.rrbcdg.gov.in/'],
+    ['nta','NTA','National entrance','https://www.nta.ac.in/'],
+    ['sbi','SBI Careers','Banking','https://sbi.co.in/web/careers/current-openings'],
+  ];
+  let noticeFeed={items:[],sources:noticeSources.map(([id,name,category,url])=>({id,name,category,url,status:'pending',checkedAt:null,lastSuccessfulAt:null})),generatedAt:null};
+  let noticeLoaded=false;
+  let noticeFailure=false;
+  let noticeSearch='';
+  let noticeAgency='all';
+  let noticesLoading=false;
   if(!validPages.includes(state.page)) state.page='overview';
   const officialOpen = (e) => e.registrationStart && e.registrationStart<=today && (e.lateRegistrationEnd||e.registrationEnd)>=today;
   const statusFor = (e) => {
@@ -39,11 +53,11 @@
   const futureCount = exams.filter(e=>e.examDates.some(d=>d>=today)).length;
   const quickNext = [...exams].filter(e=>nextExam(e) && nextExam(e)>=today).sort((a,b)=>nextExam(a).localeCompare(nextExam(b)));
   const nextDeadline = [...exams].filter(e=>officialOpen(e)).map(e=>({...e,deadline:e.registrationEnd>=today?e.registrationEnd:e.lateRegistrationEnd})).sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];
-  const nav = [ ['overview','grid','Overview'],['explore','search','Explore exams'],['calendar','calendar','Exam calendar'],['saved','bookmark','Saved exams'],['sources','shield','Official sources'] ];
+  const nav = [ ['overview','grid','Overview'],['explore','search','Explore exams'],['calendar','calendar','Exam calendar'],['notices','bell','Official notices'],['saved','bookmark','Saved exams'],['sources','shield','Official sources'] ];
   let toastTimer;
   function notify(message){const el=$('#toast');el.innerHTML=`${ico('check')} ${escapeHTML(message)}`;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3100);}
   function saveToggle(id){ if(saved.has(id))saved.delete(id);else saved.add(id);try{localStorage.setItem(storeKey,JSON.stringify([...saved]));}catch(e){}; renderPage();updateNav();notify(saved.has(id)?'Exam saved to your watchlist':'Removed from your watchlist'); }
-  function setPage(page){if(!validPages.includes(page))return;if(page==='saved'&&state.page!=='saved'){state.query='';state.track='all';state.category='all';state.status='all';}state.page=page;location.hash=page;updateNav();renderPage();window.scrollTo({top:0,behavior:'smooth'});}
+  function setPage(page){if(!validPages.includes(page))return;if(page==='notices')loadNotices();if(page==='saved'&&state.page!=='saved'){state.query='';state.track='all';state.category='all';state.status='all';}state.page=page;location.hash=page;updateNav();renderPage();window.scrollTo({top:0,behavior:'smooth'});}
   function shell(){
     return `<div class="site-shell">
     <aside class="sidebar">
@@ -53,7 +67,7 @@
       <div class="sidebar-label secondary-label">EXPLORE BY SCOPE</div>
       <button class="scope-link selected" data-page="explore">${ico('location')} Nationwide <span>V1</span></button>
       <div class="scope-link locked" title="State-level exams are planned for a later version">${ico('location')} State exams <span>SOON</span></div>
-      <div class="sidebar-bottom"><div class="sidebar-upgrade"><div class="upgrade-icon">${ico('sparkle')}</div><strong>More states. More exams.</strong><p>We're starting with India's biggest nationwide exams. State-level coverage is next.</p><span>PHASE 01 OF 02 ${ico('arrow')}</span></div><div class="made-in">Made for aspirants, across India <span>✳</span></div></div>
+      <div class="sidebar-bottom"><div class="sidebar-upgrade"><div class="upgrade-icon">${ico('sparkle')}</div><strong>More states. More exams.</strong><p>We're starting with India's biggest nationwide exams. State-level coverage is next.</p><span>PHASE 02 · NOTICE WATCHER ${ico('arrow')}</span></div><div class="made-in">Made for aspirants, across India <span>✳</span></div></div>
     </aside>
     <div class="main-side"><header class="topbar"><div class="breadcrumb">INDIA <span>/</span> NATIONAL EXAMS <span>/</span> <b id="breadcrumb-page">${state.page.toUpperCase()}</b></div><div class="topbar-right"><span class="ist-pill"><span class="pulse"></span> IST · ${pretty(today,{day:'numeric',month:'short',year:'numeric'})}</span><button class="topbar-save" type="button" data-page="saved" title="Saved exams">${ico('bookmark')}<span class="save-count-top">${saved.size}</span></button><div class="avatar" title="ExamAtlas India">EA</div></div></header><main class="content" id="page-view"></main><footer class="footer"><span>© 2026 ExamAtlas India. Independent information dashboard.</span><span>Not affiliated with examination authorities · All times IST</span></footer></div>
     </div>`;
@@ -61,12 +75,13 @@
   function updateNav(){document.querySelectorAll('.nav-link').forEach(e=>e.classList.toggle('active',e.dataset.page===state.page)); const bc=$('#breadcrumb-page');if(bc)bc.textContent=state.page.toUpperCase();const sc=$('#saved-count');if(sc)sc.textContent=saved.size;const top=$('.save-count-top');if(top)top.textContent=saved.size;}
   function miniStat(label,value,iconName,foot,type=''){return `<div class="metric-card ${type}"><div class="metric-head"><span>${label}</span><span class="metric-icon">${ico(iconName)}</span></div><div class="metric-value">${value}</div><div class="metric-sub">${foot}</div></div>`;}
   function header(title,description,eyebrow='THE DASHBOARD'){return `<div class="page-heading"><div><p class="eyebrow"><span></span> ${eyebrow}</p><h1>${title}</h1><p class="head-desc">${description}</p></div><div class="heading-bubble">${ico('shield')} <span>Official sources only</span></div></div>`;}
-  function banner(){return `<div class="freshness-banner">${ico('info')} <span><strong>Schedule snapshot · 19 Oct 2026.</strong> Exam dates and form links can change. We display original official notices where available; please verify before applying.</span><button type="button" data-page="sources">View sources ${ico('arrow')}</button></div>`;}
+  function banner(){return `<div class="freshness-banner">${ico('info')} <span><strong>Exam dates: editorial snapshot · 19 Oct 2026.</strong> News notices update separately from official agency pages. New notices do not automatically change calendar dates or registration deadlines.</span><button type="button" data-page="sources">View sources ${ico('arrow')}</button></div>`;}
   function overview(){
     const feature = [...exams].filter(e=>['open','late'].includes(statusFor(e))).sort((a,b)=>a.registrationEnd.localeCompare(b.registrationEnd));
     const countRecruit = exams.filter(e=>e.track==='recruitment').length;
     return `${header('A clearer path to your <em>next big thing.</em>','Your one-stop destination for India’s central government and nationwide competitive examinations.')}
     <section class="hero" aria-label="ExamAtlas introduction"><div class="hero-decor hero-orbit"></div><div class="hero-decor hero-orbit2"></div><div class="hero-inner"><div class="hero-kicker"><span class="hero-star">✳</span> NATIONWIDE OPPORTUNITIES, SIMPLIFIED</div><h2>Don’t miss the<br /><span>exam that matters.</span></h2><p>From UPSC to CAT, GATE to banking — find verified exam dates, deadlines and official links, all in one place.</p><div class="hero-buttons"><button class="hero-cta" data-page="explore">Explore all exams ${ico('arrow-up-right')}</button><button class="hero-alt" data-page="calendar">${ico('calendar')} View calendar</button></div></div><div class="hero-art" aria-hidden="true"><div class="art-circle one"></div><div class="art-circle two"></div><div class="art-circle three"></div><div class="hero-float fl-1"><span class="float-glyph">${ico('calendar')}</span><span><small>EXAM DATE</small><b>23 MAY 2027</b></span></div><div class="hero-float fl-2"><span class="float-signal"></span> VERIFIED SCHEDULE</div><div class="art-star">✳</div></div></section>
+    <div class="notice-teaser"><div class="notice-teaser-icon">${ico('bell')}</div><div><span class="overline">NEW IN EXAMATLAS</span><h3>Official notification tracker</h3><p>Follow notices from UPSC, SSC, IBPS, RRB, NTA and SBI. Check when sources were scanned, and open original announcements.</p></div><button type="button" data-page="notices">Explore notices ${ico('arrow-up-right')}</button></div>
     <div class="metrics-grid">${miniStat('EXAMS TRACKED',exams.length,'grid','Across major national boards')}${miniStat('APPLICATIONS OPEN',openCount.toString().padStart(2,'0'),'trending','Including any late-fee windows','metric-highlight')}${miniStat('UPCOMING EXAMS',futureCount,'calendar','With published calendar dates')}${miniStat('RECRUITMENT EXAMS',countRecruit,'graduation','Central & nationwide opportunities')}</div>
     <div class="section-row top-section"><div><p class="overline">ACT NOW</p><h2>Applications you can explore <span class="tiny-count">${feature.length}</span></h2><p class="section-caption">Registration windows currently listed as open.</p></div><button class="text-action" data-page="explore" data-filter="open">Browse open applications ${ico('arrow')}</button></div>
     <div class="featured-grid">${feature.length?feature.map(e=>featuredCard(e)).join(''):'<div class="empty-feature">No current applications in this snapshot. Browse upcoming registration windows instead.</div>'}</div>
@@ -97,8 +112,44 @@
     ['RRBs','Railway Recruitment Boards','https://www.rrbapply.gov.in/','Recruitment announcements']
   ];return `${header('Know your source. <em>Trust the date.</em>','Official websites and original scheduling documents behind our exam listings.','TRANSPARENCY FIRST')}
   <div class="source-intro panel"><div class="source-intro-icon">${ico('shield')}</div><div><strong>We link to official institutions, not third-party registration websites.</strong><p>Some links open an organiser's portal rather than a direct form. Dates marked “calendar” are scheduled and can be revised. Missing dates stay missing instead of being invented.</p></div></div>
-  <div class="source-heading"><h2>Trusted official institutions</h2><span>${organizations.length} official destinations</span></div><div class="sources-grid">${organizations.map(([abbr,name,url,description])=>`<a class="source-card" href="${url}" target="_blank" rel="noopener noreferrer"><div class="source-card-top"><span class="source-avatar">${escapeHTML(abbr.slice(0,3))}</span>${ico('arrow-up-right')}</div><h3>${escapeHTML(abbr)}</h3><p>${escapeHTML(name)}</p><div class="source-card-bottom"><span>${ico('check')} ${escapeHTML(description)}</span></div></a>`).join('')}</div><div class="source-explainer panel"><span class="overline">HOW UPDATES WORK IN V1</span><h2>Verified snapshot, not live scraping</h2><p>At launch, schedules are curated in a local data file. The website automatically changes an application's visible status as dates pass in Indian Standard Time, but it does not fetch newly published government announcements on its own. We can add a checked update pipeline in a later version.</p><a href="https://www.upsc.gov.in/examinations/exam-calendar" target="_blank" rel="noopener noreferrer" class="primary-outline">See a sample official schedule ${ico('arrow-up-right')}</a></div>${banner()}`;}
-  function renderPage(){const area=$('#page-view');if(!area)return;area.innerHTML=state.page==='overview'?overview():state.page==='explore'?explore():state.page==='saved'?explore(true):state.page==='calendar'?calendar():sources();}
+  <div class="source-heading"><h2>Trusted official institutions</h2><span>${organizations.length} official destinations</span></div><div class="sources-grid">${organizations.map(([abbr,name,url,description])=>`<a class="source-card" href="${url}" target="_blank" rel="noopener noreferrer"><div class="source-card-top"><span class="source-avatar">${escapeHTML(abbr.slice(0,3))}</span>${ico('arrow-up-right')}</div><h3>${escapeHTML(abbr)}</h3><p>${escapeHTML(name)}</p><div class="source-card-bottom"><span>${ico('check')} ${escapeHTML(description)}</span></div></a>`).join('')}</div><div class="source-explainer panel"><span class="overline">HOW UPDATES WORK IN V2</span><h2>Exam schedule vs. notice discovery</h2><p>Exam dates and registration links are still reviewed manually from original schedules. The separate Official Notices board checks six agencies twice daily using GitHub Actions, records scan health, and lists links found on their websites. A headline is not proof of an application window. Blocked and dynamic sites may require a manual visit.</p><a href="https://www.upsc.gov.in/examinations/exam-calendar" target="_blank" rel="noopener noreferrer" class="primary-outline">See a sample official schedule ${ico('arrow-up-right')}</a></div>${banner()}`;}
+  const noticeIcon = (status) => status==='ok'?'check':status==='pending'?'clock':'info';
+  const noticeLabel = (status) => ({ok:'Reading notices',limited:'Needs review',unavailable:'Source unavailable',pending:'Awaiting first scan'})[status] || 'Needs review';
+  const noticeDate = (iso) => iso ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'Asia/Kolkata'}).format(new Date(iso)) : 'Not checked yet';
+  const sinceNotice = (iso) => {if(!iso)return 'Not yet scanned';const hours=Math.max(0,Math.floor((Date.now()-Date.parse(iso))/3600000));return hours<1?'Less than 1 hour ago':hours<24?`${hours} hour${hours===1?'':'s'} ago`:`${Math.floor(hours/24)} day${Math.floor(hours/24)===1?'':'s'} ago`;};
+  async function loadNotices(force=false){
+    if(noticesLoading || (noticeLoaded&&!force))return;
+    noticesLoading=true;
+    try{
+      const response=await fetch('notices.json?cb='+Date.now(),{cache:'no-store'});
+      if(!response.ok)throw new Error('feed unavailable');
+      const payload=await response.json();
+      if(!payload||!Array.isArray(payload.items)||!Array.isArray(payload.sources))throw new Error('invalid feed');
+      noticeFeed=payload;noticeFailure=false;
+    }catch(err){noticeFailure=true;}finally{noticesLoading=false;noticeLoaded=true;if(state.page==='notices')renderPage();}
+  }
+  function notices(){
+    const sources=noticeFeed.sources||[],all=noticeFeed.items||[];
+    const q=noticeSearch.trim().toLowerCase();
+    const filtered=all.filter(n=>(noticeAgency==='all'||n.agency===noticeAgency)&&(!q||n.title.toLowerCase().includes(q)||n.agency.includes(q)));
+    const successful=sources.filter(s=>s.status==='ok').length;
+    const label=noticeFeed.generatedAt?'Last scan: '+sinceNotice(noticeFeed.generatedAt):'First automatic scan pending';
+    return `${header('Notices from <em>official sources.</em>','Track new announcements across six nationwide examination agencies. Every entry links back to an official site.','PHASE 02 · AUTOMATED NOTICES')}
+      <div class="notice-summary panel"><div class="notice-summary-icon">${ico('bell')}</div><div><span class="overline">SOURCE SCANNING</span><h2>${escapeHTML(label)}</h2><p>${successful}/${sources.length} sites yielded notices in the last scan. A blocked or unavailable website does not mean it had no new announcements.</p></div><button class="primary-outline" data-action="reload-notices" type="button" ${noticesLoading?'disabled':''}>${ico('trending')} Reload feed</button></div>
+      ${noticeFailure?`<div class="notice-warning">${ico('info')} The published feed could not be loaded. Visit an agency's official website directly.</div>`:''}
+      <div class="notice-sources-grid">${sources.map(s=>`<a class="notice-source" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer"><span class="notice-source-name">${escapeHTML(s.name)} ${ico('arrow-up-right')}</span><span class="notice-source-status ${s.status}">${ico(noticeIcon(s.status))} ${escapeHTML(noticeLabel(s.status))}</span><small>${s.checkedAt?'Checked '+noticeDate(s.checkedAt):'Initial sync pending'}</small></a>`).join('')}</div>
+      <section class="notice-list-section"><div class="section-row"><div><p class="overline">ANNOUNCEMENTS</p><h2>Notices detected <span class="tiny-count">${all.length}</span></h2><p class="section-caption">“First detected” is when ExamAtlas spotted a link, not its original publication date.</p></div></div>
+      <div class="notice-toolbar"><label class="notice-search">${ico('search')}<input id="notice-search" placeholder="Search official notices..." aria-label="Search official notices" value="${escapeHTML(noticeSearch)}"/></label><label class="notice-agency-label">Board<select id="notice-agency"><option value="all">All agencies</option>${sources.map(s=>`<option value="${escapeHTML(s.id)}" ${noticeAgency===s.id?'selected':''}>${escapeHTML(s.name)}</option>`).join('')}</select></label></div>
+      <div class="notice-results" id="notice-results">${noticeResults(filtered,all.length)}</div>
+      <p class="notice-footnote">${ico('shield')} Automatic checking is best-effort and not an official announcement service. We never infer application dates or the opening of registration from notice headlines. Always verify the linked official notice before acting.</p></section>${banner()}`;
+  }
+  function noticeResults(list,total){
+    if(!noticeLoaded)return `<div class="notice-empty panel">${ico('clock')}<h3>Loading published notices...</h3></div>`;
+    if(!total)return `<div class="notice-empty panel">${ico('bell')}<h3>${noticeFeed.generatedAt?'No notices detected yet':'First scan not complete'}</h3><p>Once the scheduled official-site watcher runs, announcements it can read will appear here. You can always open the agencies above.</p></div>`;
+    if(!list.length)return `<div class="notice-empty panel">${ico('search')}<h3>No matches</h3><p>Try searching a different term or selecting another agency.</p></div>`;
+    return list.slice(0,90).map(n=>{const org=(noticeFeed.sources||[]).find(s=>s.id===n.agency);return `<article class="notice-entry"><div class="notice-entry-head"><span class="notice-agency-pill">${escapeHTML(org?.name||n.agency)}</span><span class="notice-first-seen">First detected ${noticeDate(n.firstSeenAt)}</span></div><h3>${escapeHTML(n.title)}</h3><a href="${escapeHTML(n.url)}" target="_blank" rel="noopener noreferrer">Open official notice ${ico('arrow-up-right')}</a></article>`;}).join('');
+  }
+  function renderPage(){const area=$('#page-view');if(!area)return;area.innerHTML=state.page==='overview'?overview():state.page==='explore'?explore():state.page==='saved'?explore(true):state.page==='calendar'?calendar():state.page==='notices'?notices():sources();}
   function detailModal(id){const e=exams.find(x=>x.id===id);if(!e)return;const s=statusFor(e);const d=e.registrationEnd; const modal=document.createElement('div');modal.className='modal-backdrop';modal.innerHTML=`<div class="detail-modal" role="dialog" aria-modal="true" aria-label="${escapeHTML(e.title)} details"><div class="modal-top"><span class="status-chip ${statusClass[s]}"><span class="chip-dot"></span>${statusLabels[s]}</span><button class="modal-close" data-action="close-modal" aria-label="Close dialog">${ico('x')}</button></div><div class="modal-label">${escapeHTML(e.agency)} / ${escapeHTML(e.category)}</div><h2>${escapeHTML(e.title)}</h2><p class="modal-description">${escapeHTML(e.description)}</p><div class="modal-stat-grid"><div><small>EXAM DATE</small><strong>${escapeHTML(e.examLabel)}</strong></div><div><small>REGISTRATION OPENS</small><strong>${pretty(e.registrationStart)}</strong></div><div><small>STANDARD DEADLINE</small><strong>${pretty(d)}</strong></div><div><small>ELIGIBILITY GUIDE</small><strong>${escapeHTML(e.qualification)}</strong></div></div>${e.lateRegistrationEnd?`<p class="late-notice">${ico('clock')} Last permitted late-fee date: <strong>${pretty(e.lateRegistrationEnd)}</strong></p>`:''}<div class="modal-note">${ico('info')} <p>${escapeHTML(e.note)}</p></div><div class="modal-verification">${ico('shield')} Source checked on ${pretty(e.verified)} · ${e.certainty==='official'?'Official notice':e.certainty==='calendar'?'Official advance calendar':e.certainty==='tentative'?'Tentative calendar':'No exact published date'}</div><div class="modal-links"><a href="${escapeHTML(e.applyUrl)}" target="_blank" rel="noopener noreferrer" class="modal-primary">Open official portal ${ico('arrow-up-right')}</a><a href="${escapeHTML(e.sourceUrl)}" target="_blank" rel="noopener noreferrer" class="modal-secondary">Source document ${ico('file')}</a><button data-action="download-ics" data-id="${e.id}" ${!e.examDates.length?'disabled title="No confirmed date"':''} class="modal-secondary">${ico('download')} Add to calendar</button></div></div>`;document.body.appendChild(modal);const close=()=>modal.remove();modal.addEventListener('click',evt=>{if(evt.target===modal||evt.target.closest('[data-action="close-modal"]'))close();const target=evt.target.closest('[data-action="download-ics"]');if(target){downloadICS(e);}});function escClose(evt){if(evt.key==='Escape'){close();document.removeEventListener('keydown',escClose);}}document.addEventListener('keydown',escClose);modal.querySelector('.modal-close').focus();}
   function downloadICS(e){
     if(!e.examDates.length)return;
@@ -123,12 +174,13 @@
     if(btn.dataset.view){state.layout=btn.dataset.view;renderPage();return;}
     if(btn.dataset.month){calendarStep(Number(btn.dataset.month));return;}
     if(btn.dataset.date){state.selectedDate=btn.dataset.date;renderPage();return;}
+    if(btn.dataset.action==='reload-notices'){loadNotices(true);return;}
     if(btn.dataset.action==='calendar-today'){state.calYear=Number(today.slice(0,4));state.calMonth=Number(today.slice(5,7))-1;state.selectedDate=today;renderPage();return;}
     if(btn.dataset.action==='reset-filters'){state.query='';state.track='all';state.category='all';state.status='all';state.sort='soonest';renderPage();return;}
   });
-  document.addEventListener('input',e=>{if(e.target.id==='exam-search'){state.query=e.target.value;const area=$('#result-area');if(area)area.innerHTML=resultsArea();}});
-  document.addEventListener('change',e=>{const ids={'filter-track':'track','filter-category':'category','filter-status':'status','sort-exam':'sort'};if(ids[e.target.id]){state[ids[e.target.id]]=e.target.value;if(e.target.id==='sort-exam'){const area=$('#result-area');if(area)area.innerHTML=resultsArea();}else{const area=$('#result-area');if(area)area.innerHTML=resultsArea();}}});
+  document.addEventListener('input',e=>{if(e.target.id==='notice-search'){noticeSearch=e.target.value;const match=(noticeFeed.items||[]).filter(n=>(noticeAgency==='all'||n.agency===noticeAgency)&&(!noticeSearch.trim()||n.title.toLowerCase().includes(noticeSearch.trim().toLowerCase())||n.agency.includes(noticeSearch.trim().toLowerCase())));const el=$('#notice-results');if(el)el.innerHTML=noticeResults(match,noticeFeed.items.length);return;}if(e.target.id==='exam-search'){state.query=e.target.value;const area=$('#result-area');if(area)area.innerHTML=resultsArea();}});
+  document.addEventListener('change',e=>{if(e.target.id==='notice-agency'){noticeAgency=e.target.value;renderPage();return;}const ids={'filter-track':'track','filter-category':'category','filter-status':'status','sort-exam':'sort'};if(ids[e.target.id]){state[ids[e.target.id]]=e.target.value;if(e.target.id==='sort-exam'){const area=$('#result-area');if(area)area.innerHTML=resultsArea();}else{const area=$('#result-area');if(area)area.innerHTML=resultsArea();}}});
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && state.page==='explore'){e.preventDefault();$('#exam-search')?.focus();}});
-  window.addEventListener('hashchange',()=>{const to=location.hash.replace('#','');if(validPages.includes(to)&&to!==state.page){state.page=to;updateNav();renderPage();}});
-  $('#app').innerHTML=shell();renderPage();
+  window.addEventListener('hashchange',()=>{const to=location.hash.replace('#','');if(validPages.includes(to)&&to!==state.page){state.page=to;if(to==='notices')loadNotices();updateNav();renderPage();}});
+  $('#app').innerHTML=shell();renderPage();if(state.page==='notices')loadNotices();
 })();
