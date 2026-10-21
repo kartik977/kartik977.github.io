@@ -35,6 +35,9 @@ class NoticeParserTests(unittest.TestCase):
         self.assertEqual(kind_for('Result Status of Online Preliminary Examination CRP PO XVI'),'result')
         self.assertEqual(kind_for('Rescheduled Preliminary Examination 2027: Important Notice'),'update')
         self.assertTrue(is_useful('UPPSC Combined State Services Examination 2027 — Notification'))
+        self.assertEqual(kind_for('LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/2025, ASSISTANT TEACHER'),'result')
+        self.assertEqual(kind_for('NOTICE REGARDING DISTRICT INFORMATION SLIP FOR ADVT. NO. D-6/E-1/2025'),'update')
+        self.assertEqual(kind_for('NOTICE REGARDING ADVT. NO. A-7/E-1/2021, TECHNICAL EDUCATION'),'update')
 
 
 if __name__=='__main__': unittest.main()
