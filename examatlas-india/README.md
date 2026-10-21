@@ -59,3 +59,15 @@ Independent informational project; not affiliated with UPSC, SSC, IBPS, NTA, IIM
 `python scripts/sync_notices.py` (requires public internet access)
 
 Deploy the source files in this directory under `public/examatlas-india/` and the watcher workflow at repository root `.github/workflows/examatlas-notices.yml`.
+
+
+## Phase 03 — useful notices and first state commissions (2026-10-20)
+
+- A dedicated **State exams** page (`#states`) introduces Uttar Pradesh/UPPSC, Bihar/BPSC, Maharashtra/MPSC and Rajasthan/RPSC. The initial cards contain recurring exam families and original commission homepages, *not* automatically inferred open registrations.
+- **Official notices** (`#notices`) supports nationwide vs state vs all sources, board search, and tabs for *Applications & recruitment*, *Exam updates*, and *Results & admit cards*. This classification is keyword-based and denotes document topics, never confirmation that registration is currently open.
+- `scripts/sync_notices.py` now scans ten official commissions with additional official deep pages for UPSC and IBPS, suppresses generic navigation/download labels, classifies results conservatively, and migrates older link identifiers to stable URL identifiers without resetting the original first-detected timestamp.
+- Sources without usable parsed links clearly indicate 'Needs review' or 'Source unavailable'. A successful scan is not a guarantee of complete coverage.
+- The scheduled workflow remains twice daily; the public feed is materialized as `notices.json` in the Pages build.
+- **State-specific exam dates, direct registration forms, exact vacancies and verified application windows are NOT yet automated.** Add these to the editorial catalog only after verifying an official exam PDF.
+
+To verify: `python -m unittest discover -s scripts -p 'test_*.py'` and `node --check app.js`.
