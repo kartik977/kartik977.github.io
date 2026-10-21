@@ -1,82 +1,433 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-10-20T18:32:17Z",
-  "about": "Best-effort discovery of links on official agency pages. First seen is not the publication date. Exam dates and registration windows are not inferred.",
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-21T03:08:12Z",
+  "about": "Links discovered on official examination bodies. Detection time is not publication time. A notice is not proof that registration is open. Exam dates are separately checked.",
   "sources": [
     {
       "id": "upsc",
       "name": "UPSC",
       "category": "Civil services",
+      "scope": "national",
+      "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": null,
       "count": 0,
-      "message": "Site is unavailable or blocks automated checks; use its official link."
+      "pagesChecked": 0,
+      "pagesConfigured": 2,
+      "message": "Official pages blocked automated access or did not load."
     },
     {
       "id": "ssc",
       "name": "SSC",
       "category": "Central recruitment",
+      "scope": "national",
+      "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": null,
       "count": 0,
-      "message": "No individual notices could be safely identified. Visit the official source."
+      "pagesChecked": 1,
+      "pagesConfigured": 1,
+      "message": "Page loaded, but no individual exam notices could be extracted."
     },
     {
       "id": "ibps",
       "name": "IBPS",
       "category": "Banking",
+      "scope": "national",
+      "state": null,
       "url": "https://www.ibps.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": null,
       "count": 0,
-      "message": "Site is unavailable or blocks automated checks; use its official link."
+      "pagesChecked": 0,
+      "pagesConfigured": 2,
+      "message": "Official pages blocked automated access or did not load."
     },
     {
       "id": "rrb",
       "name": "RRB Chandigarh",
       "category": "Railways",
+      "scope": "national",
+      "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": null,
       "count": 0,
-      "message": "Site is unavailable or blocks automated checks; use its official link."
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
     },
     {
       "id": "nta",
       "name": "NTA",
       "category": "National entrance",
+      "scope": "national",
+      "state": null,
       "url": "https://www.nta.ac.in/",
-      "status": "ok",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "status": "limited",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": "2026-10-20T18:32:17Z",
-      "count": 18
+      "count": 0,
+      "pagesChecked": 1,
+      "pagesConfigured": 1,
+      "message": "Page loaded, but no individual exam notices could be extracted."
     },
     {
       "id": "sbi",
       "name": "SBI Careers",
       "category": "Banking",
+      "scope": "national",
+      "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
-      "status": "limited",
-      "checkedAt": "2026-10-20T18:32:17Z",
+      "status": "unavailable",
+      "checkedAt": "2026-10-21T03:08:12Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
-      "message": "No individual notices could be safely identified. Visit the official source."
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "uppsc",
+      "name": "UPPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "url": "https://uppsc.up.nic.in/",
+      "status": "ok",
+      "checkedAt": "2026-10-21T03:08:12Z",
+      "lastSuccessfulAt": "2026-10-21T03:08:12Z",
+      "count": 24,
+      "pagesChecked": 1,
+      "pagesConfigured": 1
+    },
+    {
+      "id": "bpsc",
+      "name": "BPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Bihar",
+      "url": "https://bpsc.bihar.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-21T03:08:12Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "mpsc",
+      "name": "MPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Maharashtra",
+      "url": "https://mpsc.gov.in/",
+      "status": "limited",
+      "checkedAt": "2026-10-21T03:08:12Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 1,
+      "pagesConfigured": 1,
+      "message": "Page loaded, but no individual exam notices could be extracted."
+    },
+    {
+      "id": "rpsc",
+      "name": "RPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Rajasthan",
+      "url": "https://rpsc.rajasthan.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-21T03:08:12Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
     }
   ],
   "items": [
+    {
+      "id": "cfea230efdccb29e7c",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDRwIQMjGyuh7N",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "2b3f29d8449e412224",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING DISTRICT INFORMATION SLIP FOR ADVT. NO:- D-6/E-1/2025, DENTAL S",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDR5BHS7ZpRn4S",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "a546b8f82902598e35",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-2/E-1/2020, REGIONAL I",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgvOzjioxzzCo",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "5208743bfe5b07f698",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. A-7/E-1/2021, U.P. TECHNICAL EDUCATION (TEACHING) SER",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgoWo8RkhUpnV",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "7ab7f25d25dd09d012",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING DISTRICT INFORMATION SLIP FOR ADVT. NO:- D-6/E-1/2025 VETTING O",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgjJg+um+MX8d",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "383e392f52aaaeafaa",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING DISTRICT SLIP FOR ADVT. NO:- D-6/E-1/2025, HOMEOPATHIC MEDICAL",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgiIJLpDwLkww",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "b73fb51865a8668d1c",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASSISTANT",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgiXC/U69+f+i",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "4b450f17e25b86447c",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-4/E-1/2025, UTTAR PRADESH AYUSH (AYURVEDA) DEPARTMENT, PRO",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgoSSgw34Mkau",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "9056891082dbef63f0",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPAR",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxJUy3AgqZ4Ub",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "6a9e2a58c90b37d62d",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxNf1NcenU8cK",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "fb1a5033581da63ba6",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO.D-2/E-1/2024, UTTAR PRADESH AYUSH (AYURVEDA) DEPARTMENT, Read",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnr4uATu7lVSyJODCxSObFX",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "f239503e2f5628c42f",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnr4uATu7lVS+Kdn7bANrC+",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "058bca79e6d8c54219",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnr4uATu7lVS9Jm9XBAaZWi",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "b70697e40f73d5c8b0",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT. NO. D-6/E-1/2025, FOOD SAFETY AND DRUG ADMINI",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjH2Nkd5tvpyU",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "e2c9dd7680165d7c18",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING INTERVIEW SCHEDULE OF ADVT. NO. A-1/E-1/2025, COMBINED STATE/UP",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjD3K8mMdO/t9",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "8a8f41ee8eaefe69ab",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjI+X70XaoE7Y",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "6b30f3e8f78524c608",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjKKsih8bLTaq",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "d47f92b4f85d425297",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING OF ADVT NO: D-6/E-1/2025, UTTAR PRADESH LEGISLATIVE DEPARTMENT",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkC/gT4ITeNgrXkVJ6dwkRn",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "3cb588bb06da33557b",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF HOMOEOPATHY UT",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYRiV9UshCHNK",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "2997031cd6cd323b9e",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, LABOUR DEPARTMENT UTTAR PRADE",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYeOz5T9WBNmY",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "2d6cf08f12d231d0be",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "625d7d1f39bc6f6c54",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY W",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnSFF+2PuzLq8yhYQ7psXl2",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "69e5a027ac4681cf65",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. D-2/E-1/2024, ASSISTANT ARCHITECT, S-06/01 (PUBLIC WO",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagktt06NhTTxwivFUuvsdMCE",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
+    {
+      "id": "52d2e7ebcf3075c805",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "application",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, FOOD SAFETY AND DRUG ADMINISTRATION UTT",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagldpN1/ndg4XQJWpYXr4Ud3",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-21T03:08:12Z"
+    },
     {
       "id": "fe9302389516a82f62",
       "agency": "nta",
       "title": "Inviting Online Application Form for Rashtriya Military School Common Entrance Test (RMS CET) - 2026",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260924163325.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "f9ccf00d8ac08ebdad",
@@ -84,15 +435,10 @@
       "title": "Correction in Particulars of the Online Application Form of Rashtriya Indian Military College Entrance Examination (RIMCEE)",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261007203421.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "f57e6fc0742fedeb3f",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT Hindi / English (986 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/03092026_1_Advt+_Wealth+MGMT_04.09.2026.pdf/d2fd7bab-0791-b62b-61d3-8f46c2cb3ec6?t=1788439145915",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "ed6468eaa7d13d69db",
@@ -100,7 +446,10 @@
       "title": "Inviting Online Application for Joint CSIR UGC-NET December 2026",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261008083141.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "e07c1054331117f397",
@@ -108,15 +457,10 @@
       "title": "Issuance of Certificates for Joint CSIR-UGC NET June 2026, Examination.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260925215817.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "d635b2ec743afb66bf",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT ( Hindi (517 KB) )/ English (941 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/08092026_SBI+-+CRPD-SCO-2026-27_15+-+Hindi.pdf/c1433c7d-f780-e111-ff6c-c1fb55fd5595?t=1788859450385",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "d51b90c0592cfab26f",
@@ -124,7 +468,10 @@
       "title": "Announcement of Date(s) for Study Webs of Active Learning for Young Aspiring Minds (SWAYAM) (July 2026 Semester) Exam-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917165604.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "update",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "d0d9051874ddc58cb3",
@@ -132,15 +479,10 @@
       "title": "Declaration of results of UGC-NET June 2026 Exam conducted on 09th and 10th September 2026 for English, Commerce and Sociology-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260918000302.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "cefe6b4bd29a156543",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT English (890 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/1_Advertisement+_Wealth+MGMT_30.09.2026.pdf/ed836f34-1d3a-408a-f3a5-09005623781a?t=1790692625089",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "cb3a854e38d3b5a445",
@@ -148,23 +490,10 @@
       "title": "UGC-NET Exam June-2026, (3) Subjects Category Wise Cut off Marks",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917235839.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "c8a373327715ad13e8",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (530 KB) / English (1 MB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/08102026_SBI+-+CRPD-SCO-2026-27_20+-+Hindi.pdf/6e599e5d-2ac6-c1ef-a9b6-bfefa8f2b914?t=1791461918486",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "c6adb20aaddd5ff941",
-      "agency": "nta",
-      "title": "EoI for Translation Reviewers and Corrigendum",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260915213027.pdf",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "c07b85833311224f01",
@@ -172,7 +501,10 @@
       "title": "Display of Final Answer Keys of UGC-NET June 2026 Exam conducted on 09th and 10th September 2026 for English, Commerce and Sociology – reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917231934.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "bba8906248af345a44",
@@ -180,15 +512,10 @@
       "title": "Public Notice regarding Issuance of e-Certificates for UGC-NET June 2026 Examination",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260924172919.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "b9c16c8f862112a04a",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT ( Hindi (517 KB) )/ English (941 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/29082026_FINAL+ADVT+TFO+IBG_SCO+15.pdf/222db64b-91da-cbe8-c439-9af6b1dd06b2?t=1787986916149",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "a8192e312e834f4b4f",
@@ -196,31 +523,10 @@
       "title": "Vacancy Notification for Librarian - Administration",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261007204855.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "a1963f1a0fe3103443",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (467 KB) / English (771 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/10092026_SBI+-+CRPD-SCO-2026-27_21+-+Hindi.pdf/24bd29d5-b0f6-8453-0e22-b5a30f2d4d50?t=1789030545711",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "96e865531c33d8cdd9",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT English (796 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/17102026_Detail_ADV_CRPD_SCO_2026-27_30.pdf/226b6572-e6bd-2b73-f266-dc7db9b282bd?t=1792240760461",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "753d6fb0a2e4f7e16e",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (530 KB) / English (1 MB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/16092026_ADV_CRPD_SCO_2026-27_20_SBIL.pdf/72f2a326-b338-3ea8-84d9-2fb56c3253a2?t=1789538665520",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "6914dd428a225e7933",
@@ -228,55 +534,10 @@
       "title": "Inviting Online Application Form for Study Webs of Active Learning for Young Aspiring Minds [SWAYAM-2026 (July Semester)] -reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261009123259.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "58be310ce8a903e7fd",
-      "agency": "nta",
-      "title": "EoI for Subject Matter Expert and Corrigendum",
-      "url": "https://www.nta.ac.in/Download/Notice/Notice_20260915212856.pdf",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "56d5465987345e2898",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( HINDI (645 KB) / English) (959 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/21082026_JA+2026+-+Detailed+Ad+-+Hindi.pdf/935be45b-8796-77d0-0701-eecc6ba02abe?t=1787300674572",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "44111cdbd354624757",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT Hindi / English (986 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/FINAL+ADVT+OF+2026-27_24.pdf/9cf5df5f-5ce2-976d-70d1-2dc8d49380cd?t=1790690953073",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "43965e75b5df46eaa6",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (467 KB) / English (771 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/04092026_FINAL+ADVT+SCO+_21_+GROUP+CISO.pdf/92a8bf33-5351-6edc-ff5b-0bd27b3a61cf?t=1788521056853",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "39d313324fc1ff49be",
-      "agency": "sbi",
-      "title": "DOWNLOAD PRELIMINARY EXAMINATION CALL LETTER",
-      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_sep26/login.php?appid=24c6ba07c29762dbe2586e1f533198ec",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "2c9de8b0152f6690ee",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (847 KB) / English (847 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/07102026_SBI+-+CRPD-SCO-2026-27_22+-+Hindi+%281%29+%281%29.pdf/0413cacb-b3e1-8823-8581-e2ac6155f00e?t=1791378137016",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "1e8984e0a3528e5a9d",
@@ -284,7 +545,10 @@
       "title": "Publication of the Examination Calendar of the National Testing Agency (NTA) up to March 2027 - reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260916195948.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "update",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "1a64303371bcc83267",
@@ -292,31 +556,10 @@
       "title": "Opening of the online registration portal for submission of Online Application Form for UGC-NET December 2026 examination – reg",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261008212430.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "1841034b0346638da5",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT English (890 KB) (NEW) APPLY ONLINE (30.09.2026 to 21.10.2026) (NEW) BIODATA (NEW) CTC NEGOTIATION FORM (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/5_BIODATA+%281%29.pdf/8c8fc1e1-a26d-ca6b-441d-2949a972f891?t=1790692682457",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "16f6a4365e347a9c12",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT Hindi / English (986 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/SBI+-+CRPD-SCO-2026-27_24+-+Hindi.pdf/f7e425fd-051c-e9ad-9e4b-d4b258af9636?t=1792068580332",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
-    },
-    {
-      "id": "13e31fe5d8e5951e9e",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT English (890 KB) (NEW) APPLY ONLINE (30.09.2026 to 21.10.2026) (NEW) BIODATA (NEW) CTC NEGOTIATION FORM (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/CTC+Negotiation+Form+%282%29.pdf/51c4c8b2-1d49-3a98-3adb-4efbacc7d3fe?t=1790692698129",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "0fcf96f60e857e127b",
@@ -324,15 +567,10 @@
       "title": "Inviting Online Applications for the National Institute of Fashion Technology Entrance Examination (NIFTEE)–2027 for Admissions to UG, PG, NLEA, Artisans and Ph.D. Programmes-reg.",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261016183525.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
-    },
-    {
-      "id": "0e7d25f4ed26567ea2",
-      "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT( Hindi (847 KB) / English (847 KB) ) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/16092026_ADV_CRPD_SCO_2026_27_22.pdf/6285a84d-5171-c301-5817-fe41b4a83cad?t=1789538056721",
-      "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "application",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "0e2150a6c70273b3f4",
@@ -340,7 +578,10 @@
       "title": "Declaration of the results of the National Initiative for Technical Teachers Training (NITTT) Examination held in July - August 2026-reg",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20261005203634.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "result",
+      "scope": "national",
+      "state": null
     },
     {
       "id": "0c9707ce830a7e5b3f",
@@ -348,15 +589,21 @@
       "title": "NOTICE INVITING QUOTATION (NIQ) FOR EMPANELMENT OF HOTELS IN THE VICINITY OF MINTO ROAD, NEW DELHI",
       "url": "https://www.nta.ac.in/Download/Notice/Notice_20260917131651.pdf",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T18:32:17Z"
+      "lastSeenAt": "2026-10-20T18:32:17Z",
+      "kind": "update",
+      "scope": "national",
+      "state": null
     },
     {
-      "id": "03f6e49e6d45ac4d69",
+      "id": "39d313324fc1ff49be",
       "agency": "sbi",
-      "title": "DOWNLOAD ADVERTISEMENT Hindi / English (986 KB) (NEW)",
-      "url": "https://sbi.co.in/documents/77530/57941334/SBI+-+CRPD-SCO-2026-27_23+-+Hindi_23092026.pdf/9176d35c-772d-484d-1776-a0479537d3a6?t=1790171378048",
+      "title": "DOWNLOAD PRELIMINARY EXAMINATION CALL LETTER",
+      "url": "https://ibpsreg.ibps.in/sbijajul26/oecla_sep26/login.php?appid=24c6ba07c29762dbe2586e1f533198ec",
       "firstSeenAt": "2026-10-20T05:36:50Z",
-      "lastSeenAt": "2026-10-20T05:36:50Z"
+      "lastSeenAt": "2026-10-20T05:36:50Z",
+      "kind": "update",
+      "scope": "national",
+      "state": null
     }
   ]
 }
