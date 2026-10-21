@@ -19,7 +19,7 @@
   try { saved = new Set(JSON.parse(localStorage.getItem(storeKey) || '[]')); } catch(e) { saved = new Set(); }
   const now = new Date();
   const state = {page:(location.hash.replace('#','') || 'overview'),query:'',track:'all',category:'all',status:'all',sort:'soonest',layout:'grid',calYear:Number(today.slice(0,4)),calMonth:Number(today.slice(5,7))-1,selectedDate:today};
-  const validPages=['overview','explore','calendar','notices','saved','sources'];
+  const validPages=['overview','explore','calendar','notices','states','saved','sources'];
   const noticeSources = [
     ['upsc','UPSC','Civil services','https://www.upsc.gov.in/'],
     ['ssc','SSC','Central recruitment','https://ssc.gov.in/'],
@@ -27,12 +27,19 @@
     ['rrb','RRB Chandigarh','Railways','https://www.rrbcdg.gov.in/'],
     ['nta','NTA','National entrance','https://www.nta.ac.in/'],
     ['sbi','SBI Careers','Banking','https://sbi.co.in/web/careers/current-openings'],
+    ['uppsc','UPPSC','Uttar Pradesh','https://uppsc.up.nic.in/'],
+    ['bpsc','BPSC','Bihar','https://bpsc.bihar.gov.in/'],
+    ['mpsc','MPSC','Maharashtra','https://mpsc.gov.in/'],
+    ['rpsc','RPSC','Rajasthan','https://rpsc.rajasthan.gov.in/'],
   ];
   let noticeFeed={items:[],sources:noticeSources.map(([id,name,category,url])=>({id,name,category,url,status:'pending',checkedAt:null,lastSuccessfulAt:null})),generatedAt:null};
   let noticeLoaded=false;
   let noticeFailure=false;
   let noticeSearch='';
   let noticeAgency='all';
+  let noticeScope='national';
+  let noticeKind='all';
+  let selectedState='all';
   let noticesLoading=false;
   if(!validPages.includes(state.page)) state.page='overview';
   const officialOpen = (e) => e.registrationStart && e.registrationStart<=today && (e.lateRegistrationEnd||e.registrationEnd)>=today;
@@ -53,11 +60,11 @@
   const futureCount = exams.filter(e=>e.examDates.some(d=>d>=today)).length;
   const quickNext = [...exams].filter(e=>nextExam(e) && nextExam(e)>=today).sort((a,b)=>nextExam(a).localeCompare(nextExam(b)));
   const nextDeadline = [...exams].filter(e=>officialOpen(e)).map(e=>({...e,deadline:e.registrationEnd>=today?e.registrationEnd:e.lateRegistrationEnd})).sort((a,b)=>a.deadline.localeCompare(b.deadline))[0];
-  const nav = [ ['overview','grid','Overview'],['explore','search','Explore exams'],['calendar','calendar','Exam calendar'],['notices','bell','Official notices'],['saved','bookmark','Saved exams'],['sources','shield','Official sources'] ];
+  const nav = [ ['overview','grid','Overview'],['explore','search','Explore exams'],['calendar','calendar','Exam calendar'],['notices','bell','Official notices'],['states','location','State exams'],['saved','bookmark','Saved exams'],['sources','shield','Official sources'] ];
   let toastTimer;
   function notify(message){const el=$('#toast');el.innerHTML=`${ico('check')} ${escapeHTML(message)}`;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3100);}
   function saveToggle(id){ if(saved.has(id))saved.delete(id);else saved.add(id);try{localStorage.setItem(storeKey,JSON.stringify([...saved]));}catch(e){}; renderPage();updateNav();notify(saved.has(id)?'Exam saved to your watchlist':'Removed from your watchlist'); }
-  function setPage(page){if(!validPages.includes(page))return;if(page==='notices')loadNotices();if(page==='saved'&&state.page!=='saved'){state.query='';state.track='all';state.category='all';state.status='all';}state.page=page;location.hash=page;updateNav();renderPage();window.scrollTo({top:0,behavior:'smooth'});}
+  function setPage(page){if(!validPages.includes(page))return;if(page==='notices'||page==='states')loadNotices();if(page==='saved'&&state.page!=='saved'){state.query='';state.track='all';state.category='all';state.status='all';}state.page=page;location.hash=page;updateNav();renderPage();window.scrollTo({top:0,behavior:'smooth'});}
   function shell(){
     return `<div class="site-shell">
     <aside class="sidebar">
@@ -66,10 +73,10 @@
       <nav class="side-nav" aria-label="Main navigation">${nav.map(([key,symbol,label])=>`<button type="button" class="nav-link ${key===state.page?'active':''}" data-page="${key}">${ico(symbol)}<span>${label}</span>${key==='saved'?`<span class="nav-count" id="saved-count">${saved.size}</span>`:''}</button>`).join('')}</nav>
       <div class="sidebar-label secondary-label">EXPLORE BY SCOPE</div>
       <button class="scope-link selected" data-page="explore">${ico('location')} Nationwide <span>V1</span></button>
-      <div class="scope-link locked" title="State-level exams are planned for a later version">${ico('location')} State exams <span>SOON</span></div>
-      <div class="sidebar-bottom"><div class="sidebar-upgrade"><div class="upgrade-icon">${ico('sparkle')}</div><strong>More states. More exams.</strong><p>We're starting with India's biggest nationwide exams. State-level coverage is next.</p><span>PHASE 02 · NOTICE WATCHER ${ico('arrow')}</span></div><div class="made-in">Made for aspirants, across India <span>✳</span></div></div>
+      <button class="scope-link" data-page="states">${ico('location')} State exams <span>NEW</span></button>
+      <div class="sidebar-bottom"><div class="sidebar-upgrade"><div class="upgrade-icon">${ico('sparkle')}</div><strong>More states. More exams.</strong><p>Now tracking four state commissions alongside nationwide exams.</p><span>PHASE 03 · STATE TRACKER ${ico('arrow')}</span></div><div class="made-in">Made for aspirants, across India <span>✳</span></div></div>
     </aside>
-    <div class="main-side"><header class="topbar"><div class="breadcrumb">INDIA <span>/</span> NATIONAL EXAMS <span>/</span> <b id="breadcrumb-page">${state.page.toUpperCase()}</b></div><div class="topbar-right"><span class="ist-pill"><span class="pulse"></span> IST · ${pretty(today,{day:'numeric',month:'short',year:'numeric'})}</span><button class="topbar-save" type="button" data-page="saved" title="Saved exams">${ico('bookmark')}<span class="save-count-top">${saved.size}</span></button><div class="avatar" title="ExamAtlas India">EA</div></div></header><main class="content" id="page-view"></main><footer class="footer"><span>© 2026 ExamAtlas India. Independent information dashboard.</span><span>Not affiliated with examination authorities · All times IST</span></footer></div>
+    <div class="main-side"><header class="topbar"><div class="breadcrumb">INDIA <span>/</span> EXAM DISCOVERY <span>/</span> <b id="breadcrumb-page">${state.page.toUpperCase()}</b></div><div class="topbar-right"><span class="ist-pill"><span class="pulse"></span> IST · ${pretty(today,{day:'numeric',month:'short',year:'numeric'})}</span><button class="topbar-save" type="button" data-page="saved" title="Saved exams">${ico('bookmark')}<span class="save-count-top">${saved.size}</span></button><div class="avatar" title="ExamAtlas India">EA</div></div></header><main class="content" id="page-view"></main><footer class="footer"><span>© 2026 ExamAtlas India. Independent information dashboard.</span><span>Not affiliated with examination authorities · All times IST</span></footer></div>
     </div>`;
   }
   function updateNav(){document.querySelectorAll('.nav-link').forEach(e=>e.classList.toggle('active',e.dataset.page===state.page)); const bc=$('#breadcrumb-page');if(bc)bc.textContent=state.page.toUpperCase();const sc=$('#saved-count');if(sc)sc.textContent=saved.size;const top=$('.save-count-top');if(top)top.textContent=saved.size;}
@@ -81,7 +88,7 @@
     const countRecruit = exams.filter(e=>e.track==='recruitment').length;
     return `${header('A clearer path to your <em>next big thing.</em>','Your one-stop destination for India’s central government and nationwide competitive examinations.')}
     <section class="hero" aria-label="ExamAtlas introduction"><div class="hero-decor hero-orbit"></div><div class="hero-decor hero-orbit2"></div><div class="hero-inner"><div class="hero-kicker"><span class="hero-star">✳</span> NATIONWIDE OPPORTUNITIES, SIMPLIFIED</div><h2>Don’t miss the<br /><span>exam that matters.</span></h2><p>From UPSC to CAT, GATE to banking — find verified exam dates, deadlines and official links, all in one place.</p><div class="hero-buttons"><button class="hero-cta" data-page="explore">Explore all exams ${ico('arrow-up-right')}</button><button class="hero-alt" data-page="calendar">${ico('calendar')} View calendar</button></div></div><div class="hero-art" aria-hidden="true"><div class="art-circle one"></div><div class="art-circle two"></div><div class="art-circle three"></div><div class="hero-float fl-1"><span class="float-glyph">${ico('calendar')}</span><span><small>EXAM DATE</small><b>23 MAY 2027</b></span></div><div class="hero-float fl-2"><span class="float-signal"></span> VERIFIED SCHEDULE</div><div class="art-star">✳</div></div></section>
-    <div class="notice-teaser"><div class="notice-teaser-icon">${ico('bell')}</div><div><span class="overline">NEW IN EXAMATLAS</span><h3>Official notification tracker</h3><p>Follow notices from UPSC, SSC, IBPS, RRB, NTA and SBI. Check when sources were scanned, and open original announcements.</p></div><button type="button" data-page="notices">Explore notices ${ico('arrow-up-right')}</button></div>
+    <div class="notice-teaser"><div class="notice-teaser-icon">${ico('bell')}</div><div><span class="overline">NEW IN EXAMATLAS</span><h3>Official notification tracker</h3><p>Follow official recruitment and examination notices from national boards and the first four state commissions. Check source coverage and filter by notice type.</p></div><button type="button" data-page="notices">Explore notices ${ico('arrow-up-right')}</button></div>
     <div class="metrics-grid">${miniStat('EXAMS TRACKED',exams.length,'grid','Across major national boards')}${miniStat('APPLICATIONS OPEN',openCount.toString().padStart(2,'0'),'trending','Including any late-fee windows','metric-highlight')}${miniStat('UPCOMING EXAMS',futureCount,'calendar','With published calendar dates')}${miniStat('RECRUITMENT EXAMS',countRecruit,'graduation','Central & nationwide opportunities')}</div>
     <div class="section-row top-section"><div><p class="overline">ACT NOW</p><h2>Applications you can explore <span class="tiny-count">${feature.length}</span></h2><p class="section-caption">Registration windows currently listed as open.</p></div><button class="text-action" data-page="explore" data-filter="open">Browse open applications ${ico('arrow')}</button></div>
     <div class="featured-grid">${feature.length?feature.map(e=>featuredCard(e)).join(''):'<div class="empty-feature">No current applications in this snapshot. Browse upcoming registration windows instead.</div>'}</div>
@@ -109,14 +116,29 @@
     ['IIT Madras','GATE 2027 organising institute','https://gate2027.iitm.ac.in/','GATE 2027 schedule'],
     ['NTA / NIFT','NIFT entrance examination','https://exams.nta.nic.in/niftee/','NIFTEE 2027 public notice'],
     ['CBSE / CTET','Central Teacher Eligibility Test','https://ctet.nic.in/','Official next-cycle notices'],
-    ['RRBs','Railway Recruitment Boards','https://www.rrbapply.gov.in/','Recruitment announcements']
+    ['RRBs','Railway Recruitment Boards','https://www.rrbapply.gov.in/','Recruitment announcements'],
+    ['UPPSC','Uttar Pradesh Public Service Commission','https://uppsc.up.nic.in/','State exam notices'],
+    ['BPSC','Bihar Public Service Commission','https://bpsc.bihar.gov.in/','State exam notices'],
+    ['MPSC','Maharashtra Public Service Commission','https://mpsc.gov.in/','State exam notices'],
+    ['RPSC','Rajasthan Public Service Commission','https://rpsc.rajasthan.gov.in/','State exam notices']
   ];return `${header('Know your source. <em>Trust the date.</em>','Official websites and original scheduling documents behind our exam listings.','TRANSPARENCY FIRST')}
   <div class="source-intro panel"><div class="source-intro-icon">${ico('shield')}</div><div><strong>We link to official institutions, not third-party registration websites.</strong><p>Some links open an organiser's portal rather than a direct form. Dates marked “calendar” are scheduled and can be revised. Missing dates stay missing instead of being invented.</p></div></div>
-  <div class="source-heading"><h2>Trusted official institutions</h2><span>${organizations.length} official destinations</span></div><div class="sources-grid">${organizations.map(([abbr,name,url,description])=>`<a class="source-card" href="${url}" target="_blank" rel="noopener noreferrer"><div class="source-card-top"><span class="source-avatar">${escapeHTML(abbr.slice(0,3))}</span>${ico('arrow-up-right')}</div><h3>${escapeHTML(abbr)}</h3><p>${escapeHTML(name)}</p><div class="source-card-bottom"><span>${ico('check')} ${escapeHTML(description)}</span></div></a>`).join('')}</div><div class="source-explainer panel"><span class="overline">HOW UPDATES WORK IN V2</span><h2>Exam schedule vs. notice discovery</h2><p>Exam dates and registration links are still reviewed manually from original schedules. The separate Official Notices board checks six agencies twice daily using GitHub Actions, records scan health, and lists links found on their websites. A headline is not proof of an application window. Blocked and dynamic sites may require a manual visit.</p><a href="https://www.upsc.gov.in/examinations/exam-calendar" target="_blank" rel="noopener noreferrer" class="primary-outline">See a sample official schedule ${ico('arrow-up-right')}</a></div>${banner()}`;}
+  <div class="source-heading"><h2>Trusted official institutions</h2><span>${organizations.length} official destinations</span></div><div class="sources-grid">${organizations.map(([abbr,name,url,description])=>`<a class="source-card" href="${url}" target="_blank" rel="noopener noreferrer"><div class="source-card-top"><span class="source-avatar">${escapeHTML(abbr.slice(0,3))}</span>${ico('arrow-up-right')}</div><h3>${escapeHTML(abbr)}</h3><p>${escapeHTML(name)}</p><div class="source-card-bottom"><span>${ico('check')} ${escapeHTML(description)}</span></div></a>`).join('')}</div><div class="source-explainer panel"><span class="overline">HOW UPDATES WORK IN V3</span><h2>Exam schedule vs. notice discovery</h2><p>Exam dates and registration links are still reviewed manually from original schedules. The separate Official Notices board checks six nationwide agencies plus four state commissions twice daily using GitHub Actions, records scan health, and lists links found on their websites. A headline is not proof of an application window. Blocked and dynamic sites may require a manual visit.</p><a href="https://www.upsc.gov.in/examinations/exam-calendar" target="_blank" rel="noopener noreferrer" class="primary-outline">See a sample official schedule ${ico('arrow-up-right')}</a></div>${banner()}`;}
   const noticeIcon = (status) => status==='ok'?'check':status==='pending'?'clock':'info';
   const noticeLabel = (status) => ({ok:'Reading notices',limited:'Needs review',unavailable:'Source unavailable',pending:'Awaiting first scan'})[status] || 'Needs review';
-  const noticeDate = (iso) => iso ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'Asia/Kolkata'}).format(new Date(iso)) : 'Not checked yet';
+  const noticeDate = (iso) => iso && !Number.isNaN(Date.parse(iso)) ? new Intl.DateTimeFormat('en-GB',{dateStyle:'medium',timeZone:'Asia/Kolkata'}).format(new Date(iso)) : 'Not checked yet';
   const sinceNotice = (iso) => {if(!iso)return 'Not yet scanned';const hours=Math.max(0,Math.floor((Date.now()-Date.parse(iso))/3600000));return hours<1?'Less than 1 hour ago':hours<24?`${hours} hour${hours===1?'':'s'} ago`:`${Math.floor(hours/24)} day${Math.floor(hours/24)===1?'':'s'} ago`;};
+  const kindNames={application:'Applications & recruitment',update:'Exam updates',result:'Results & admit cards'};
+  const fallbackKind=(title)=>/result|answer\s*key|admit\s*card|marks|score\s*card|cut[ -]?off/i.test(title)?'result':/application|recruitment|vacanc|advertisement|registration|\bCEN\b|\bCRP\b/i.test(title)?'application':'update';
+  const getScope=(n)=>n.scope || (['uppsc','bpsc','mpsc','rpsc'].includes(n.agency)?'state':'national');
+  const sourceScope=(s)=>s.scope || (['uppsc','bpsc','mpsc','rpsc'].includes(s.id)?'state':'national');
+  const getKind=(n)=>n.kind || fallbackKind(n.title);
+  const stateGroups=[
+    {state:'Uttar Pradesh',name:'UPPSC',board:'Uttar Pradesh Public Service Commission',exam:'UPPSC PCS / Combined State Services',url:'https://uppsc.up.nic.in/',description:'State civil services and other recruitment notifications published by UPPSC.'},
+    {state:'Bihar',name:'BPSC',board:'Bihar Public Service Commission',exam:'BPSC Combined Competitive Examination (CCE)',url:'https://bpsc.bihar.gov.in/',description:'Combined competitive exams and recruitment advertisements released by BPSC.'},
+    {state:'Maharashtra',name:'MPSC',board:'Maharashtra Public Service Commission',exam:'MPSC State Services / Rajyaseva',url:'https://mpsc.gov.in/',description:'Maharashtra State Services and related commission advertisements.'},
+    {state:'Rajasthan',name:'RPSC',board:'Rajasthan Public Service Commission',exam:'RPSC RAS / State & Subordinate Services',url:'https://rpsc.rajasthan.gov.in/',description:'Rajasthan administrative and subordinate-service recruitment notices.'},
+  ];
   async function loadNotices(force=false){
     if(noticesLoading || (noticeLoaded&&!force))return;
     noticesLoading=true;
@@ -125,31 +147,51 @@
       if(!response.ok)throw new Error('feed unavailable');
       const payload=await response.json();
       if(!payload||!Array.isArray(payload.items)||!Array.isArray(payload.sources))throw new Error('invalid feed');
+      // The published snapshot may still be rolling out; retain known official sources.
+      const supplied=new Set(payload.sources.map(x=>x.id));
+      for(const [id,name,category,url] of noticeSources){if(!supplied.has(id))payload.sources.push({id,name,category,url,status:'pending',checkedAt:null,count:0});}
       noticeFeed=payload;noticeFailure=false;
-    }catch(err){noticeFailure=true;}finally{noticesLoading=false;noticeLoaded=true;if(state.page==='notices')renderPage();}
+    }catch(err){noticeFailure=true;}finally{noticesLoading=false;noticeLoaded=true;if(['notices','states'].includes(state.page))renderPage();}
   }
-  function notices(){
-    const sources=noticeFeed.sources||[],all=noticeFeed.items||[];
+  function scopeSources(scope){return (noticeFeed.sources||[]).filter(s=>scope==='all'||sourceScope(s)===scope);}
+  function filteredNotices(scope=noticeScope){
     const q=noticeSearch.trim().toLowerCase();
-    const filtered=all.filter(n=>(noticeAgency==='all'||n.agency===noticeAgency)&&(!q||n.title.toLowerCase().includes(q)||n.agency.includes(q)));
+    return (noticeFeed.items||[]).filter(n=>(scope==='all'||getScope(n)===scope) && (noticeAgency==='all'||n.agency===noticeAgency) && (noticeKind==='all'||getKind(n)===noticeKind) && (!q||String(n.title||'').toLowerCase().includes(q)||n.agency.includes(q)));
+  }
+  function noticeSourceCards(sources){return `<div class="notice-sources-grid">${sources.map(s=>`<a class="notice-source" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer"><span class="notice-source-name">${escapeHTML(s.name)} ${ico('arrow-up-right')}</span><span class="notice-source-status ${escapeHTML(s.status)}">${ico(noticeIcon(s.status))} ${escapeHTML(noticeLabel(s.status))}</span><small>${s.checkedAt?'Checked '+noticeDate(s.checkedAt):'Initial scan pending'} · ${Number(s.count)||0} links</small>${s.message?`<small>${escapeHTML(s.message)}</small>`:''}</a>`).join('')}</div>`;}
+  function notices(){
+    const sources=scopeSources(noticeScope),listed=filteredNotices(),all=(noticeFeed.items||[]).filter(n=>noticeScope==='all'||getScope(n)===noticeScope);
     const successful=sources.filter(s=>s.status==='ok').length;
     const label=noticeFeed.generatedAt?'Last scan: '+sinceNotice(noticeFeed.generatedAt):'First automatic scan pending';
-    return `${header('Notices from <em>official sources.</em>','Track new announcements across six nationwide examination agencies. Every entry links back to an official site.','PHASE 02 · AUTOMATED NOTICES')}
-      <div class="notice-summary panel"><div class="notice-summary-icon">${ico('bell')}</div><div><span class="overline">SOURCE SCANNING</span><h2>${escapeHTML(label)}</h2><p>${successful}/${sources.length} sites yielded notices in the last scan. A blocked or unavailable website does not mean it had no new announcements.</p></div><button class="primary-outline" data-action="reload-notices" type="button" ${noticesLoading?'disabled':''}>${ico('trending')} Reload feed</button></div>
-      ${noticeFailure?`<div class="notice-warning">${ico('info')} The published feed could not be loaded. Visit an agency's official website directly.</div>`:''}
-      <div class="notice-sources-grid">${sources.map(s=>`<a class="notice-source" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer"><span class="notice-source-name">${escapeHTML(s.name)} ${ico('arrow-up-right')}</span><span class="notice-source-status ${s.status}">${ico(noticeIcon(s.status))} ${escapeHTML(noticeLabel(s.status))}</span><small>${s.checkedAt?'Checked '+noticeDate(s.checkedAt):'Initial sync pending'}</small></a>`).join('')}</div>
-      <section class="notice-list-section"><div class="section-row"><div><p class="overline">ANNOUNCEMENTS</p><h2>Notices detected <span class="tiny-count">${all.length}</span></h2><p class="section-caption">“First detected” is when ExamAtlas spotted a link, not its original publication date.</p></div></div>
-      <div class="notice-toolbar"><label class="notice-search">${ico('search')}<input id="notice-search" placeholder="Search official notices..." aria-label="Search official notices" value="${escapeHTML(noticeSearch)}"/></label><label class="notice-agency-label">Board<select id="notice-agency"><option value="all">All agencies</option>${sources.map(s=>`<option value="${escapeHTML(s.id)}" ${noticeAgency===s.id?'selected':''}>${escapeHTML(s.name)}</option>`).join('')}</select></label></div>
-      <div class="notice-results" id="notice-results">${noticeResults(filtered,all.length)}</div>
-      <p class="notice-footnote">${ico('shield')} Automatic checking is best-effort and not an official announcement service. We never infer application dates or the opening of registration from notice headlines. Always verify the linked official notice before acting.</p></section>${banner()}`;
+    const activeAgencies=sources.some(s=>s.id===noticeAgency) || noticeAgency==='all';
+    if(!activeAgencies)noticeAgency='all';
+    return `${header('Notices from <em>official sources.</em>','Find recruitment notices, exam changes, results and admit cards. Every item links to an official commission website.','PHASE 03 · SMART NOTICE WATCHER')}
+      <div class="notice-summary panel"><div class="notice-summary-icon">${ico('bell')}</div><div><span class="overline">AUTOMATIC SOURCE SCANNING</span><h2>${escapeHTML(label)}</h2><p>${successful}/${sources.length} selected sources yielded usable links. A blocked source does not mean there are no new announcements. Registration status is never inferred from a headline.</p></div><button class="primary-outline" data-action="reload-notices" type="button" ${noticesLoading?'disabled':''}>${ico('trending')} Refresh display</button></div>
+      ${noticeFailure?`<div class="notice-warning">${ico('info')} The published feed could not be loaded. Use the official portals below.</div>`:''}
+      <div class="notice-scope-tabs" role="group" aria-label="Notice scope">${[['national','Nationwide'],['state','State commissions'],['all','All sources']].map(([value,label])=>`<button type="button" data-notice-scope="${value}" class="${noticeScope===value?'active':''}">${label}</button>`).join('')}</div>
+      ${noticeSourceCards(sources)}
+      <section class="notice-list-section"><div class="section-row"><div><p class="overline">ANNOUNCEMENTS</p><h2>Official notice links <span class="tiny-count">${listed.length}</span></h2><p class="section-caption">First detected by ExamAtlas does not mean newly published or currently open.</p></div></div>
+      <div class="notice-kind-tabs" role="group" aria-label="Filter by notice type">${[['all','All types'],['application','Applications & recruitment'],['update','Exam updates'],['result','Results & admit cards']].map(([value,label])=>`<button type="button" class="${noticeKind===value?'active':''}" data-notice-kind="${value}">${label}</button>`).join('')}</div>
+      <div class="notice-toolbar"><label class="notice-search">${ico('search')}<input id="notice-search" placeholder="Search exam, agency or keyword..." aria-label="Search official notices" value="${escapeHTML(noticeSearch)}"/></label><label class="notice-agency-label">Board<select id="notice-agency"><option value="all">All agencies</option>${sources.map(s=>`<option value="${escapeHTML(s.id)}" ${noticeAgency===s.id?'selected':''}>${escapeHTML(s.name)}</option>`).join('')}</select></label></div>
+      <div class="notice-results" id="notice-results">${noticeResults(listed,all.length)}</div>
+      <p class="notice-footnote">${ico('shield')} Application and recruitment categories mean the notice is about an opportunity; they do not mean registration is open. Use the original PDF or portal for dates, eligibility, fees and changes.</p></section>${banner()}`;
   }
   function noticeResults(list,total){
     if(!noticeLoaded)return `<div class="notice-empty panel">${ico('clock')}<h3>Loading published notices...</h3></div>`;
-    if(!total)return `<div class="notice-empty panel">${ico('bell')}<h3>${noticeFeed.generatedAt?'No notices detected yet':'First scan not complete'}</h3><p>Once the scheduled official-site watcher runs, announcements it can read will appear here. You can always open the agencies above.</p></div>`;
-    if(!list.length)return `<div class="notice-empty panel">${ico('search')}<h3>No matches</h3><p>Try searching a different term or selecting another agency.</p></div>`;
-    return list.slice(0,90).map(n=>{const org=(noticeFeed.sources||[]).find(s=>s.id===n.agency);return `<article class="notice-entry"><div class="notice-entry-head"><span class="notice-agency-pill">${escapeHTML(org?.name||n.agency)}</span><span class="notice-first-seen">First detected ${noticeDate(n.firstSeenAt)}</span></div><h3>${escapeHTML(n.title)}</h3><a href="${escapeHTML(n.url)}" target="_blank" rel="noopener noreferrer">Open official notice ${ico('arrow-up-right')}</a></article>`;}).join('');
+    if(!total)return `<div class="notice-empty panel">${ico('bell')}<h3>${noticeFeed.generatedAt?'No links extracted from these sources':'First scan pending'}</h3><p>Official commissions sometimes block automated access. Use the official source cards above while coverage is unavailable.</p></div>`;
+    if(!list.length)return `<div class="notice-empty panel">${ico('search')}<h3>No matching notices</h3><p>Try a different type, agency or search term.</p></div>`;
+    return list.slice(0,90).map(n=>{const org=(noticeFeed.sources||[]).find(s=>s.id===n.agency);const kind=getKind(n);const seen=n.lastSeenAt&&noticeFeed.generatedAt&&(Date.parse(noticeFeed.generatedAt)-Date.parse(n.lastSeenAt)>48*3600000)?'Previously detected':'Detected in latest scans';return `<article class="notice-entry"><div class="notice-entry-head"><span class="notice-agency-pill">${escapeHTML(org?.name||n.agency)}</span><span class="notice-kind-chip ${escapeHTML(kind)}">${escapeHTML(kindNames[kind]||'Exam update')}</span></div><h3>${escapeHTML(n.title)}</h3><div class="notice-meta"><span>First detected ${noticeDate(n.firstSeenAt)}</span><span>${seen}</span></div><a href="${escapeHTML(n.url)}" target="_blank" rel="noopener noreferrer">Read original notice ${ico('arrow-up-right')}</a></article>`;}).join('');
   }
-  function renderPage(){const area=$('#page-view');if(!area)return;area.innerHTML=state.page==='overview'?overview():state.page==='explore'?explore():state.page==='saved'?explore(true):state.page==='calendar'?calendar():state.page==='notices'?notices():sources();}
+  function states(){
+    const displayed=stateGroups.filter(s=>selectedState==='all'||s.state===selectedState);
+    const stateSources=scopeSources('state');
+    return `${header('State exams, <em>now on the map.</em>','Start with official commission hubs for Uttar Pradesh, Bihar, Maharashtra and Rajasthan. Verified dates will be added separately.','PHASE 03 · STATE EXAMS')}
+      <div class="state-note">${ico('info')} <div><strong>State exam discovery is in early access.</strong><p>These are recurring exam categories, not confirmed open vacancies. No state registration dates are displayed until checked against official recruitment notices.</p></div></div>
+      <div class="state-filter-head"><div><h2>Explore by state</h2><p>Four states · official commission websites · more to come</p></div><label>State <select id="state-selector"><option value="all">All four states</option>${stateGroups.map(s=>`<option value="${s.state}" ${selectedState===s.state?'selected':''}>${s.state}</option>`).join('')}</select></label></div>
+      <div class="state-exam-grid">${displayed.map(s=>{const status=stateSources.find(x=>x.name===s.name);return `<article class="state-exam-card"><div class="state-exam-top"><span class="state-monogram">${escapeHTML(s.name.slice(0,2))}</span><span class="state-name">${escapeHTML(s.state)}</span></div><p class="overline">${escapeHTML(s.name)} · STATE RECRUITMENT</p><h3>${escapeHTML(s.exam)}</h3><p>${escapeHTML(s.description)}</p><div class="state-date-row">${ico('calendar')} Dates & registration: <strong>Check official notice</strong></div><div class="state-card-actions"><a target="_blank" rel="noopener noreferrer" href="${escapeHTML(s.url)}">Visit official commission ${ico('arrow-up-right')}</a><button type="button" data-state-notices="${escapeHTML(s.name.toLowerCase())}">Agency notices ${ico('bell')}</button></div><span class="state-source-health">${ico(noticeIcon(status?.status||'pending'))} Automatic scanning: ${escapeHTML(noticeLabel(status?.status||'pending'))}</span></article>`;}).join('')}</div>
+      <div class="state-guide panel"><span class="overline">YOUR STATE EXAM ROADMAP</span><h2>Find the commission. Check the announcement. Apply officially.</h2><p>Once a state commission publishes a recruitment notification, check its eligibility, important dates, syllabus and official application process on that commission's website. ExamAtlas will not assume a new registration window from recurring exam names.</p><button class="primary-outline" type="button" data-action="state-to-notices">Browse state notices ${ico('arrow-up-right')}</button></div>${banner()}`;
+  }
+  function renderPage(){const area=$('#page-view');if(!area)return;area.innerHTML=state.page==='overview'?overview():state.page==='explore'?explore():state.page==='saved'?explore(true):state.page==='calendar'?calendar():state.page==='notices'?notices():state.page==='states'?states():sources();}
   function detailModal(id){const e=exams.find(x=>x.id===id);if(!e)return;const s=statusFor(e);const d=e.registrationEnd; const modal=document.createElement('div');modal.className='modal-backdrop';modal.innerHTML=`<div class="detail-modal" role="dialog" aria-modal="true" aria-label="${escapeHTML(e.title)} details"><div class="modal-top"><span class="status-chip ${statusClass[s]}"><span class="chip-dot"></span>${statusLabels[s]}</span><button class="modal-close" data-action="close-modal" aria-label="Close dialog">${ico('x')}</button></div><div class="modal-label">${escapeHTML(e.agency)} / ${escapeHTML(e.category)}</div><h2>${escapeHTML(e.title)}</h2><p class="modal-description">${escapeHTML(e.description)}</p><div class="modal-stat-grid"><div><small>EXAM DATE</small><strong>${escapeHTML(e.examLabel)}</strong></div><div><small>REGISTRATION OPENS</small><strong>${pretty(e.registrationStart)}</strong></div><div><small>STANDARD DEADLINE</small><strong>${pretty(d)}</strong></div><div><small>ELIGIBILITY GUIDE</small><strong>${escapeHTML(e.qualification)}</strong></div></div>${e.lateRegistrationEnd?`<p class="late-notice">${ico('clock')} Last permitted late-fee date: <strong>${pretty(e.lateRegistrationEnd)}</strong></p>`:''}<div class="modal-note">${ico('info')} <p>${escapeHTML(e.note)}</p></div><div class="modal-verification">${ico('shield')} Source checked on ${pretty(e.verified)} · ${e.certainty==='official'?'Official notice':e.certainty==='calendar'?'Official advance calendar':e.certainty==='tentative'?'Tentative calendar':'No exact published date'}</div><div class="modal-links"><a href="${escapeHTML(e.applyUrl)}" target="_blank" rel="noopener noreferrer" class="modal-primary">Open official portal ${ico('arrow-up-right')}</a><a href="${escapeHTML(e.sourceUrl)}" target="_blank" rel="noopener noreferrer" class="modal-secondary">Source document ${ico('file')}</a><button data-action="download-ics" data-id="${e.id}" ${!e.examDates.length?'disabled title="No confirmed date"':''} class="modal-secondary">${ico('download')} Add to calendar</button></div></div>`;document.body.appendChild(modal);const close=()=>modal.remove();modal.addEventListener('click',evt=>{if(evt.target===modal||evt.target.closest('[data-action="close-modal"]'))close();const target=evt.target.closest('[data-action="download-ics"]');if(target){downloadICS(e);}});function escClose(evt){if(evt.key==='Escape'){close();document.removeEventListener('keydown',escClose);}}document.addEventListener('keydown',escClose);modal.querySelector('.modal-close').focus();}
   function downloadICS(e){
     if(!e.examDates.length)return;
@@ -167,20 +209,24 @@
     const link=document.createElement('a');link.href=url;link.download=e.id+'.ics';document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);notify('Calendar file created');
   }
   function calendarStep(amount){const d=new Date(Date.UTC(state.calYear,state.calMonth+amount,1));state.calYear=d.getUTCFullYear();state.calMonth=d.getUTCMonth();state.selectedDate=calDate(state.calYear,state.calMonth,1);renderPage();}
-  document.addEventListener('click',e=>{const btn=e.target.closest('[data-page],[data-action],[data-detail],[data-save],[data-view],[data-month],[data-date],[data-filter]');if(!btn)return;
+  document.addEventListener('click',e=>{const btn=e.target.closest('[data-page],[data-action],[data-detail],[data-save],[data-view],[data-month],[data-date],[data-filter],[data-notice-scope],[data-notice-kind],[data-state-notices]');if(!btn)return;
     if(btn.dataset.page){e.preventDefault();if(btn.dataset.filter)state.status=btn.dataset.filter;setPage(btn.dataset.page);return;}
+    if(btn.dataset.noticeScope){noticeScope=btn.dataset.noticeScope;noticeAgency='all';renderPage();return;}
+    if(btn.dataset.noticeKind){noticeKind=btn.dataset.noticeKind;renderPage();return;}
+    if(btn.dataset.stateNotices){noticeScope='state';noticeAgency=btn.dataset.stateNotices;noticeKind='all';noticeSearch='';setPage('notices');return;}
     if(btn.dataset.save){saveToggle(btn.dataset.save);return;}
     if(btn.dataset.detail){detailModal(btn.dataset.detail);return;}
     if(btn.dataset.view){state.layout=btn.dataset.view;renderPage();return;}
     if(btn.dataset.month){calendarStep(Number(btn.dataset.month));return;}
     if(btn.dataset.date){state.selectedDate=btn.dataset.date;renderPage();return;}
     if(btn.dataset.action==='reload-notices'){loadNotices(true);return;}
+    if(btn.dataset.action==='state-to-notices'){noticeScope='state';noticeAgency='all';noticeKind='all';noticeSearch='';setPage('notices');return;}
     if(btn.dataset.action==='calendar-today'){state.calYear=Number(today.slice(0,4));state.calMonth=Number(today.slice(5,7))-1;state.selectedDate=today;renderPage();return;}
     if(btn.dataset.action==='reset-filters'){state.query='';state.track='all';state.category='all';state.status='all';state.sort='soonest';renderPage();return;}
   });
-  document.addEventListener('input',e=>{if(e.target.id==='notice-search'){noticeSearch=e.target.value;const match=(noticeFeed.items||[]).filter(n=>(noticeAgency==='all'||n.agency===noticeAgency)&&(!noticeSearch.trim()||n.title.toLowerCase().includes(noticeSearch.trim().toLowerCase())||n.agency.includes(noticeSearch.trim().toLowerCase())));const el=$('#notice-results');if(el)el.innerHTML=noticeResults(match,noticeFeed.items.length);return;}if(e.target.id==='exam-search'){state.query=e.target.value;const area=$('#result-area');if(area)area.innerHTML=resultsArea();}});
-  document.addEventListener('change',e=>{if(e.target.id==='notice-agency'){noticeAgency=e.target.value;renderPage();return;}const ids={'filter-track':'track','filter-category':'category','filter-status':'status','sort-exam':'sort'};if(ids[e.target.id]){state[ids[e.target.id]]=e.target.value;if(e.target.id==='sort-exam'){const area=$('#result-area');if(area)area.innerHTML=resultsArea();}else{const area=$('#result-area');if(area)area.innerHTML=resultsArea();}}});
+  document.addEventListener('input',e=>{if(e.target.id==='notice-search'){noticeSearch=e.target.value;const match=filteredNotices();const el=$('#notice-results');if(el)el.innerHTML=noticeResults(match,(noticeFeed.items||[]).filter(n=>noticeScope==='all'||getScope(n)===noticeScope).length);return;}if(e.target.id==='exam-search'){state.query=e.target.value;const area=$('#result-area');if(area)area.innerHTML=resultsArea();}});
+  document.addEventListener('change',e=>{if(e.target.id==='notice-agency'){noticeAgency=e.target.value;renderPage();return;}if(e.target.id==='state-selector'){selectedState=e.target.value;renderPage();return;}const ids={'filter-track':'track','filter-category':'category','filter-status':'status','sort-exam':'sort'};if(ids[e.target.id]){state[ids[e.target.id]]=e.target.value;if(e.target.id==='sort-exam'){const area=$('#result-area');if(area)area.innerHTML=resultsArea();}else{const area=$('#result-area');if(area)area.innerHTML=resultsArea();}}});
   document.addEventListener('keydown',e=>{if(e.key==='/' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName) && state.page==='explore'){e.preventDefault();$('#exam-search')?.focus();}});
-  window.addEventListener('hashchange',()=>{const to=location.hash.replace('#','');if(validPages.includes(to)&&to!==state.page){state.page=to;if(to==='notices')loadNotices();updateNav();renderPage();}});
-  $('#app').innerHTML=shell();renderPage();if(state.page==='notices')loadNotices();
+  window.addEventListener('hashchange',()=>{const to=location.hash.replace('#','');if(validPages.includes(to)&&to!==state.page){state.page=to;if(to==='notices'||to==='states')loadNotices();updateNav();renderPage();}});
+  $('#app').innerHTML=shell();renderPage();if(state.page==='notices'||state.page==='states')loadNotices();
 })();
