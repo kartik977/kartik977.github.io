@@ -37,9 +37,9 @@ SAFE_HOSTS = ('upsc.gov.in', 'ssc.gov.in', 'ibps.in', 'rrbcdg.gov.in', 'nta.ac.i
 SPECIFIC = re.compile(r'(?i)\b(exam(?:ination)?s?|notification|notice|recruitment|vacanc(?:y|ies)|advertisement|application|registration|admit\s*card|result|answer\s*key|corrigendum|prelim(?:inary)?|mains|call\s*letter|selected|merit\s*list|revised|schedule|timetable|calendar|combined\s*competitive|civil\s*service|\bCEN\b|\bCRP\b|\bNET\b|\bCBT\b|\bRAS\b|\bCCE\b)\b')
 JUNK = re.compile(r'(?i)(cookies?|privacy|disclaimer|tender|procurement|eoi|translation\s*reviewers|advertising\s*agency|media\s*briefing|trade\s*mark|annual\s*report|telephone\s*directory|archives?|site\s*map|visitor\s*counter|public\s*grievance|contact\s*us|judgment|court\s*order|publication\s*policy|copyright|fraudulent\s*websites|appointment\s*of\s*consultant)')
 VAGUE = re.compile(r'(?i)^(?:click\s*here|read\s*more|view\s*all|more|news|latest\s*news|notices?|recruitment|results?|important\s*notice|current\s*openings|download\s*advertisements?|download|english|hindi|register|apply\s*now|home|pdf|view|apply\s*online)(?:\s*\([^)]*\))?$')
-APPLY = re.compile(r'(?i)(inviting\s*(?:online\s*)?applications?|applications?\s*(?:invited|open|commenc|for)|registration\s*(?:open|commenc|start)|recruitment\s*(?:for|of|to)|vacanc(?:y|ies)|new\s*advertisement|direct\s*recruitment|window\s*notification|\badvt\.?\s*(?:no\.?|\d))')
-OUTCOMES = re.compile(r'(?i)(results?|scorecards?|cut[ -]?off|answer\s*key|admit\s*card|hall\s*ticket|merit\s*list|shortlist|selection\s*list|certificate|marks|response\s*sheet)')
-UPDATES = re.compile(r'(?i)(reschedul|postpon|revis|date(?:s)?\s*of\s*exam|schedule|city\s*intimation|change\s*in|corrigendum|extension\s*of|calendar|exam(?:ination)?s?)')
+APPLY = re.compile(r'(?i)(inviting\s*(?:online\s*)?applications?|applications?\s*(?:invited|open|commenc|for)|registration\s*(?:open|commenc|start)|recruitment\s*(?:for|of|to)|vacanc(?:y|ies)|new\s*advertisement|direct\s*recruitment|window\s*notification)')
+OUTCOMES = re.compile(r'(?i)(results?|selected\s*candidates?|provisionally\s*selected|selection\s*list|shortlist|scorecards?|cut[ -]?off|answer\s*key|admit\s*card|hall\s*ticket|merit\s*list|shortlist|selection\s*list|certificate|marks|response\s*sheet)')
+UPDATES = re.compile(r'(?i)(district\s*(?:information|intimation)\s*slip|city\s*(?:information|intimation)\s*slip|exam\s*city|reschedul|postpon|revis|date(?:s)?\s*of\s*exam|schedule|city\s*intimation|change\s*in|corrigendum|extension\s*of|calendar|exam(?:ination)?s?)')
 
 
 def safe_url(raw: str, base: str) -> str | None:
@@ -88,6 +88,8 @@ def candidate_title(anchor) -> str:
 def kind_for(title: str) -> str:
     if OUTCOMES.search(title):
         return 'result'
+    if re.search(r'(?i)(district\s*(?:information|intimation)\s*slip|city\s*(?:information|intimation)\s*slip|exam\s*city)', title):
+        return 'update'
     if APPLY.search(title):
         return 'application'
     if UPDATES.search(title):
