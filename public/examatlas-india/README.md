@@ -71,3 +71,16 @@ Deploy the source files in this directory under `public/examatlas-india/` and th
 - **State-specific exam dates, direct registration forms, exact vacancies and verified application windows are NOT yet automated.** Add these to the editorial catalog only after verifying an official exam PDF.
 
 To verify: `python -m unittest discover -s scripts -p 'test_*.py'` and `node --check app.js`.
+
+## Phase 04 — state exam dates & personal milestones (2026-10-21)
+
+The main navigation now includes **My deadline planner** (`#planner`), with eight editorial state records in `state-data.js` across Uttar Pradesh, Bihar, Maharashtra and Rajasthan.
+
+- **Source confidence**: `published` reflects an original official exam notice; `tentative` and `proposed` are authority-published planning dates, not guaranteed examination dates. `needs-review` and `unannounced` explicitly show no guessed dates.
+- **Applications**: there are **no verified open state application windows** in this release. Official agency/application portal links are *landing pages* unless a cycle-specific form has been established. Never label one as a currently open form without independent verification.
+- **Eligibility**: cards have high-level, post-dependent guidance only. The PDF/advertisement controls eligibility and language, reservation, age, degree and fees.
+- **My tracker**: candidates can save exams, enter their **own** study/application milestones and notes, filter to tracked exams, and download ICS calendars for the exam date or their personal date. A personal date is NEVER displayed as an official registration deadline. Data persists **only in the current browser's localStorage**; no accounts, cross-device sync, push, email, server data collection or background reminders.
+- **Sources checked**: UPPSC 2026 advance exam calendar; UPPSC October 2026 screening notice; BPSC 14 August 2026 *tentative* exam calendar; RPSC 26 December 2025 *proposed* 2026 exam calendar; MPSC public website, where conflicting secondary date reports were not promoted to verified dates.
+- **Update policy**: edit `state-data.js` only when an original commission publication has been checked; update `verified` and `document`. Do not feed all notice-parser discoveries directly into schedule dates.
+
+Implementation: `planner.js` owns the state planner UI and localStorage. `planner.css` is scoped to `.plan-page`; `index.html` loads both new scripts before `app.js`. The planner uses the existing URL hash navigation. Tested by Chromium browser harness for tracking, persistence, date editing, filters, ICS and narrow viewport overflow.
