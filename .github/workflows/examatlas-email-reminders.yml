@@ -1,0 +1,30 @@
+name: ExamAtlas Private Email Reminders
+on:
+  schedule:
+    # 08:10 IST every day. GitHub scheduled Actions can be delayed.
+    - cron: '40 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: examatlas-email-reminders
+  cancel-in-progress: false
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check reminder tests
+        run: python -m unittest discover -s public/examatlas-india/scripts -p 'test_deadline_emails.py'
+      - name: Send only configured, verified reminders
+        run: python public/examatlas-india/scripts/send_deadline_emails.py
+        env:
+          EA_SMTP_HOST: ${{ secrets.EA_SMTP_HOST }}
+          EA_SMTP_PORT: ${{ secrets.EA_SMTP_PORT }}
+          EA_SMTP_USER: ${{ secrets.EA_SMTP_USER }}
+          EA_SMTP_PASSWORD: ${{ secrets.EA_SMTP_PASSWORD }}
+          EA_ALERT_FROM: ${{ secrets.EA_ALERT_FROM }}
+          EA_ALERT_RECIPIENTS: ${{ secrets.EA_ALERT_RECIPIENTS }}
