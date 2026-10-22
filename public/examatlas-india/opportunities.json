@@ -22,6 +22,27 @@
       "sourceName": "Ministry of Railways, PIB · 11 Oct 2026"
     },
     {
+      "id": "nta-ugcnet-dec-2026",
+      "title": "UGC–NET — December 2026",
+      "agency": "National Testing Agency",
+      "scope": "Nationwide",
+      "kind": "Eligibility examination",
+      "qualification": "Eligibility varies by subject and category; check the official NTA UGC–NET Information Bulletin for postgraduate requirements, reserved-category rules and JRF age criteria.",
+      "start": "2026-10-08",
+      "end": "2026-10-31",
+      "regularDeadline": "2026-10-28",
+      "lateStart": "2026-10-29",
+      "feeDeadline": "2026-10-31",
+      "correctionEnd": "2026-11-04",
+      "examDate": "2026-12-14",
+      "status": "verified-window",
+      "slots": null,
+      "note": "Regular applications close 28 October 2026 at 11:50 PM IST. Late applications with a ₹500 late fee are accepted 29–31 October until 11:50 PM. Correction window 2–4 November; exams scheduled 14–19 December 2026.",
+      "applyUrl": "https://ugcnet.nta.nic.in/",
+      "sourceUrl": "https://cdnbbsr.s3waas.gov.in/s301eee509ee2f68dc6014898c309e86bf/uploads/2026/10/202610081928217016.pdf",
+      "sourceName": "NTA official public notice · 8 Oct 2026"
+    },
+    {
       "id": "uppsc-direct-d6-2025",
       "title": "UPPSC Direct Recruitment — D-6/E-1/2025",
       "agency": "Uttar Pradesh Public Service Commission",

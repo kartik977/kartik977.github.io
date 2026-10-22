@@ -44,7 +44,8 @@ def collect_alerts(records: list[dict], day: date) -> list[dict]:
 def build_message(items: list[dict], today: date, sender: str, recipients: list[str]) -> EmailMessage:
     email = EmailMessage()
     email["From"] = sender
-    email["To"] = ", ".join(recipients)
+    email["To"] = sender
+    email["Bcc"] = ", ".join(recipients)
     email["Subject"] = f"ExamAtlas: {len(items)} verified application deadline reminder(s) — {today.isoformat()}"
     lines = ["ExamAtlas India — private daily deadline reminder", "", "All dates are India Standard Time (IST).", ""]
     for e in items:
