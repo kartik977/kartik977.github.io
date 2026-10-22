@@ -137,3 +137,16 @@ V6 introduces a calmer, search-first homepage, a horizontal five-item primary na
 Pathfinder (`#pathfinder`) lets visitors compare **SSC CGL, RRB NTPC, and IBPS PO**. The editorial concept crosswalk is in `pathfinder-data.js`, the interactive view in `pathfinder.js`, and styles in `pathfinder.css`. It reads V7 `examatlas-prepare-v7` checklist progress from the same browser (with no account or server upload). The 7-day study-bridge planner saves checks locally and exports a 7-day .ics calendar. Visitors can move into the target Study Studio guide.
 
 **Important limitations:** Editorially related topics are not interchangeable syllabus requirements or a calculated readiness score. Exam patterns and difficulty differ. Dates, age, posts, vacancies, eligibility, registration status and application instructions are *not* assessed by Pathfinder. Always read each official authority's latest notification. The concept crosswalk maps V7 section-topic IDs and must be reviewed when V7 guide topics change. If the source website changes, recheck links.
+
+
+## V9 — Pathfinder expansion and Notice Intelligence (22 October 2026)
+
+- Pathfinder includes SSC CGL, SSC CHSL, RRB NTPC, RRB Group D, IBPS PO, SBI PO, UPSC CSE and CAT. `pathfinder-extra.js` adds three optional Study Studio guides and editorial mappings for five additional examinations.
+- Cross-exam topics represent related preparation concepts only; they do not certify comparable difficulty, complete syllabus coverage, application eligibility, or exam readiness.
+- `#intelligence` tracks possible correction titles from the official notice feed. Students may store watched exams in browser local storage; this is **not** an email or push subscription.
+- `scripts/notice_intelligence.py` checks three allowlisted official source documents twice daily through the existing notice workflow and stores a normalized text SHA-256 fingerprint in `notice-snapshots.json`. First successful reads create baselines. A later changed text fingerprint creates a **needs-review** event in `notice-intelligence.json`.
+- A detected revision does not specify whether any deadline, age limit, vacancy, syllabus, or application condition changed. Review the two original official documents manually before any editorial calendar update.
+- Scanning may be blocked or unavailable, and revised notices can appear at *new* URLs. The title classifier catches some possible corrigenda; monitoring is not exhaustive and must not be described as guaranteed real-time protection.
+- The `reviewed` list is reserved for separately validated editorial interpretations and is not populated by automation.
+- Tests: `python -m unittest discover -s public/examatlas-india/scripts -p 'test_*.py'`. The GitHub Actions workflow installs BeautifulSoup and pypdf, tests both parsers, refreshes notice data, commits fingerprints and republishes GitHub Pages.
+
