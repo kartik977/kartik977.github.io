@@ -130,3 +130,10 @@ V6 introduces a calmer, search-first homepage, a horizontal five-item primary na
 - Topic lists are **editorial preparation guides**, not a complete official syllabus or guarantee of paper coverage. CAT's organisers do not prescribe a fixed topic-by-topic syllabus; refer to the original information bulletin and mock when provided.
 - All resource URLs were reviewed during implementation, but public agency sites may change routes or require JavaScript. Review links and exam notices periodically.
 - No login, analytics tracking, external APIs or server-side student data required for this release.
+
+
+## Phase 08 — Pathfinder (22 October 2026)
+
+Pathfinder (`#pathfinder`) lets visitors compare **SSC CGL, RRB NTPC, and IBPS PO**. The editorial concept crosswalk is in `pathfinder-data.js`, the interactive view in `pathfinder.js`, and styles in `pathfinder.css`. It reads V7 `examatlas-prepare-v7` checklist progress from the same browser (with no account or server upload). The 7-day study-bridge planner saves checks locally and exports a 7-day .ics calendar. Visitors can move into the target Study Studio guide.
+
+**Important limitations:** Editorially related topics are not interchangeable syllabus requirements or a calculated readiness score. Exam patterns and difficulty differ. Dates, age, posts, vacancies, eligibility, registration status and application instructions are *not* assessed by Pathfinder. Always read each official authority's latest notification. The concept crosswalk maps V7 section-topic IDs and must be reviewed when V7 guide topics change. If the source website changes, recheck links.
