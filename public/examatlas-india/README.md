@@ -114,3 +114,8 @@ SMTP uses STARTTLS and will not fall back to cleartext authentication. The workf
 To maintain records: edit `opportunities.json`, regenerate `opportunity-data.js` from the JSON, review the dates and sources, and run `python -m unittest discover -s public/examatlas-india/scripts -p 'test_deadline_emails.py'`.
 
 **Phase 05 update:** NTA UGC–NET December 2026 official notice confirms regular applications 8–28 Oct 2026, late-fee window 29–31 Oct 2026, correction 2–4 Nov; the final late-fee cutoff is tracked separately from the regular deadline. The SMTP digest keeps all recipient addresses in Bcc and places only the sender address in To.
+
+
+## Phase 06 — The Quiet Atlas redesign
+
+V6 introduces a calmer, search-first homepage, a horizontal five-item primary navigation with less-frequent pages under More, a muted mint and off-white palette, less dense exam cards and expandable eligibility notes. Search chips and the homepage search open the existing exam explorer with the selected query. Saved lists, official sources, registration states, dates, reminder exports and updater workflows are retained. `v6.css` is loaded last for presentation overrides and `v6-home.js` before `app.js`.
