@@ -84,3 +84,31 @@ The main navigation now includes **My deadline planner** (`#planner`), with eigh
 - **Update policy**: edit `state-data.js` only when an original commission publication has been checked; update `verified` and `document`. Do not feed all notice-parser discoveries directly into schedule dates.
 
 Implementation: `planner.js` owns the state planner UI and localStorage. `planner.css` is scoped to `.plan-page`; `index.html` loads both new scripts before `app.js`. The planner uses the existing URL hash navigation. Tested by Chromium browser harness for tracking, persistence, date editing, filters, ICS and narrow viewport overflow.
+
+
+## Phase 05 — verified windows and private email reminders (21 October 2026)
+
+- New **Verified deadlines** page at `#deadlines`, loaded from the manually reviewed `opportunities.json` catalog and the generated `opportunity-data.js` file. Dates use **India Standard Time**. Open / closed labels are calculated dynamically from the current Indian date. Source URLs link to the original government authority, NTA, or Ministry of Railways.
+- **RRB NTPC Graduate CEN 06/2026**: 8 Oct–6 Nov 2026 registration, fee payment until 8 Nov, modification 9–18 Nov (Ministry of Railways official PIB release 11 Oct 2026).
+- **Joint CSIR–UGC NET December 2026**: 7 Oct–5 Nov regular registration; 6–9 Nov late fee (+₹500); correction 10–12 Nov (NTA public notice 7 Oct 2026). The final late-fee cutoff is used for the reminder tracker, with the regular cutoff explicitly displayed in card notes.
+- **UPPSC D-6/E-1/2025**: registration ended 21 Oct 2026; correction/reconciliation to 28 Oct is not a reopened form.
+- **UPSC Engineering Services 2027**: registration closed 6 Oct 2026; prelims 31 Jan 2027 (official UPSC page).
+- **BPSC 72nd CCE**: commission postponed the previously tentative 25 Oct prelims date; date cleared from the State Exam Planner until the commission announces a new one.
+- The page saves user choices **locally on the current browser**, exports calendar reminder `.ics` files with 7- and 1-day pop-up alarms (actual delivery depends on the calendar client), and can launch an **email draft** in the user's email client. Drafting an email is not automated delivery.
+
+### Scheduled email: optional site-admin setup only
+
+A daily GitHub Actions workflow `.github/workflows/examatlas-email-reminders.yml` checks manually verified, open deadlines at 7 / 3 / 1 / 0 days before the deadline using `public/examatlas-india/scripts/send_deadline_emails.py`. It runs at approximately 08:10 IST and can be run manually. GitHub Actions' scheduled runs may be delayed.
+
+**Automatic email alerts are disabled until the site administrator privately configures these Actions repository secrets** under **Settings → Secrets and variables → Actions → New repository secret**:
+
+- `EA_SMTP_HOST` — outgoing mail server hostname (e.g., smtp.gmail.com)
+- `EA_SMTP_PORT` — usually `587` (if omitted, defaults to 587)
+- `EA_SMTP_USER` — SMTP login
+- `EA_SMTP_PASSWORD` — SMTP application password or provider credential
+- `EA_ALERT_FROM` — sender address
+- `EA_ALERT_RECIPIENTS` — the site's privately managed opt-in recipient email(s), comma-separated
+
+SMTP uses STARTTLS and will not fall back to cleartext authentication. The workflow exits without sending when the required secrets are missing. No email address, credential, or subscriber list belongs in source files, static JSON, Git history or client-side JavaScript. **There is no public visitor subscription endpoint**; to safely add one later, provide a secure backend with verified consent, unsubscribe handling and abuse controls. Daily alerts use the editorial snapshot and never imply that a newly scraped notice is an active application.
+
+To maintain records: edit `opportunities.json`, regenerate `opportunity-data.js` from the JSON, review the dates and sources, and run `python -m unittest discover -s public/examatlas-india/scripts -p 'test_deadline_emails.py'`.

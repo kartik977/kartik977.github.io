@@ -30,12 +30,12 @@ window.EXAMATLAS_STATE_DATA = [
   {
     id:'bpsc-72-cce-2026', state:'Bihar', agency:'BPSC',
     title:'72nd Combined Competitive Examination — Prelims 2026',
-    stage:'Preliminary examination', dates:['2026-10-25'], dateStatus:'tentative',
-    document:'BPSC examination calendar dated 14 August 2026 — all dates tentative',
-    sourceUrl:'https://bpsc.bihar.gov.in/exam-calendar/',
+    stage:'Preliminary examination · postponed', dates:[], dateStatus:'needs-review',
+    document:'BPSC official postponement notice supersedes tentative 25 October date',
+    sourceUrl:'https://bpsc.bihar.gov.in/whats-new/',
     portalUrl:'https://bpsc.bihar.gov.in/advertisement/',
     eligibility:'A university degree is generally expected for CCE; verify the 72nd CCE advertisement for age, category, language and eligible posts.',
-    application:'The calendar lists an exam date, not a registration start/end date. Consult the advertisement page for the application link.',
+    application:'The 25 October tentative prelims date has been postponed by BPSC. A new date is pending on the official BPSC website; no live registration is implied.',
     registrationStart:null, registrationEnd:null,
     verified:'2026-10-21'
   },
