@@ -32,5 +32,7 @@ class AlertSelectionTests(unittest.TestCase):
         msg=build_message([item],date(2026,11,3),'alerts@example.org',['admin@example.org'])
         self.assertIn('https://www.pib.gov.in/',msg.get_content())
         self.assertIn('3 days',msg.get_content())
+        self.assertEqual(msg['To'], 'alerts@example.org')
+        self.assertEqual(msg['Bcc'], 'admin@example.org')
 
 if __name__ == '__main__': unittest.main()
