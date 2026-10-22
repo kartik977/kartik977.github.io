@@ -53,5 +53,5 @@
  });
  document.addEventListener('input',evt=>{if(evt.target.id!=='prep-search')return;state.q=evt.target.value;const list=document.querySelector('.prep-tile-list');if(!list)return;const filtered=exams.filter(e=>(state.filter==='all'||e.type===state.filter)&&[e.name,e.short,e.agency].join(' ').toLowerCase().includes(state.q.toLowerCase()));list.innerHTML=filtered.length?filtered.map(examTile).join(''):'<p class="prep-empty-list">No matching exam guides.</p>';});
  document.addEventListener('change',evt=>{const el=evt.target;if(el.id==='prep-days'){state.chosenDays=Number(el.value);save();return;}if(el.id==='prep-minutes'){state.chosenMinutes=Number(el.value);save();return;}if(el.dataset.prepTopic){const e=current(),id=el.dataset.prepTopic;if(!e)return;state.checks[e.id]??={};state.checks[e.id][id]=el.checked;save();refresh();return;}if(el.dataset.prepSession!==undefined){const e=current(),p=e&&getPlan(e);if(!p)return;p.done??={};p.done[Number(el.dataset.prepSession)]=el.checked;save();refresh();}});
- window.EXAMATLAS_PREPARE={render,exams,progress};
+ window.EXAMATLAS_PREPARE={render,exams,progress,focusExam:(id)=>{if(exams.some(e=>e.id===id)){state.active=id;state.tab='syllabus';state.week=0;save();}}};
 })();
