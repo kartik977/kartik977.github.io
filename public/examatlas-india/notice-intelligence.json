@@ -1,34 +1,260 @@
 {
   "schemaVersion": 1,
-  "generatedAt": null,
-  "about": "Automatic candidates are not verified changes to examination dates or rules.",
-  "events": [],
+  "generatedAt": "2026-10-22T18:30:29Z",
+  "about": "Candidate notices and text changes require human review before any date or rule is updated",
+  "events": [
+    {
+      "id": "link-b70697e40f73d5c8b0e3",
+      "type": "related-notice",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT. NO. D-6/E-1/2025, FOOD SAFETY AND DRUG ADMINI",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjH2Nkd5tvpyU",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-22T18:29:52Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    },
+    {
+      "id": "link-3cb588bb06da33557be7",
+      "type": "related-notice",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF HOMOEOPATHY UT",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYRiV9UshCHNK",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-22T18:29:52Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    },
+    {
+      "id": "link-2997031cd6cd323b9e22",
+      "type": "related-notice",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, LABOUR DEPARTMENT UTTAR PRADE",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYeOz5T9WBNmY",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-22T18:29:52Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    },
+    {
+      "id": "link-2d6cf08f12d231d0be21",
+      "type": "related-notice",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-22T18:29:52Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    },
+    {
+      "id": "link-625d7d1f39bc6f6c5430",
+      "type": "related-notice",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY W",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnSFF+2PuzLq8yhYQ7psXl2",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-10-22T18:29:52Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    }
+  ],
   "monitors": [
     {
       "id": "ssc-cgl-2026",
       "title": "SSC CGL 2026 official notice",
       "agency": "ssc",
       "url": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf",
-      "status": "pending",
-      "message": "Awaiting first successful scan"
+      "examTags": [
+        "SSC CGL"
+      ],
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:30:29Z",
+      "message": "Automated read unavailable; open official source",
+      "lastSuccessfulAt": null
     },
     {
       "id": "ibps-calendar-2026",
       "title": "IBPS official tentative calendar 2026–27",
       "agency": "ibps",
       "url": "https://www.ibps.in/wp-content/uploads/IBPS_CALENDAR_2026-27_final.pdf",
-      "status": "pending",
-      "message": "Awaiting first successful scan"
+      "examTags": [
+        "IBPS PO"
+      ],
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:30:29Z",
+      "message": "Automated read unavailable; open official source",
+      "lastSuccessfulAt": null
     },
     {
       "id": "upsc-cse-2026",
       "title": "UPSC Civil Services 2026 examination page",
       "agency": "upsc",
       "url": "https://www.upsc.gov.in/examinations/Civil%20Services%20%28Preliminary%29%20Examination%2C%202026",
-      "status": "pending",
-      "message": "Awaiting first successful scan"
+      "examTags": [
+        "UPSC CSE"
+      ],
+      "status": "reading",
+      "checkedAt": "2026-10-22T18:30:29Z",
+      "message": "Document text checked; first successful read establishes baseline",
+      "lastSuccessfulAt": "2026-10-22T18:30:29Z"
     }
   ],
   "reviewed": [],
-  "sourceCoverage": []
+  "sourceCoverage": [
+    {
+      "id": "upsc",
+      "name": "UPSC",
+      "category": "Civil services",
+      "scope": "national",
+      "state": null,
+      "url": "https://www.upsc.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 2,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "ssc",
+      "name": "SSC",
+      "category": "Central recruitment",
+      "scope": "national",
+      "state": null,
+      "url": "https://ssc.gov.in/",
+      "status": "limited",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 1,
+      "pagesConfigured": 1,
+      "message": "Page loaded, but no individual exam notices could be extracted."
+    },
+    {
+      "id": "ibps",
+      "name": "IBPS",
+      "category": "Banking",
+      "scope": "national",
+      "state": null,
+      "url": "https://www.ibps.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 2,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "rrb",
+      "name": "RRB Chandigarh",
+      "category": "Railways",
+      "scope": "national",
+      "state": null,
+      "url": "https://www.rrbcdg.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "nta",
+      "name": "NTA",
+      "category": "National entrance",
+      "scope": "national",
+      "state": null,
+      "url": "https://www.nta.ac.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": "2026-10-21T03:11:55Z",
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "sbi",
+      "name": "SBI Careers",
+      "category": "Banking",
+      "scope": "national",
+      "state": null,
+      "url": "https://sbi.co.in/web/careers/current-openings",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": "2026-10-20T05:36:50Z",
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "uppsc",
+      "name": "UPPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "url": "https://uppsc.up.nic.in/",
+      "status": "ok",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": "2026-10-22T18:29:52Z",
+      "count": 24,
+      "pagesChecked": 1,
+      "pagesConfigured": 1
+    },
+    {
+      "id": "bpsc",
+      "name": "BPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Bihar",
+      "url": "https://bpsc.bihar.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    },
+    {
+      "id": "mpsc",
+      "name": "MPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Maharashtra",
+      "url": "https://mpsc.gov.in/",
+      "status": "limited",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 1,
+      "pagesConfigured": 1,
+      "message": "Page loaded, but no individual exam notices could be extracted."
+    },
+    {
+      "id": "rpsc",
+      "name": "RPSC",
+      "category": "State civil services",
+      "scope": "state",
+      "state": "Rajasthan",
+      "url": "https://rpsc.rajasthan.gov.in/",
+      "status": "unavailable",
+      "checkedAt": "2026-10-22T18:29:52Z",
+      "lastSuccessfulAt": null,
+      "count": 0,
+      "pagesChecked": 0,
+      "pagesConfigured": 1,
+      "message": "Official pages blocked automated access or did not load."
+    }
+  ]
 }
