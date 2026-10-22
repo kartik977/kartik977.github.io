@@ -119,3 +119,14 @@ To maintain records: edit `opportunities.json`, regenerate `opportunity-data.js`
 ## Phase 06 — The Quiet Atlas redesign
 
 V6 introduces a calmer, search-first homepage, a horizontal five-item primary navigation with less-frequent pages under More, a muted mint and off-white palette, less dense exam cards and expandable eligibility notes. Search chips and the homepage search open the existing exam explorer with the selected query. Saved lists, official sources, registration states, dates, reminder exports and updater workflows are retained. `v6.css` is loaded last for presentation overrides and `v6-home.js` before `app.js`.
+
+## Phase 07 — Study Studio / Preparation Hub (21 October 2026)
+
+- New **Study hub** tab at `#prepare`; the simplified home page links directly to it.
+- Five curated guides: UPSC CSE, SSC CGL, RRB NTPC, IBPS PO and CAT. These include 79 topic-level study tasks in total, grouped by subject, plus direct official portals and publisher resource links.
+- **Study resources** link to original official notices/past papers and optionally to publisher study references. Books/PDFs are never republished or scraped into this repository.
+- **Topic progress:** browser-only checkboxes stored in `localStorage` under `examatlas-prepare-v7`. This is not a cloud profile: clearing browser storage or switching devices clears or hides saved progress.
+- **Study plan:** select 30 / 60 / 90 days and 30 / 60 / 90 / 120 daily minutes; create a rotating topic schedule, mark sessions complete and export the current seven days as an iCalendar (.ics) file. Plans are instructional suggestions, not proof of coverage or readiness.
+- Topic lists are **editorial preparation guides**, not a complete official syllabus or guarantee of paper coverage. CAT's organisers do not prescribe a fixed topic-by-topic syllabus; refer to the original information bulletin and mock when provided.
+- All resource URLs were reviewed during implementation, but public agency sites may change routes or require JavaScript. Review links and exam notices periodically.
+- No login, analytics tracking, external APIs or server-side student data required for this release.
