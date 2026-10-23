@@ -1,0 +1,24 @@
+
+/* ExamAtlas V10: spacious source-backed before/after comparisons */
+.ni .nr-card{background:white;border:1px solid #dbe8de;border-radius:20px;padding:clamp(18px,3vw,30px);margin:0 0 14px;box-shadow:0 8px 26px #173e2808}
+.nr-line{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:11px}
+.nr-eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:750;color:#607d68}
+.nr-pill{display:inline-flex;border-radius:40px;padding:7px 11px;font-size:12px;font-weight:750;background:#fff3e4;color:#815b30}
+.nr-pill.verified{background:#e7f6ec;color:#266340}
+.nr-card h3{font-size:clamp(19px,2.3vw,25px);line-height:1.3;letter-spacing:-.025em;margin:0 0 9px;color:#223d2d}
+.nr-description{font-size:14px;line-height:1.7;color:#5e7565;margin:0 0 16px}
+.nr-columns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nr-side{background:#f7faf7;border:1px solid #e5ede5;padding:18px;border-radius:13px;min-height:117px}
+.nr-side:last-child{background:#eff8f1}
+.nr-side>span{display:block;font-weight:800;font-size:11px;letter-spacing:.08em;color:#617f6c;margin-bottom:10px}
+.nr-side p,.nr-side strong{font-size:14px;line-height:1.65;color:#243c2d;overflow-wrap:anywhere;margin:0;display:block}
+.nr-side p{font-weight:500}
+.nr-impact{margin:14px 0;padding:16px;background:#eaf5ed;border:1px solid #d6e7da;border-radius:13px}
+.nr-impact strong{font-size:13px}
+.nr-impact p{margin:7px 0 0;font-size:14px;line-height:1.6}
+.nr-warning{font-size:12px;color:#795b37;line-height:1.6;margin:13px 0}
+.nr-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:13px}
+.nr-links a,.nr-empty a{padding:10px 14px;border:1px solid #d0e4d6;border-radius:10px;text-decoration:none;color:#215a3b;background:#eff8f1;font-size:13px;font-weight:750}
+.nr-empty{border:1px dashed #c6dbc9;padding:26px;border-radius:18px;background:#fff}
+.nr-empty p{font-size:14px;line-height:1.6;color:#5b7665}
+@media(max-width:690px){.nr-columns{grid-template-columns:1fr}.nr-side{min-height:0}.nr-links a{width:100%;text-align:center}}

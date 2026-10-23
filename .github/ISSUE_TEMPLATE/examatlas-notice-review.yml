@@ -1,0 +1,32 @@
+name: ExamAtlas official notice comparison
+description: Suggest two official sources for a manual, unverified review
+labels: ["examatlas", "needs-review"]
+body:
+  - type: markdown
+    attributes:
+      value: "This is not an approval. Do not provide personal identifiers, application numbers or credentials."
+  - type: input
+    id: exam
+    attributes:
+      label: Exam, board and advertisement number
+    validations:
+      required: true
+  - type: input
+    id: original
+    attributes:
+      label: Official original notice URL
+    validations:
+      required: true
+  - type: input
+    id: revised
+    attributes:
+      label: Official revised notice URL
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What appears to have changed?
+      description: Include page references and uncertainties, not personal details.
+    validations:
+      required: true

@@ -150,3 +150,8 @@ Pathfinder (`#pathfinder`) lets visitors compare **SSC CGL, RRB NTPC, and IBPS P
 - The `reviewed` list is reserved for separately validated editorial interpretations and is not populated by automation.
 - Tests: `python -m unittest discover -s public/examatlas-india/scripts -p 'test_*.py'`. The GitHub Actions workflow installs BeautifulSoup and pypdf, tests both parsers, refreshes notice data, commits fingerprints and republishes GitHub Pages.
 
+
+
+## V10 — Notice Change Review
+
+The Notice Intelligence page now offers a separate **Reviewed changes** tab for source-backed, human-approved before/after comparisons. It starts empty; scanner candidates remain explicitly unverified. To submit or publish a review, see [NOTICE_CHANGE_REVIEW.md](NOTICE_CHANGE_REVIEW.md). The public website has no admin privileges. GitHub deploy validates approved rows before publication.
