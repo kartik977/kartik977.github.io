@@ -1,8 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-28T08:43:42Z",
+  "generatedAt": "2026-10-28T19:40:01Z",
   "about": "Candidate notices and text changes require human review before any date or rule is updated",
   "events": [
+    {
+      "id": "link-17a792ca39a9bb501d49",
+      "type": "related-notice",
+      "title": "18 Dec 2026 CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PRADESH / CHIKITSA ADHIKARI (UNANI), S-11/30",
+      "agency": "uppsc",
+      "url": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagkz0o52o77EYd5icBBuNfGC",
+      "firstSeenAt": "2026-10-28T19:39:23Z",
+      "lastSeenAt": "2026-10-28T19:39:23Z",
+      "examTags": [],
+      "status": "needs-review",
+      "summary": "Possible correction or revised notice. Specific change not independently verified."
+    },
     {
       "id": "doc-a60f6c36cef76ccebfba",
       "type": "document-text-change",
@@ -72,7 +84,7 @@
       "agency": "uppsc",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T08:42:57Z",
+      "lastSeenAt": "2026-10-28T19:39:23Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -100,7 +112,7 @@
         "SSC CGL"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:43:42Z",
+      "checkedAt": "2026-10-28T19:40:01Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": null
     },
@@ -113,7 +125,7 @@
         "IBPS PO"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:43:42Z",
+      "checkedAt": "2026-10-28T19:40:01Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": null
     },
@@ -126,9 +138,9 @@
         "UPSC CSE"
       ],
       "status": "reading",
-      "checkedAt": "2026-10-28T08:43:42Z",
+      "checkedAt": "2026-10-28T19:40:01Z",
       "message": "Document text checked; first successful read establishes baseline",
-      "lastSuccessfulAt": "2026-10-28T08:43:42Z"
+      "lastSuccessfulAt": "2026-10-28T19:40:01Z"
     }
   ],
   "reviewed": [],
@@ -141,7 +153,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -156,7 +168,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -171,7 +183,7 @@
       "state": null,
       "url": "https://www.ibps.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -186,7 +198,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -201,7 +213,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -216,7 +228,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -231,8 +243,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-10-28T08:42:57Z",
-      "lastSuccessfulAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
+      "lastSuccessfulAt": "2026-10-28T19:39:23Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -245,7 +257,7 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -260,7 +272,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -275,7 +287,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T08:42:57Z",
+      "checkedAt": "2026-10-28T19:39:23Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
