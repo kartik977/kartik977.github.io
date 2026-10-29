@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-28T19:39:23Z",
+  "generatedAt": "2026-10-29T08:38:27Z",
   "about": "Links discovered on official examination bodies. Detection time is not publication time. A notice is not proof that registration is open. Exam dates are separately checked.",
   "sources": [
     {
@@ -11,7 +11,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -26,7 +26,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -41,7 +41,7 @@
       "state": null,
       "url": "https://www.ibps.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -56,7 +56,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -71,7 +71,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -86,7 +86,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -101,8 +101,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-10-28T19:39:23Z",
-      "lastSuccessfulAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
+      "lastSuccessfulAt": "2026-10-29T08:38:27Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -115,7 +115,7 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -130,7 +130,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -145,7 +145,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-10-28T19:39:23Z",
+      "checkedAt": "2026-10-29T08:38:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -163,7 +163,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AZU6OQK2HlGI",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "5243993775a33ce95e",
@@ -174,7 +174,7 @@
       "title": "31 Dec 2026 NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPARTMENT UTTAR PRADESH, DENTAL SURGEON S-8/02",
       "url": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagkIY3nIrO0zxAYQ8Jqy3+nN",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "26c17c0c3594da7bac",
@@ -185,7 +185,7 @@
       "title": "19 Dec 2026 NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH, MEDICAL OFFICER COMMUNITY HEALTH (AYURVEDIC AND UNANI) S-09/06",
       "url": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagnQ0/TjMEfCjLeu0vVyodfJ",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "658c2135259a683cf8",
@@ -196,7 +196,7 @@
       "title": "20 Dec 2026 NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH, CHIKITSA ADHIKARI (AYURVED) S-09/05",
       "url": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagnQ0/TjMEfCjAwR0kJ5346+",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "17a792ca39a9bb501d",
@@ -207,7 +207,7 @@
       "title": "18 Dec 2026 CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PRADESH / CHIKITSA ADHIKARI (UNANI), S-11/30",
       "url": "https://uppsc.up.nic.in/Open_PDF.aspx?I4PnQ0tBagkz0o52o77EYd5icBBuNfGC",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "45164018ccb7d18a07",
@@ -218,7 +218,7 @@
       "title": "CLICK HERE FOR ADVT. NO. A-5/E-1/2025, ASSISTANT TEACHER TRAINED GRADUATE (M./F.) EXAM 2025, (HOME SCIENCE) (DOCUMENT VERIFICATION)",
       "url": "https://uppsc.up.nic.in/CandidatePages/OTRAppForm/Applicant_OtrAuthentication.aspx?WEqGEem9m0+8Y4tNQqJiNYurmbKsjJR/fgSlThSTh6o=",
       "firstSeenAt": "2026-10-26T19:59:35Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "42b708a20d9fbe960e",
@@ -229,7 +229,7 @@
       "title": "CLICK HERE TO APPLY FOR ADVT.NO. A-4/E-1/2026,SAMIKSHA ADHIKARI/SAHAYAK SAMIKSHA ADHIKARI ETC.(GEN. / SPL. RECTT.) EXAM.-2026",
       "url": "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx",
       "firstSeenAt": "2026-10-26T07:54:24Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "057fb654a7802e2a55",
@@ -240,7 +240,7 @@
       "title": "UPPSC Exam Calendar 2026",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmIqec6cDg6BUi0bxHlS/Ba",
       "firstSeenAt": "2026-10-25T07:40:15Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "e5655649c6d083b9ca",
@@ -251,7 +251,7 @@
       "title": "Click here for One Time Registration (OTR), वन टाइम रजिस्ट्रेशन (ओटीआर) के लिए यहां क्लिक करें।",
       "url": "https://otr.pariksha.nic.in/",
       "firstSeenAt": "2026-10-25T07:40:15Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "30e1c768e929cbef4b",
@@ -262,7 +262,7 @@
       "title": "NOTICE REGARDING DISTRICT INFORMATION SLIP / ADMIT CARD FOR ADVT. NO:- D-3/E-1/2",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDR0yp8H0q1cBz",
       "firstSeenAt": "2026-10-24T07:24:34Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "fa98bef13b02c4bb7b",
@@ -273,7 +273,7 @@
       "title": "NOTICE REAGARDING DOCUMENT VERIFICATION FOR ADVT. NO. A-5/E-1/2025, ASSISTANT TE",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDR/OjdeHPS5Dn",
       "firstSeenAt": "2026-10-23T18:28:33Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "cfea230efdccb29e7c",
@@ -284,7 +284,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDRwIQMjGyuh7N",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "a546b8f82902598e35",
@@ -295,7 +295,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-2/E-1/2020, REGIONAL I",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgvOzjioxzzCo",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "5208743bfe5b07f698",
@@ -306,7 +306,7 @@
       "title": "NOTICE REGARDING ADVT. NO. A-7/E-1/2021, U.P. TECHNICAL EDUCATION (TEACHING) SER",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgoWo8RkhUpnV",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "b73fb51865a8668d1c",
@@ -317,7 +317,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASSISTANT",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgiXC/U69+f+i",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "4b450f17e25b86447c",
@@ -328,7 +328,7 @@
       "title": "RESULT OF ADVT. NO. D-4/E-1/2025, UTTAR PRADESH AYUSH (AYURVEDA) DEPARTMENT, PRO",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgoSSgw34Mkau",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "9056891082dbef63f0",
@@ -339,7 +339,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPAR",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxJUy3AgqZ4Ub",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "6a9e2a58c90b37d62d",
@@ -350,7 +350,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxNf1NcenU8cK",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "fb1a5033581da63ba6",
@@ -361,7 +361,7 @@
       "title": "RESULT OF ADVT. NO.D-2/E-1/2024, UTTAR PRADESH AYUSH (AYURVEDA) DEPARTMENT, Read",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnr4uATu7lVSyJODCxSObFX",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "8a8f41ee8eaefe69ab",
@@ -372,7 +372,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjI+X70XaoE7Y",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "6b30f3e8f78524c608",
@@ -383,7 +383,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjKKsih8bLTaq",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "2d6cf08f12d231d0be",
@@ -394,7 +394,7 @@
       "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "69e5a027ac4681cf65",
@@ -405,7 +405,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-2/E-1/2024, ASSISTANT ARCHITECT, S-06/01 (PUBLIC WO",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagktt06NhTTxwivFUuvsdMCE",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "52d2e7ebcf3075c805",
@@ -416,7 +416,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, FOOD SAFETY AND DRUG ADMINISTRATION UTT",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagldpN1/ndg4XQJWpYXr4Ud3",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-10-28T19:39:23Z"
+      "lastSeenAt": "2026-10-29T08:38:27Z"
     },
     {
       "id": "71a4d6bd0242fec7b1",
