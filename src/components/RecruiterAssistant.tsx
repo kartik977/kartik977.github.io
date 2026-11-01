@@ -288,6 +288,24 @@ const responseBank: Array<{
     }
   },
   {
+    keywords: ['channelscope', 'youtube analytics', 'creator intelligence', 'creator tools', 'instagram studio', 'video optimizer', 'content calendar'],
+    reply: {
+      text:
+        'ChannelScope is Kartik’s creator-intelligence platform built with React, Vite and Cloudflare Workers. It combines public YouTube channel analysis with creator planning, AI-assisted publishing drafts, Instagram tools, content opportunities, cross-platform publishing and a local-first video upload workflow.',
+      source: 'Project case study · ChannelScope',
+      action: { label: 'Open ChannelScope', path: '/projects/channelscope' }
+    }
+  },
+  {
+    keywords: ['pluvia', 'rain', 'weather experience', 'weather project', 'rain room', 'soundscape'],
+    reply: {
+      text:
+        'Pluvia is an immersive browser-based rain experience. It combines live weather, global city photography, animated rain, selectable viewing environments, city-specific sound and music, PWA support and a separate Rain Room rather than presenting weather as a conventional dashboard.',
+      source: 'Project case study · Pluvia',
+      action: { label: 'Open Pluvia', path: '/projects/pluvia' }
+    }
+  },
+  {
     keywords: ['ai job hunter', 'job hunter', 'ats', 'resume project', 'supabase'],
     reply: {
       text:
@@ -318,7 +336,7 @@ const responseBank: Array<{
     keywords: ['ai', 'projects', 'project'],
     reply: {
       text:
-        'His portfolio includes AI Job Hunter, a full-stack ATS and resume-intelligence platform, plus a Node.js image generator using OpenAI’s image API. The Projects section also includes a full-stack Angular + Spring Boot grocery system.',
+        'His portfolio now includes ChannelScope, a creator-intelligence platform; Pluvia, an immersive live-weather experience; AI Job Hunter, a resume-intelligence platform; a full-stack Angular + Spring Boot grocery system; and a Node.js image generator using OpenAI’s image API.',
       source: 'Projects · Selected systems',
       action: { label: 'Explore Projects', path: '/projects' }
     }
@@ -336,7 +354,7 @@ const responseBank: Array<{
     keywords: ['contact', 'email', 'linkedin', 'github', 'reach', 'hire'],
     reply: {
       text:
-        'You can contact Kartik at kartikkataria0697@gmail.com, or use the LinkedIn and GitHub links available throughout the portfolio.',
+        'You can contact Kartik at kartik.kataria266@gmail.com, or use the LinkedIn and GitHub links available throughout the portfolio.',
       source: 'Contact',
       action: { label: 'Contact Kartik', path: '/contact' }
     }
