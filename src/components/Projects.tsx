@@ -42,46 +42,13 @@ type Project = {
 
 const projectData: Project[] = [
   {
-    title: 'AI Job Hunter',
-    eyebrow: 'AI-POWERED CAREER PLATFORM',
-    description: 'Analyzes resumes, matches jobs and scores ATS fit to surface personalized recommendations through an end-to-end TypeScript and Node.js platform.',
-    technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'OpenAI API', 'Next.js', 'React'],
-    github: 'https://github.com/kartik977/AI-Job-Hunter',
-    number: '01',
-    kind: 'job',
-    accent: 'from-cyan-400/25 via-blue-500/10 to-transparent',
-    caseStudy: '/projects/ai-job-hunter'
-  },
-  {
-    title: 'Grocery Ordering',
-    eyebrow: 'FULL-STACK ORDERING SYSTEM',
-    description: 'A full-stack commerce application with an Angular 17 frontend and Spring Boot 3 backend covering catalog, JWT-secured cart, checkout and order tracking.',
-    technologies: ['Angular 17', 'TypeScript', 'Spring Boot 3', 'Java 17', 'Spring Security', 'JPA'],
-    github: 'https://github.com/kartik977/grocery-app',
-    number: '02',
-    kind: 'grocery',
-    accent: 'from-emerald-400/25 via-teal-500/10 to-transparent',
-    caseStudy: '/projects/grocery-ordering'
-  },
-  {
-    title: 'AI Image Generator',
-    eyebrow: 'GENERATIVE AI SERVICE',
-    description: 'A focused Node.js and Express application that accepts prompt and size input, calls OpenAI\'s image API, and returns the generated image URL to a browser UI.',
-    technologies: ['Node.js', 'Express', 'OpenAI SDK', 'DALL-E', 'JavaScript'],
-    github: 'https://github.com/kartik977/Image-Generator-using-OpenAI-and-Dall-e',
-    number: '03',
-    kind: 'image',
-    accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent',
-    caseStudy: '/projects/ai-image-generator'
-  },
-  {
     title: 'ChannelScope',
     eyebrow: 'CREATOR INTELLIGENCE PLATFORM',
     description: 'A multi-workspace creator platform combining public YouTube analytics, AI-assisted creator planning, Instagram drafting, cross-platform publishing tools and local-first video frame analysis.',
     technologies: ['React', 'Vite', 'Cloudflare Workers', 'YouTube Data API', 'Groq', 'JavaScript'],
     github: 'https://github.com/kartik977/youtube-channel-intelligence',
     live: 'https://channelscope.kartikkataria2000.workers.dev/',
-    number: '04',
+    number: '01',
     kind: 'channelscope',
     accent: 'from-red-400/25 via-blue-500/10 to-transparent',
     caseStudy: '/projects/channelscope'
@@ -93,10 +60,43 @@ const projectData: Project[] = [
     technologies: ['JavaScript', 'Canvas', 'PWA', 'Web APIs', 'CSS', 'Audio'],
     github: 'https://github.com/kartik977/kartik977.github.io/tree/master/public/pluvia',
     live: 'https://kartik977.github.io/pluvia/',
-    number: '05',
+    number: '02',
     kind: 'pluvia',
     accent: 'from-cyan-300/25 via-sky-500/10 to-transparent',
     caseStudy: '/projects/pluvia'
+  },
+  {
+    title: 'AI Job Hunter',
+    eyebrow: 'AI-POWERED CAREER PLATFORM',
+    description: 'Analyzes resumes, matches jobs and scores ATS fit to surface personalized recommendations through an end-to-end TypeScript and Node.js platform.',
+    technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'OpenAI API', 'Next.js', 'React'],
+    github: 'https://github.com/kartik977/AI-Job-Hunter',
+    number: '03',
+    kind: 'job',
+    accent: 'from-cyan-400/25 via-blue-500/10 to-transparent',
+    caseStudy: '/projects/ai-job-hunter'
+  },
+  {
+    title: 'Grocery Ordering',
+    eyebrow: 'FULL-STACK ORDERING SYSTEM',
+    description: 'A full-stack commerce application with an Angular 17 frontend and Spring Boot 3 backend covering catalog, JWT-secured cart, checkout and order tracking.',
+    technologies: ['Angular 17', 'TypeScript', 'Spring Boot 3', 'Java 17', 'Spring Security', 'JPA'],
+    github: 'https://github.com/kartik977/grocery-app',
+    number: '04',
+    kind: 'grocery',
+    accent: 'from-emerald-400/25 via-teal-500/10 to-transparent',
+    caseStudy: '/projects/grocery-ordering'
+  },
+  {
+    title: 'AI Image Generator',
+    eyebrow: 'GENERATIVE AI SERVICE',
+    description: 'A focused Node.js and Express application that accepts prompt and size input, calls OpenAI\'s image API, and returns the generated image URL to a browser UI.',
+    technologies: ['Node.js', 'Express', 'OpenAI SDK', 'DALL-E', 'JavaScript'],
+    github: 'https://github.com/kartik977/Image-Generator-using-OpenAI-and-Dall-e',
+    number: '05',
+    kind: 'image',
+    accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent',
+    caseStudy: '/projects/ai-image-generator'
   }
 ];
 
