@@ -5,6 +5,7 @@ on:
     branches:
       - portfolio-motion-v2
       - kartik-runtime-series
+      - add-channelscope-pluvia
   workflow_dispatch:
 
 jobs:
