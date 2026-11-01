@@ -17,6 +17,8 @@ import Contact from './components/Contact';
 import AIJobHunterCaseStudy from './components/AIJobHunterCaseStudy';
 import GroceryCaseStudy from './components/GroceryCaseStudy';
 import ImageGeneratorCaseStudy from './components/ImageGeneratorCaseStudy';
+import ChannelScopeCaseStudy from './components/ChannelScopeCaseStudy';
+import PluviaCaseStudy from './components/PluviaCaseStudy';
 import CommandPalette from './components/CommandPalette';
 import EngineeringLab from './components/EngineeringLab';
 import RecruiterAssistant from './components/RecruiterAssistant';
@@ -100,6 +102,8 @@ const AnimatedRoutes: React.FC<{ runtimeView: RuntimeView }> = ({ runtimeView })
           <Route path="/projects/ai-job-hunter" element={<AIJobHunterCaseStudy />} />
           <Route path="/projects/grocery-ordering" element={<GroceryCaseStudy />} />
           <Route path="/projects/ai-image-generator" element={<ImageGeneratorCaseStudy />} />
+          <Route path="/projects/channelscope" element={<ChannelScopeCaseStudy />} />
+          <Route path="/projects/pluvia" element={<PluviaCaseStudy />} />
           <Route path="/lab" element={<EngineeringLab />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/contact" element={<Contact />} />
