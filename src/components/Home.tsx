@@ -64,11 +64,11 @@ const exploreItems = [
   {
     id: 'projects',
     title: 'Featured Projects',
-    eyebrow: '3 case studies',
-    copy: 'AI Job Hunter, Grocery Ordering and AI Image Generator.',
+    eyebrow: '5 projects',
+    copy: 'ChannelScope, Pluvia and three additional full-stack / AI builds.',
     path: '/projects',
     icon: Boxes,
-    meta: '3 builds'
+    meta: '5 builds'
   },
   {
     id: 'lab',
@@ -99,8 +99,26 @@ const orderByView: Record<RuntimeView, string[]> = {
 
 const projects = [
   {
-    title: 'AI Job Hunter',
+    title: 'ChannelScope',
     label: 'Project 01',
+    copy: 'Public YouTube intelligence, creator planning, Instagram drafting and cross-platform publishing tools.',
+    stack: 'React · Vite · Cloudflare Workers · YouTube API',
+    path: '/projects/channelscope',
+    accent: 'runtime-project-channelscope',
+    visual: 'channelscope'
+  },
+  {
+    title: 'PLUVIA',
+    label: 'Project 02',
+    copy: 'An immersive rain experience with live weather, global cities, soundscapes, music and a personal Rain Room.',
+    stack: 'JavaScript · Canvas · PWA · Web APIs',
+    path: '/projects/pluvia',
+    accent: 'runtime-project-pluvia',
+    visual: 'pluvia'
+  },
+  {
+    title: 'AI Job Hunter',
+    label: 'Project 03',
     copy: 'Resume parsing, ATS scoring, AI-assisted optimization and job tracking.',
     stack: 'Next.js · TypeScript · Supabase',
     path: '/projects/ai-job-hunter',
@@ -109,7 +127,7 @@ const projects = [
   },
   {
     title: 'Grocery Ordering',
-    label: 'Project 02',
+    label: 'Project 04',
     copy: 'Full-stack commerce flow with auth, cart, checkout, orders and role-based access.',
     stack: 'Angular · Spring Boot · Java',
     path: '/projects/grocery-ordering',
@@ -118,7 +136,7 @@ const projects = [
   },
   {
     title: 'AI Image Generator',
-    label: 'Project 03',
+    label: 'Project 05',
     copy: 'Prompt-to-image workflow with a lightweight Express API and generated image delivery.',
     stack: 'Node.js · Express · OpenAI',
     path: '/projects/ai-image-generator',
@@ -371,7 +389,7 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
         <div className="runtime-section-heading">
           <div>
             <p>Featured Projects</p>
-            <h2>Three projects. Three different engineering challenges.</h2>
+            <h2>Five projects. Different products, systems and engineering challenges.</h2>
           </div>
           <Link to="/projects">View all projects <ArrowRight size={14} /></Link>
         </div>
@@ -390,12 +408,32 @@ const Home: React.FC<HomeProps> = ({ runtimeView }) => {
                 <div className="runtime-project-no">0{index + 1}</div>
                 <div className="runtime-project-label">{project.label}</div>
                 <div className="runtime-project-image-shell">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="runtime-project-image"
-                    loading="lazy"
-                  />
+                  {'image' in project && project.image ? (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="runtime-project-image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className={'runtime-project-generated-art runtime-project-generated-' + project.visual} aria-hidden="true">
+                      {project.visual === 'channelscope' ? (
+                        <>
+                          <div className="runtime-channel-top"><span>CHANNELSCOPE</span><em>CREATOR INTELLIGENCE</em></div>
+                          <div className="runtime-channel-kpis"><i>1.8M<small>VIEWS</small></i><i>126<small>UPLOADS</small></i><i>4.9%<small>ENGAGEMENT</small></i></div>
+                          <div className="runtime-channel-chart">{[35,58,46,74,62,86,76,96].map((h, i) => <b key={i} style={{ height: h + '%' }} />)}</div>
+                          <div className="runtime-channel-ai">AI Creator Advisor</div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="runtime-pluvia-sky" />
+                          <div className="runtime-pluvia-copy"><span>NOW EXPERIENCING</span><strong>Tokyo</strong><small>Live weather · Café window</small></div>
+                          <div className="runtime-pluvia-rain">{Array.from({ length: 13 }).map((_, i) => <i key={i} style={{ left: ((i * 41) % 100) + '%' }} />)}</div>
+                          <div className="runtime-pluvia-cities"><span>Tokyo</span><span>London</span><span>Mumbai</span><span>Seoul</span></div>
+                        </>
+                      )}
+                    </div>
+                  )}
                   <div className="runtime-project-image-shade" aria-hidden="true" />
                 </div>
                 <div className="runtime-project-copy">
