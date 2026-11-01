@@ -9,14 +9,22 @@ import {
 } from 'framer-motion';
 import {
   ArrowUpRight,
+  BarChart3,
   Bot,
+  CalendarDays,
   Check,
+  CloudRain,
+  ExternalLink,
   Github,
+  Instagram,
+  MapPin,
+  Music2,
   Search,
   ShoppingBag,
   ShoppingCart,
   Sparkles,
-  Wand2
+  Wand2,
+  Youtube
 } from 'lucide-react';
 
 type Project = {
@@ -25,8 +33,9 @@ type Project = {
   description: string;
   technologies: string[];
   github: string;
+  live?: string;
   number: string;
-  kind: 'job' | 'grocery' | 'image';
+  kind: 'job' | 'grocery' | 'image' | 'channelscope' | 'pluvia';
   accent: string;
   caseStudy?: string;
 };
@@ -64,6 +73,30 @@ const projectData: Project[] = [
     kind: 'image',
     accent: 'from-violet-400/25 via-fuchsia-500/10 to-transparent',
     caseStudy: '/projects/ai-image-generator'
+  },
+  {
+    title: 'ChannelScope',
+    eyebrow: 'CREATOR INTELLIGENCE PLATFORM',
+    description: 'A multi-workspace creator platform combining public YouTube analytics, AI-assisted creator planning, Instagram drafting, cross-platform publishing tools and local-first video frame analysis.',
+    technologies: ['React', 'Vite', 'Cloudflare Workers', 'YouTube Data API', 'Groq', 'JavaScript'],
+    github: 'https://github.com/kartik977/youtube-channel-intelligence',
+    live: 'https://channelscope.kartikkataria2000.workers.dev/',
+    number: '04',
+    kind: 'channelscope',
+    accent: 'from-red-400/25 via-blue-500/10 to-transparent',
+    caseStudy: '/projects/channelscope'
+  },
+  {
+    title: 'PLUVIA',
+    eyebrow: 'IMMERSIVE WEATHER EXPERIENCE',
+    description: 'An atmospheric rain experience combining live weather, global city photography, animated rain, selectable window environments, soundscapes, music and an installable PWA experience.',
+    technologies: ['JavaScript', 'Canvas', 'PWA', 'Web APIs', 'CSS', 'Audio'],
+    github: 'https://github.com/kartik977/kartik977.github.io/tree/master/public/pluvia',
+    live: 'https://kartik977.github.io/pluvia/',
+    number: '05',
+    kind: 'pluvia',
+    accent: 'from-cyan-300/25 via-sky-500/10 to-transparent',
+    caseStudy: '/projects/pluvia'
   }
 ];
 
@@ -285,9 +318,97 @@ const ImageGeneratorMockup: React.FC = () => (
   </div>
 );
 
+
+const ChannelScopeMockup: React.FC = () => (
+  <div className="project-ui h-full min-h-[360px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#080b12] shadow-2xl">
+    <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-2">
+        <BarChart3 size={15} className="text-red-300" />
+        <span className="text-xs font-semibold">ChannelScope</span>
+      </div>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-slate-600">creator intelligence</span>
+    </div>
+    <div className="grid min-h-[315px] grid-cols-[0.72fr_1.28fr]">
+      <div className="border-r border-white/[0.06] p-3">
+        {[
+          [Youtube, 'YouTube', 'text-red-300'],
+          [Instagram, 'Instagram', 'text-fuchsia-300'],
+          [CalendarDays, 'Creator Tools', 'text-cyan-300']
+        ].map(([Icon, label, color], index) => {
+          const ItemIcon = Icon as React.ElementType;
+          return (
+            <motion.div key={String(label)} animate={{ x: [0, index === 0 ? 2 : 0, 0] }} transition={{ duration: 3, repeat: Infinity, delay: index * .25 }} className="mb-2 flex items-center gap-2 rounded-xl border border-white/[0.06] bg-white/[0.025] p-3">
+              <ItemIcon size={13} className={String(color)} />
+              <span className="text-[10px] font-medium text-slate-400">{String(label)}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+      <div className="p-3">
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            ['Views', '1.8M'],
+            ['Uploads', '126'],
+            ['Engagement', '4.9%']
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-lg border border-white/[0.05] bg-white/[0.025] p-2">
+              <span className="text-[7px] uppercase tracking-[0.12em] text-slate-600">{label}</span>
+              <strong className="mt-1 block text-xs text-white">{value}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex h-24 items-end gap-1.5 rounded-xl border border-white/[0.05] bg-black/20 p-3">
+          {[38, 58, 45, 72, 62, 86, 74, 96].map((height, index) => (
+            <motion.span key={index} className="flex-1 rounded-t bg-gradient-to-t from-red-500/30 to-cyan-300/80" initial={{ height: '10%' }} whileInView={{ height: height + '%' }} viewport={{ once: true }} transition={{ delay: index * .04 }} />
+          ))}
+        </div>
+        <div className="mt-3 rounded-xl border border-cyan-300/10 bg-cyan-300/[0.035] p-3">
+          <div className="flex items-center gap-2 text-cyan-300"><Bot size={13} /><span className="text-[9px] font-semibold">AI Creator Advisor</span></div>
+          <p className="mt-1.5 text-[8px] leading-4 text-slate-500">Public channel data → experiments, ideas and publishing drafts.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const PluviaMockup: React.FC = () => (
+  <div className="project-ui relative h-full min-h-[360px] overflow-hidden rounded-[1.5rem] border border-cyan-200/10 bg-[linear-gradient(180deg,#0c2030_0%,#08131c_50%,#03070a_100%)] shadow-2xl">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(125,211,252,.24),transparent_22%),linear-gradient(to_top,rgba(2,6,10,.92),transparent_52%)]" />
+    {Array.from({ length: 18 }).map((_, index) => (
+      <motion.i key={index} className="absolute top-[-20%] h-16 w-px bg-gradient-to-b from-transparent via-cyan-100/35 to-transparent" style={{ left: ((index * 43) % 100) + '%' }} animate={{ y: ['0%', '700%'] }} transition={{ duration: 1.3 + (index % 5) * .16, repeat: Infinity, ease: 'linear', delay: -(index % 7) * .28 }} />
+    ))}
+    <div className="absolute bottom-0 left-0 right-0 h-32 bg-[linear-gradient(160deg,transparent_0_17%,#07131a_18%_27%,transparent_28%_35%,#0b1820_36%_48%,transparent_49%_56%,#061017_57%_72%,transparent_73%)] opacity-90" />
+    <div className="relative flex items-center justify-between border-b border-white/[0.07] px-4 py-3">
+      <div className="flex items-center gap-2 text-cyan-200"><CloudRain size={15} /><span className="text-xs font-semibold">PLUVIA</span></div>
+      <span className="text-[9px] font-semibold uppercase tracking-[0.14em] text-cyan-100/40">live weather atmosphere</span>
+    </div>
+    <div className="relative p-4">
+      <div className="flex items-start justify-between">
+        <div>
+          <span className="text-[8px] font-semibold uppercase tracking-[0.15em] text-cyan-100/45">Now experiencing</span>
+          <h3 className="mt-1 text-2xl font-semibold text-white">Tokyo</h3>
+          <p className="text-[9px] text-slate-400">Tokyo Tower · local time</p>
+        </div>
+        <span className="text-4xl font-light text-cyan-100">18°</span>
+      </div>
+      <div className="mt-5 grid grid-cols-3 gap-2">
+        {[['Café', MapPin], ['Rain mix', Music2], ['Live sky', CloudRain]].map(([label, Icon]) => {
+          const ItemIcon = Icon as React.ElementType;
+          return <div key={String(label)} className="rounded-xl border border-white/[0.07] bg-black/25 p-3 backdrop-blur"><ItemIcon size={13} className="text-cyan-300" /><span className="mt-2 block text-[9px] text-slate-400">{String(label)}</span></div>;
+        })}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-1.5">
+        {['Tokyo', 'London', 'Mumbai', 'Seoul', 'Kyoto'].map((city) => <span key={city} className="rounded-full border border-cyan-200/10 bg-cyan-100/[0.035] px-2 py-1 text-[8px] text-cyan-50/65">{city}</span>)}
+      </div>
+    </div>
+  </div>
+);
+
 const ProjectVisual: React.FC<{ kind: Project['kind'] }> = ({ kind }) => {
   if (kind === 'job') return <JobHunterMockup />;
   if (kind === 'grocery') return <GroceryMockup />;
+  if (kind === 'channelscope') return <ChannelScopeMockup />;
+  if (kind === 'pluvia') return <PluviaMockup />;
   return <ImageGeneratorMockup />;
 };
 
@@ -368,6 +489,19 @@ const ProjectStage: React.FC<{ project: Project }> = ({ project }) => {
                   View case study
                   <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
+              )}
+
+              {project.live && (
+                <a
+                  href={project.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.055] px-5 py-3.5 text-sm font-semibold text-cyan-100 transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30"
+                >
+                  <ExternalLink size={16} />
+                  Live project
+                  <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </a>
               )}
 
               <a
