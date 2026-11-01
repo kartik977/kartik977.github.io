@@ -104,6 +104,24 @@ const CommandPalette: React.FC = () => {
         action: () => navigate('/contact')
       },
       {
+        id: 'channelscope',
+        label: 'ChannelScope',
+        description: 'Creator intelligence platform for YouTube, Instagram and publishing workflows',
+        group: 'Projects',
+        icon: Sparkles,
+        keywords: ['channelscope', 'youtube', 'creator', 'instagram', 'cloudflare', 'analytics', 'content'],
+        action: () => navigate('/projects/channelscope')
+      },
+      {
+        id: 'pluvia',
+        label: 'PLUVIA',
+        description: 'Immersive live-weather rain experience',
+        group: 'Projects',
+        icon: Layers3,
+        keywords: ['pluvia', 'rain', 'weather', 'canvas', 'pwa', 'cities', 'soundscape'],
+        action: () => navigate('/projects/pluvia')
+      },
+      {
         id: 'job-hunter',
         label: 'AI Job Hunter',
         description: 'Local-first ATS intelligence case study',
@@ -169,12 +187,12 @@ const CommandPalette: React.FC = () => {
       {
         id: 'email',
         label: 'Email Kartik',
-        description: 'kartikkataria0697@gmail.com',
+        description: 'kartik.kataria266@gmail.com',
         group: 'Actions',
         icon: Mail,
         keywords: ['email', 'contact', 'message'],
         action: () => {
-          window.location.href = 'mailto:kartikkataria0697@gmail.com';
+          window.location.href = 'mailto:kartik.kataria266@gmail.com';
         }
       }
     ],
