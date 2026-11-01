@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowUpRight,
-  BarChart3,
   Bot,
   CalendarDays,
   Github,
