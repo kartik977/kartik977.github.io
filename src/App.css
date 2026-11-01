@@ -2714,3 +2714,199 @@ body {
     inset: 0 0 auto;
   }
 }
+
+
+/* Recent project artwork: ChannelScope + Pluvia */
+.runtime-project-channelscope {
+  background:
+    radial-gradient(circle at 24% 18%, rgba(248,113,113,.28), transparent 30%),
+    radial-gradient(circle at 82% 58%, rgba(56,189,248,.18), transparent 34%),
+    linear-gradient(155deg, #10090d, #08101a);
+}
+
+.runtime-project-pluvia {
+  background:
+    radial-gradient(circle at 30% 18%, rgba(125,211,252,.22), transparent 30%),
+    radial-gradient(circle at 76% 58%, rgba(45,212,191,.12), transparent 34%),
+    linear-gradient(155deg, #06131b, #071018);
+}
+
+.runtime-project-generated-art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: #fff;
+}
+
+.runtime-project-generated-channelscope {
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(56,189,248,.12), transparent 32%),
+    radial-gradient(circle at 12% 18%, rgba(244,63,94,.16), transparent 28%),
+    #070a11;
+}
+
+.runtime-channel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  color: rgba(255,255,255,.82);
+  font-size: .58rem;
+  font-weight: 850;
+  letter-spacing: .14em;
+}
+
+.runtime-channel-top em {
+  color: #64748b;
+  font-size: .42rem;
+  font-style: normal;
+}
+
+.runtime-channel-kpis {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: .45rem;
+  margin-top: 1rem;
+}
+
+.runtime-channel-kpis i {
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: .55rem;
+  padding: .65rem;
+  background: rgba(255,255,255,.035);
+  color: #e2e8f0;
+  font-size: .78rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.runtime-channel-kpis small {
+  display: block;
+  margin-top: .1rem;
+  color: #475569;
+  font-size: .38rem;
+  letter-spacing: .12em;
+}
+
+.runtime-channel-chart {
+  display: flex;
+  height: 44%;
+  align-items: end;
+  gap: .3rem;
+  margin-top: .7rem;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: .7rem;
+  padding: .7rem;
+  background: rgba(0,0,0,.2);
+}
+
+.runtime-channel-chart b {
+  flex: 1;
+  min-height: 12%;
+  border-radius: .2rem .2rem 0 0;
+  background: linear-gradient(to top, rgba(244,63,94,.36), rgba(103,232,249,.88));
+  box-shadow: 0 0 14px rgba(56,189,248,.08);
+}
+
+.runtime-channel-ai {
+  position: absolute;
+  right: 1rem;
+  bottom: .85rem;
+  border: 1px solid rgba(103,232,249,.12);
+  border-radius: .55rem;
+  padding: .42rem .58rem;
+  background: rgba(34,211,238,.055);
+  color: #a5f3fc;
+  font-size: .5rem;
+  font-weight: 750;
+}
+
+.runtime-project-generated-pluvia {
+  background:
+    radial-gradient(circle at 72% 20%, rgba(125,211,252,.2), transparent 24%),
+    linear-gradient(180deg,#0d2635 0%,#091823 48%,#03080c 100%);
+}
+
+.runtime-pluvia-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(2,6,10,.86), transparent 52%),
+    radial-gradient(circle at 70% 18%, rgba(186,230,253,.18), transparent 18%);
+}
+
+.runtime-pluvia-copy {
+  position: absolute;
+  z-index: 3;
+  left: 1rem;
+  top: 1rem;
+  display: grid;
+}
+
+.runtime-pluvia-copy span {
+  color: rgba(207,250,254,.52);
+  font-size: .42rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+.runtime-pluvia-copy strong {
+  margin-top: .2rem;
+  font-size: 1.25rem;
+  letter-spacing: -.04em;
+}
+
+.runtime-pluvia-copy small {
+  color: #64748b;
+  font-size: .5rem;
+}
+
+.runtime-pluvia-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.runtime-pluvia-rain i {
+  position: absolute;
+  top: -24%;
+  width: 1px;
+  height: 24%;
+  opacity: .5;
+  background: linear-gradient(to bottom, transparent, rgba(224,242,254,.78), transparent);
+  animation: runtime-pluvia-drop 1.55s linear infinite;
+}
+
+.runtime-pluvia-rain i:nth-child(3n) { animation-duration: 1.25s; }
+.runtime-pluvia-rain i:nth-child(4n) { animation-duration: 1.9s; opacity:.32; }
+
+@keyframes runtime-pluvia-drop {
+  to { transform: translateY(620%); }
+}
+
+.runtime-pluvia-cities {
+  position: absolute;
+  z-index: 3;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+}
+
+.runtime-pluvia-cities span {
+  border: 1px solid rgba(207,250,254,.1);
+  border-radius: 999px;
+  padding: .3rem .5rem;
+  background: rgba(0,0,0,.22);
+  color: rgba(207,250,254,.68);
+  font-size: .45rem;
+  backdrop-filter: blur(8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .runtime-pluvia-rain i { animation: none; }
+}
