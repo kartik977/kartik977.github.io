@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-12T21:29:45Z",
+  "generatedAt": "2026-11-13T09:43:07Z",
   "about": "Links discovered on official examination bodies. Detection time is not publication time. A notice is not proof that registration is open. Exam dates are separately checked.",
   "sources": [
     {
@@ -11,7 +11,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -26,7 +26,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -41,12 +41,11 @@
       "state": null,
       "url": "https://www.ibps.in/",
       "status": "ok",
-      "checkedAt": "2026-11-12T21:29:45Z",
-      "lastSuccessfulAt": "2026-11-12T21:29:45Z",
-      "count": 15,
-      "pagesChecked": 1,
-      "pagesConfigured": 2,
-      "message": "Partial coverage: some configured pages could not be read."
+      "checkedAt": "2026-11-13T09:43:07Z",
+      "lastSuccessfulAt": "2026-11-13T09:43:07Z",
+      "count": 25,
+      "pagesChecked": 2,
+      "pagesConfigured": 2
     },
     {
       "id": "rrb",
@@ -56,7 +55,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -71,7 +70,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -86,7 +85,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -101,8 +100,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-11-12T21:29:45Z",
-      "lastSuccessfulAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
+      "lastSuccessfulAt": "2026-11-13T09:43:07Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -115,7 +114,7 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -130,7 +129,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -145,7 +144,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-12T21:29:45Z",
+      "checkedAt": "2026-11-13T09:43:07Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -155,15 +154,125 @@
   ],
   "items": [
     {
+      "id": "675f987a183c688016",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "update",
+      "title": "CRP CSA(Customer Service Associates)",
+      "url": "https://www.ibps.in/index.php/clerical-cadre/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "1fbc8da5dd25044cee",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "MANIT Recruitment of various Group ‘B’ & ‘C’ Non-Teaching Positions Registration From 13-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/manitboct26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "a0ccfdb4a09d71a290",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "update",
+      "title": "BPCL Special Recruitment Drive for Persons with Benchmark Disabilities (PwBDs)/ Divyangjans Registration From 09-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/bpcljul26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "ea51e9ffb3380a003b",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "JKB Recruitment of Various Posts Registration From 07-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/jkbvpocto26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "831a7fe493c2aba2f6",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "SBI Recruitment of Specialist Cadre Officers (Manager (Security) / Deputy Manager (Security)) Registration From 04-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/sbirscooct26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "1c9be17a37c1fc606b",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "SBI Recruitment of Specialist Cadre Officer (Assistant Manager -Engineer (Fire)) Registration From 04-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/sbiameoct26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "eab59f1abd3e6b7916",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "update",
+      "title": "RSBL Promotion from Clerk (Junior Officer) to Assistant Branch Manager, Senior Officer to Assistant Branch Manager & Junior Officer to Senior Officer Registration From 30-Oct-2026",
+      "url": "https://ibpsreg.ibps.in/rsbl2sep26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "7b195d1da2c57b87ec",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "RSBL Recruitment of Clerk (Junior Officer), Assistant Branch Manager & Assistant Manager-IT Registration From 30-Oct-2026",
+      "url": "https://ibpsreg.ibps.in/rsblrsep26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "b68c0643c8809f1564",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "CWC Recruitment of Various Posts Registration From 17-Oct-2026",
+      "url": "https://ibpsreg.ibps.in/cwcaug26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
+      "id": "57e9fa6387ea571167",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "application",
+      "title": "NIT Recruitment of Non-Faculty Position Registration From 01-Oct-2026",
+      "url": "https://ibpsreg.ibps.in/nitrjul26/",
+      "firstSeenAt": "2026-11-13T09:43:07Z",
+      "lastSeenAt": "2026-11-13T09:43:07Z"
+    },
+    {
       "id": "e3dc958441de88e2a4",
       "agency": "ibps",
       "scope": "national",
       "state": null,
       "kind": "update",
-      "title": "11 Nov 26 Online Pre-Examination Training for Candidates who Opted for PET under CRP- RRBs-XV",
+      "title": "CRP- RRBs-XV Posted on 11 Nov, 2026",
       "url": "https://www.ibps.in/index.php/rural-bank-xv/",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "3535f5c07cf50927bf",
@@ -171,10 +280,10 @@
       "scope": "national",
       "state": null,
       "kind": "update",
-      "title": "01 Jul 26 Notification for Common Recruitment Process for CRP- PO/MTs-XVI",
+      "title": "CRP-PO/MTs-XVI Posted on 01 Jul, 2026",
       "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "b8fb91260eae93a731",
@@ -185,7 +294,7 @@
       "title": "01 Jul 26 Notification for Common Recruitment Process for CRP- SPL-XVI",
       "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification-CRP-SPL-XVI_Final_V1_30.06.2026.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "7a70b9ebbbb17be24f",
@@ -196,7 +305,7 @@
       "title": "30 Jun 26 Window Notification for CRP-PO/MTs -XVI and SPL-XVI",
       "url": "https://www.ibps.in/wp-content/uploads/PO_SPL_Combined_Window_CRP-XVI.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "cfb97ba40bedbe91a9",
@@ -207,7 +316,7 @@
       "title": "03 Feb 26 Notification Regarding Revised Advisory and Standard Operating Procedure (SOP) to handle the cases of PwBD",
       "url": "https://www.ibps.in/wp-content/uploads/Revised-Advisory-and-Standard-Operating-Procedure-SOP-to-handle-the-cases-of-PwBD-candidates.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "fae0208b2d63fad575",
@@ -218,7 +327,7 @@
       "title": "27 Jan 26 Notification Regarding ISO 9001:2015 Certification",
       "url": "https://www.ibps.in/wp-content/uploads/Final-ISO-IBPS-Notification-27Jan26.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "2b3e92021ebd50c6fd",
@@ -229,7 +338,7 @@
       "title": "16 Jan 26 Tentative Calendar of CRP (PSBs & RRBs) Online Examinations",
       "url": "https://www.ibps.in/wp-content/uploads/IBPS_CALENDAR_2026-27_final.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "fa296fc24e5ef65949",
@@ -240,7 +349,7 @@
       "title": "15 Jan 26 Notice dated 15.01.2026 in connection with CRP-PO/MT-XIV",
       "url": "https://www.ibps.in/wp-content/uploads/PO-MT-XIV-Notice-15.1.2026.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "dba21750667d391345",
@@ -251,7 +360,7 @@
       "title": "15 Jan 26 Notice dated 15.01.2026 in connection with CRP-SPL-XIV",
       "url": "https://www.ibps.in/wp-content/uploads/SPL-XIV-Notice-15.1.2026.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "753e313595efa92515",
@@ -262,7 +371,7 @@
       "title": "17 Nov 25 Normated Standards for Flagged Cases of Non-Genuine scores in IBPS Examinations",
       "url": "https://www.ibps.in/wp-content/uploads/NORMATED-STANDARDS-FOR-FLAGGED-CASES-OF-NON-GENUINE-SCORES.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "75731d71e4509505e5",
@@ -273,7 +382,7 @@
       "title": "15 Nov 25 Corrigendum dated 14.11.2025 in connection with CRP-CSA-XV",
       "url": "https://www.ibps.in/wp-content/uploads/Corrigendum-CRP-CSA-XV_Vacancy_update2_14.11.25.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "399cbe379b767bd7cd",
@@ -284,7 +393,7 @@
       "title": "15 Nov 25 Updated Vacancies as on 14.11.2025 for Common Recruitment Process for CRP-CSA-XV",
       "url": "https://www.ibps.in/wp-content/uploads/CRP-CSA_XV_BANKWISE_STATEWISE_VACANCY_14.11.2025.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "9a59ad757c4a973ca3",
@@ -295,7 +404,7 @@
       "title": "28 Oct 25 Caution Notice regarding misuse of IBPS proprietary rights",
       "url": "https://www.ibps.in/wp-content/uploads/notice-final-1.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "fe60250f8aef09cb4e",
@@ -306,7 +415,7 @@
       "title": "28 Oct 25 Updated Vacancies as on 27.10.2025 for Common Recruitment Process for CRP-CSA-XV",
       "url": "https://www.ibps.in/wp-content/uploads/CRP-CSA_XV_BANKWISE_STATEWISE_VACANCY_27.10.25.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "adaebc118e576bdee0",
@@ -317,7 +426,7 @@
       "title": "04 Nov 24 Corrigendum Regarding CRP-Clerks-XIV",
       "url": "https://www.ibps.in/wp-content/uploads/Corrigendum-CRP-Clerks-XIV-28-10-2024.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "70406977ce33f1af5c",
@@ -328,7 +437,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq9A2tZjX6yGV",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "66dab84cc145c1e988",
@@ -339,7 +448,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq5xEsDbcEUKd",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "604c52ded126e5b011",
@@ -350,7 +459,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY),",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjhRbeHv+Wx86",
       "firstSeenAt": "2026-11-07T08:55:30Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "ef8e4b8e40f13cb53c",
@@ -361,7 +470,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjjLGzSSzDMLp",
       "firstSeenAt": "2026-11-06T20:28:21Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "e579ca50b4b24e8768",
@@ -372,7 +481,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjlwtZBkbGJrM",
       "firstSeenAt": "2026-11-06T20:28:21Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "2dc27eefa94a8918be",
@@ -383,7 +492,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpK9HT4ZBX4T",
       "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "ceaaf1391c19787af5",
@@ -394,7 +503,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjiNtMjnSs/ca",
       "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "b059f40a3dc73a087d",
@@ -405,7 +514,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpt+NPYatWx2",
       "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "ad7b85f973c33f535b",
@@ -416,7 +525,7 @@
       "title": "NOTICE REAGARDING DOCUMENT VERIFICATION FOR ADVT. NO. A-5/E-1/2025, ASSISTANT TE",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6Aa5hvlYnkkej",
       "firstSeenAt": "2026-11-03T09:41:48Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "a79ef70507eba08b6a",
@@ -427,7 +536,7 @@
       "title": "RESULT OF ADVT. NO. 2/2020-2021, U.P. CHIKITSA SHIKSHA (HOMOEOPATHIC) DEPTT., LE",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AdUDjhvz8oXc",
       "firstSeenAt": "2026-10-30T19:28:43Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "e86a96cdfdf95b1080",
@@ -438,7 +547,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AZU6OQK2HlGI",
       "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "45164018ccb7d18a07",
@@ -449,7 +558,7 @@
       "title": "CLICK HERE FOR ADVT. NO. A-5/E-1/2025, ASSISTANT TEACHER TRAINED GRADUATE (M./F.) EXAM 2025, (MATHS) (DOCUMENT VERIFICATION)",
       "url": "https://uppsc.up.nic.in/CandidatePages/OTRAppForm/Applicant_OtrAuthentication.aspx?WEqGEem9m0+8Y4tNQqJiNYurmbKsjJR/fgSlThSTh6o=",
       "firstSeenAt": "2026-10-26T19:59:35Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "42b708a20d9fbe960e",
@@ -460,7 +569,7 @@
       "title": "CLICK HERE TO APPLY FOR ADVT.NO. A-5/E-1/2026,ASSISTANT ARCHITECT PLANNER EXAMINATION-2026 / SPORTS OFFICER EXAMINATION-2026 / PROGRAMMER GRADE-2 EXAMINATION-2026",
       "url": "https://uppsc.up.nic.in/CandidatePages/Notifications.aspx",
       "firstSeenAt": "2026-10-26T07:54:24Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "057fb654a7802e2a55",
@@ -471,7 +580,7 @@
       "title": "UPPSC Exam Calendar 2026",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmIqec6cDg6BUi0bxHlS/Ba",
       "firstSeenAt": "2026-10-25T07:40:15Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "e5655649c6d083b9ca",
@@ -482,7 +591,7 @@
       "title": "Click here for One Time Registration (OTR), वन टाइम रजिस्ट्रेशन (ओटीआर) के लिए यहां क्लिक करें।",
       "url": "https://otr.pariksha.nic.in/",
       "firstSeenAt": "2026-10-25T07:40:15Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "cfea230efdccb29e7c",
@@ -493,7 +602,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmzNJIRVKnDRwIQMjGyuh7N",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "a546b8f82902598e35",
@@ -504,7 +613,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-2/E-1/2020, REGIONAL I",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgvOzjioxzzCo",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "5208743bfe5b07f698",
@@ -515,7 +624,7 @@
       "title": "NOTICE REGARDING ADVT. NO. A-7/E-1/2021, U.P. TECHNICAL EDUCATION (TEACHING) SER",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagmbO3OUZentgoWo8RkhUpnV",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "9056891082dbef63f0",
@@ -526,7 +635,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPAR",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxJUy3AgqZ4Ub",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "8a8f41ee8eaefe69ab",
@@ -537,7 +646,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjI+X70XaoE7Y",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "6b30f3e8f78524c608",
@@ -548,7 +657,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjKKsih8bLTaq",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "2d6cf08f12d231d0be",
@@ -559,7 +668,7 @@
       "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "69e5a027ac4681cf65",
@@ -570,7 +679,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-2/E-1/2024, ASSISTANT ARCHITECT, S-06/01 (PUBLIC WO",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagktt06NhTTxwivFUuvsdMCE",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "52d2e7ebcf3075c805",
@@ -581,7 +690,7 @@
       "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, FOOD SAFETY AND DRUG ADMINISTRATION UTT",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagldpN1/ndg4XQJWpYXr4Ud3",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-12T21:29:45Z"
+      "lastSeenAt": "2026-11-13T09:43:07Z"
     },
     {
       "id": "e79be85f2d0abe9cf0",
