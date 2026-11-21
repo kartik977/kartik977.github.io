@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-21T09:57:34Z",
+  "generatedAt": "2026-11-21T20:36:13Z",
   "about": "Candidate notices and text changes require human review before any date or rule is updated",
   "events": [
     {
@@ -10,7 +10,7 @@
       "agency": "bpsc",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Regarding_postpone_72nd_BPSC_BPSC-20260720-u768lx.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-21T09:56:52Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -22,7 +22,7 @@
       "agency": "bpsc",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-72nd-CCE-Reduction-of-2-posts-of-BPS_BPSC-20260903-23e57k.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-21T09:56:52Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -34,7 +34,7 @@
       "agency": "bpsc",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-Integrated-72nd-CCE-Pre-Advt.-44-vacancies-of-Sugarcane-Officer-deleted_BPSC-20260506-0jupsy.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-21T09:56:52Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -46,7 +46,7 @@
       "agency": "ibps",
       "url": "https://www.ibps.in/wp-content/uploads/Revised-Advisory-and-Standard-Operating-Procedure-SOP-to-handle-the-cases-of-PwBD-candidates.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-20T10:10:03Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -58,7 +58,7 @@
       "agency": "ibps",
       "url": "https://www.ibps.in/wp-content/uploads/Corrigendum-CRP-CSA-XV_Vacancy_update2_14.11.25.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-20T10:10:03Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -70,7 +70,7 @@
       "agency": "ibps",
       "url": "https://www.ibps.in/wp-content/uploads/Corrigendum-CRP-Clerks-XIV-28-10-2024.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-20T10:10:03Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -156,7 +156,7 @@
       "agency": "uppsc",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
       "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-21T09:56:52Z",
+      "lastSeenAt": "2026-11-21T20:35:27Z",
       "examTags": [],
       "status": "needs-review",
       "summary": "Possible correction or revised notice. Specific change not independently verified."
@@ -184,7 +184,7 @@
         "SSC CGL"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:57:34Z",
+      "checkedAt": "2026-11-21T20:36:13Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": null
     },
@@ -197,9 +197,9 @@
         "IBPS PO"
       ],
       "status": "reading",
-      "checkedAt": "2026-11-21T09:57:34Z",
+      "checkedAt": "2026-11-21T20:36:13Z",
       "message": "Document text checked; first successful read establishes baseline",
-      "lastSuccessfulAt": "2026-11-21T09:57:34Z"
+      "lastSuccessfulAt": "2026-11-21T20:36:13Z"
     },
     {
       "id": "upsc-cse-2026",
@@ -210,7 +210,7 @@
         "UPSC CSE"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:57:34Z",
+      "checkedAt": "2026-11-21T20:36:13Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": "2026-11-19T10:29:45Z"
     }
@@ -225,7 +225,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -240,7 +240,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -255,12 +255,11 @@
       "state": null,
       "url": "https://www.ibps.in/",
       "status": "ok",
-      "checkedAt": "2026-11-21T09:56:52Z",
-      "lastSuccessfulAt": "2026-11-21T09:56:52Z",
-      "count": 10,
-      "pagesChecked": 1,
-      "pagesConfigured": 2,
-      "message": "Partial coverage: some configured pages could not be read."
+      "checkedAt": "2026-11-21T20:35:27Z",
+      "lastSuccessfulAt": "2026-11-21T20:35:27Z",
+      "count": 23,
+      "pagesChecked": 2,
+      "pagesConfigured": 2
     },
     {
       "id": "rrb",
@@ -270,7 +269,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -285,7 +284,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -300,7 +299,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -315,8 +314,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-11-21T09:56:52Z",
-      "lastSuccessfulAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
+      "lastSuccessfulAt": "2026-11-21T20:35:27Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -329,8 +328,8 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "ok",
-      "checkedAt": "2026-11-21T09:56:52Z",
-      "lastSuccessfulAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
+      "lastSuccessfulAt": "2026-11-21T20:35:27Z",
       "count": 9,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -343,7 +342,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -358,7 +357,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-21T09:56:52Z",
+      "checkedAt": "2026-11-21T20:35:27Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
