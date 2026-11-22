@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-22T09:54:56Z",
+  "generatedAt": "2026-11-22T20:45:37Z",
   "about": "Links discovered on official examination bodies. Detection time is not publication time. A notice is not proof that registration is open. Exam dates are separately checked.",
   "sources": [
     {
@@ -11,7 +11,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -26,7 +26,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -40,13 +40,13 @@
       "scope": "national",
       "state": null,
       "url": "https://www.ibps.in/",
-      "status": "ok",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "status": "unavailable",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": "2026-11-22T09:54:56Z",
-      "count": 10,
-      "pagesChecked": 1,
+      "count": 0,
+      "pagesChecked": 0,
       "pagesConfigured": 2,
-      "message": "Partial coverage: some configured pages could not be read."
+      "message": "Official pages blocked automated access or did not load."
     },
     {
       "id": "rrb",
@@ -56,7 +56,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -71,7 +71,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -86,7 +86,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -101,8 +101,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-11-22T09:54:56Z",
-      "lastSuccessfulAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
+      "lastSuccessfulAt": "2026-11-22T20:45:37Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -115,8 +115,8 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "ok",
-      "checkedAt": "2026-11-22T09:54:56Z",
-      "lastSuccessfulAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
+      "lastSuccessfulAt": "2026-11-22T20:45:37Z",
       "count": 9,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -129,7 +129,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -144,7 +144,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-22T09:54:56Z",
+      "checkedAt": "2026-11-22T20:45:37Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -162,7 +162,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagldjThZjoT+Rv13cFQp166b",
       "firstSeenAt": "2026-11-20T21:52:26Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "e4442911a5b9cf8182",
@@ -173,18 +173,7 @@
       "title": "NOTICE REAGARDING DOCUMENT VERIFICATION FOR ADVT. NO. A-5/E-1/2025, ASSISTANT TE",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq0gwEWI26aiK",
       "firstSeenAt": "2026-11-20T21:52:26Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "0a505ab2d579ca78ba",
-      "agency": "ibps",
-      "scope": "national",
-      "state": null,
-      "kind": "update",
-      "title": "Indian Bank Engagement of Apprentices Registration From 05-Nov-2026",
-      "url": "https://ibpsreg.ibps.in/inbraoct26/",
-      "firstSeenAt": "2026-11-19T10:28:59Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "ff3f71469b9c5ea2fe",
@@ -195,7 +184,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASSISTANT T",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq+iDwu2k57EW",
       "firstSeenAt": "2026-11-18T22:06:00Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "f8d453ef348c085a66",
@@ -206,7 +195,7 @@
       "title": "LIST OF SELECTED CANDIDATES IN Advt. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTM",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq1V5zwlKle8k",
       "firstSeenAt": "2026-11-17T22:28:42Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "f3adbca25194b29919",
@@ -217,7 +206,7 @@
       "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASSISTANT",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq5GDnL3/PIOE",
       "firstSeenAt": "2026-11-17T22:28:42Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "2c68589ad3bb85495d",
@@ -228,7 +217,7 @@
       "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
       "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq+2I4ea+ym87",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "6c1c80f9fc3d9b08ff",
@@ -239,7 +228,7 @@
       "title": "Important Notice :- Regarding Postponement of 72nd CCE (Preliminary) Competitive Examination",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Regarding_postpone_72nd_BPSC_BPSC-20260720-u768lx.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "1c817e8cece93bac02",
@@ -250,7 +239,7 @@
       "title": "Corrigendum: Integrated 72nd Combined (Preliminary) Competitive Examination – Reduction of 2 Vacancies of Deputy Superintendent of Police (BPS)",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-72nd-CCE-Reduction-of-2-posts-of-BPS_BPSC-20260903-23e57k.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "9720ea1b131f5d416c",
@@ -261,7 +250,7 @@
       "title": "Important Notice: Date of Commencement of Examination for the Post of Stenographer in Bihar Public Service Commission, Patna. (Advt. No. 01/2026)",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Important-Notice-Date-of-012026-Stenographer-BPSC-Exam_BPSC-20260420-zj3eyx.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "0df7d0b4b5cc3452e7",
@@ -272,7 +261,7 @@
       "title": "Corrigendum: Integrated 72nd Combined (Preliminary) Competitive Examination – Deletion of 44 Vacancies of Sugarcane Officer",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Corrigendum-Integrated-72nd-CCE-Pre-Advt.-44-vacancies-of-Sugarcane-Officer-deleted_BPSC-20260506-0jupsy.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "2e5ee153935cfdb012",
@@ -283,7 +272,7 @@
       "title": "Important Notice: Regarding Introduction of 5th Answer Option ‘E’ in MCQ based examinations to be conducted by BPSC",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Kaagaz_20260502_160639877178_BPSC-20260502-zjmn51.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "372aabd7a58d32ab91",
@@ -294,7 +283,7 @@
       "title": "Important Notice : Facility to edit GENDER in OTR (One Time Registration)",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-26-02_BPSC-20250626-vmnwcx.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "4a0276f1a9313c80ae",
@@ -305,7 +294,7 @@
       "title": "Important Notice:- Advertisement for the Posts of Assistant Professor in various Departments (Speciality) of State Medical College & Hospitals has been cancelled. (Advt. Nos. 04/2025 to 28/2025)",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/Important-Notice-04-282025-Advertisement-cancelled_BPSC-20261029-wh9ep8.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "f8b8dd9bafb1bb0e09",
@@ -316,7 +305,7 @@
       "title": "Facility to Candidates to update data in Profile Tab in Online Application System",
       "url": "https://bpsc.bihar.gov.in/wp-content/uploads/BPSC_content/Notices/NB-2025-06-10-01.pdf",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
+      "lastSeenAt": "2026-11-22T20:45:37Z"
     },
     {
       "id": "0c1f982e64b0593fac",
@@ -327,6 +316,215 @@
       "title": "Key Contacts Shri Hemant Kumar Singh Secretary 0612-2215187 bpscpat-bih@nic.in Enquiry Section 0612-2237999 bpscpat-bih@nic.in Shri Rajesh Kumar Singh Examination Controller 0612-2215187 bpscpat-bih@nic.in View All",
       "url": "https://bpsc.bihar.gov.in/contact-us/",
       "firstSeenAt": "2026-11-16T23:26:03Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "3403dcd22c1b472c0a",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq6pNygydf5ja",
+      "firstSeenAt": "2026-11-13T20:55:41Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "4a841902be168280da",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdqx0OkEkFHHmZ",
+      "firstSeenAt": "2026-11-13T20:55:41Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "14791bb54b83d9dbc0",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq47NrLLiwkPi",
+      "firstSeenAt": "2026-11-13T20:55:41Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "70406977ce33f1af5c",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq9A2tZjX6yGV",
+      "firstSeenAt": "2026-11-12T21:29:45Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "66dab84cc145c1e988",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq5xEsDbcEUKd",
+      "firstSeenAt": "2026-11-12T21:29:45Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "604c52ded126e5b011",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY),",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjhRbeHv+Wx86",
+      "firstSeenAt": "2026-11-07T08:55:30Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "ef8e4b8e40f13cb53c",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjjLGzSSzDMLp",
+      "firstSeenAt": "2026-11-06T20:28:21Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "e579ca50b4b24e8768",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjlwtZBkbGJrM",
+      "firstSeenAt": "2026-11-06T20:28:21Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "2dc27eefa94a8918be",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpK9HT4ZBX4T",
+      "firstSeenAt": "2026-11-05T21:07:48Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "ceaaf1391c19787af5",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjiNtMjnSs/ca",
+      "firstSeenAt": "2026-11-05T21:07:48Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "b059f40a3dc73a087d",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpt+NPYatWx2",
+      "firstSeenAt": "2026-11-05T21:07:48Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "a79ef70507eba08b6a",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "RESULT OF ADVT. NO. 2/2020-2021, U.P. CHIKITSA SHIKSHA (HOMOEOPATHIC) DEPTT., LE",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AdUDjhvz8oXc",
+      "firstSeenAt": "2026-10-30T19:28:43Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "e86a96cdfdf95b1080",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "result",
+      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AZU6OQK2HlGI",
+      "firstSeenAt": "2026-10-28T19:39:23Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "9056891082dbef63f0",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "update",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPAR",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxJUy3AgqZ4Ub",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "8a8f41ee8eaefe69ab",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "update",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjI+X70XaoE7Y",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "6b30f3e8f78524c608",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "update",
+      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjKKsih8bLTaq",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "2d6cf08f12d231d0be",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "update",
+      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "69e5a027ac4681cf65",
+      "agency": "uppsc",
+      "scope": "state",
+      "state": "Uttar Pradesh",
+      "kind": "update",
+      "title": "NOTICE REGARDING ADVT. NO. D-2/E-1/2024, ASSISTANT ARCHITECT, S-06/01 (PUBLIC WO",
+      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagktt06NhTTxwivFUuvsdMCE",
+      "firstSeenAt": "2026-10-21T03:08:12Z",
+      "lastSeenAt": "2026-11-22T20:45:37Z"
+    },
+    {
+      "id": "0a505ab2d579ca78ba",
+      "agency": "ibps",
+      "scope": "national",
+      "state": null,
+      "kind": "update",
+      "title": "Indian Bank Engagement of Apprentices Registration From 05-Nov-2026",
+      "url": "https://ibpsreg.ibps.in/inbraoct26/",
+      "firstSeenAt": "2026-11-19T10:28:59Z",
       "lastSeenAt": "2026-11-22T09:54:56Z"
     },
     {
@@ -349,39 +547,6 @@
       "title": "CRP-SPL-XV Posted on 16 Nov, 2026",
       "url": "https://www.ibps.in/index.php/specialist-officers-xv/",
       "firstSeenAt": "2026-11-16T23:26:03Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "3403dcd22c1b472c0a",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq6pNygydf5ja",
-      "firstSeenAt": "2026-11-13T20:55:41Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "4a841902be168280da",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdqx0OkEkFHHmZ",
-      "firstSeenAt": "2026-11-13T20:55:41Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "14791bb54b83d9dbc0",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026,MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/A",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq47NrLLiwkPi",
-      "firstSeenAt": "2026-11-13T20:55:41Z",
       "lastSeenAt": "2026-11-22T09:54:56Z"
     },
     {
@@ -451,28 +616,6 @@
       "lastSeenAt": "2026-11-22T09:54:56Z"
     },
     {
-      "id": "70406977ce33f1af5c",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq9A2tZjX6yGV",
-      "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "66dab84cc145c1e988",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagn3Lnqaz4gdq5xEsDbcEUKd",
-      "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
       "id": "3535f5c07cf50927bf",
       "agency": "ibps",
       "scope": "national",
@@ -481,149 +624,6 @@
       "title": "CRP-PO/MTs-XVI Posted on 01 Jul, 2026",
       "url": "https://www.ibps.in/wp-content/uploads/Detailed-Notification_CRP-PO-XVI_Final_V1_30.06.2026.pdf",
       "firstSeenAt": "2026-11-12T21:29:45Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "604c52ded126e5b011",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY),",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjhRbeHv+Wx86",
-      "firstSeenAt": "2026-11-07T08:55:30Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "ef8e4b8e40f13cb53c",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjjLGzSSzDMLp",
-      "firstSeenAt": "2026-11-06T20:28:21Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "e579ca50b4b24e8768",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjlwtZBkbGJrM",
-      "firstSeenAt": "2026-11-06T20:28:21Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "2dc27eefa94a8918be",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpK9HT4ZBX4T",
-      "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "ceaaf1391c19787af5",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjiNtMjnSs/ca",
-      "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "b059f40a3dc73a087d",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. D-1/E-1/2026, MEDICAL EDUCATION DEPARTMENT U.P. (ALLOPATHY)/",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagk3H4ltFfLCjpt+NPYatWx2",
-      "firstSeenAt": "2026-11-05T21:07:48Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "a79ef70507eba08b6a",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "RESULT OF ADVT. NO. 2/2020-2021, U.P. CHIKITSA SHIKSHA (HOMOEOPATHIC) DEPTT., LE",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AdUDjhvz8oXc",
-      "firstSeenAt": "2026-10-30T19:28:43Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "e86a96cdfdf95b1080",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "result",
-      "title": "LIST OF PROVISIONALLY SELECTED CANDIDATES IN ADVT. NO. A-5/E-1/2025, ASST. TEACH",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnfpuRH59X6AZU6OQK2HlGI",
-      "firstSeenAt": "2026-10-28T19:39:23Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "9056891082dbef63f0",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "update",
-      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, MEDICAL HEALTH AND FAMILY WELFARE DEPAR",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkIY3nIrO0zxJUy3AgqZ4Ub",
-      "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "8a8f41ee8eaefe69ab",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "update",
-      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjI+X70XaoE7Y",
-      "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "6b30f3e8f78524c608",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "update",
-      "title": "NOTICE REGARDING ADVT. NO. D-6/E-1/2025, DIRECTORATE OF AYURVEDA UTTAR PRADESH,",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagnQ0/TjMEfCjKKsih8bLTaq",
-      "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "2d6cf08f12d231d0be",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "update",
-      "title": "CORRIGENDUM NOTICE REGARDING ADVT.NO.D-6/E-1/2025, DIRECTORATE OF UNANI UTTAR PR",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagkz0o52o77EYadVpmKbwEUn",
-      "firstSeenAt": "2026-10-21T03:08:12Z",
-      "lastSeenAt": "2026-11-22T09:54:56Z"
-    },
-    {
-      "id": "69e5a027ac4681cf65",
-      "agency": "uppsc",
-      "scope": "state",
-      "state": "Uttar Pradesh",
-      "kind": "update",
-      "title": "NOTICE REGARDING ADVT. NO. D-2/E-1/2024, ASSISTANT ARCHITECT, S-06/01 (PUBLIC WO",
-      "url": "https://uppsc.up.nic.in/Open_PDF_DB.aspx?I4PnQ0tBagktt06NhTTxwivFUuvsdMCE",
-      "firstSeenAt": "2026-10-21T03:08:12Z",
       "lastSeenAt": "2026-11-22T09:54:56Z"
     },
     {
