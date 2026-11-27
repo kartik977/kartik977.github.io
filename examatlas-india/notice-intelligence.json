@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-27T11:00:21Z",
+  "generatedAt": "2026-11-27T22:46:56Z",
   "about": "Candidate notices and text changes require human review before any date or rule is updated",
   "events": [
     {
@@ -184,7 +184,7 @@
         "SSC CGL"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-11-27T11:00:21Z",
+      "checkedAt": "2026-11-27T22:46:56Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": null
     },
@@ -196,10 +196,10 @@
       "examTags": [
         "IBPS PO"
       ],
-      "status": "unavailable",
-      "checkedAt": "2026-11-27T11:00:21Z",
-      "message": "Automated read unavailable; open official source",
-      "lastSuccessfulAt": "2026-11-26T11:04:25Z"
+      "status": "reading",
+      "checkedAt": "2026-11-27T22:46:56Z",
+      "message": "Document text checked; first successful read establishes baseline",
+      "lastSuccessfulAt": "2026-11-27T22:46:56Z"
     },
     {
       "id": "upsc-cse-2026",
@@ -210,7 +210,7 @@
         "UPSC CSE"
       ],
       "status": "unavailable",
-      "checkedAt": "2026-11-27T11:00:21Z",
+      "checkedAt": "2026-11-27T22:46:56Z",
       "message": "Automated read unavailable; open official source",
       "lastSuccessfulAt": "2026-11-19T10:29:45Z"
     }
@@ -225,7 +225,7 @@
       "state": null,
       "url": "https://www.upsc.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -240,7 +240,7 @@
       "state": null,
       "url": "https://ssc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -255,11 +255,12 @@
       "state": null,
       "url": "https://www.ibps.in/",
       "status": "ok",
-      "checkedAt": "2026-11-27T10:59:40Z",
-      "lastSuccessfulAt": "2026-11-27T10:59:40Z",
-      "count": 25,
-      "pagesChecked": 2,
-      "pagesConfigured": 2
+      "checkedAt": "2026-11-27T22:46:17Z",
+      "lastSuccessfulAt": "2026-11-27T22:46:17Z",
+      "count": 13,
+      "pagesChecked": 1,
+      "pagesConfigured": 2,
+      "message": "Partial coverage: some configured pages could not be read."
     },
     {
       "id": "rrb",
@@ -269,7 +270,7 @@
       "state": null,
       "url": "https://www.rrbcdg.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
@@ -284,7 +285,7 @@
       "state": null,
       "url": "https://www.nta.ac.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": "2026-10-21T03:11:55Z",
       "count": 0,
       "pagesChecked": 0,
@@ -299,7 +300,7 @@
       "state": null,
       "url": "https://sbi.co.in/web/careers/current-openings",
       "status": "unavailable",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": "2026-10-20T05:36:50Z",
       "count": 0,
       "pagesChecked": 0,
@@ -314,8 +315,8 @@
       "state": "Uttar Pradesh",
       "url": "https://uppsc.up.nic.in/",
       "status": "ok",
-      "checkedAt": "2026-11-27T10:59:40Z",
-      "lastSuccessfulAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
+      "lastSuccessfulAt": "2026-11-27T22:46:17Z",
       "count": 24,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -328,8 +329,8 @@
       "state": "Bihar",
       "url": "https://bpsc.bihar.gov.in/",
       "status": "ok",
-      "checkedAt": "2026-11-27T10:59:40Z",
-      "lastSuccessfulAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
+      "lastSuccessfulAt": "2026-11-27T22:46:17Z",
       "count": 8,
       "pagesChecked": 1,
       "pagesConfigured": 1
@@ -342,7 +343,7 @@
       "state": "Maharashtra",
       "url": "https://mpsc.gov.in/",
       "status": "limited",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 1,
@@ -357,7 +358,7 @@
       "state": "Rajasthan",
       "url": "https://rpsc.rajasthan.gov.in/",
       "status": "unavailable",
-      "checkedAt": "2026-11-27T10:59:40Z",
+      "checkedAt": "2026-11-27T22:46:17Z",
       "lastSuccessfulAt": null,
       "count": 0,
       "pagesChecked": 0,
